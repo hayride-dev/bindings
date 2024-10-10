@@ -1,0 +1,3 @@
+[submodule "coven"]
+	path = coven
+	url = https://github.com/hayride-dev/coven
