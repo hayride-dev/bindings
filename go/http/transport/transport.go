@@ -2,7 +2,6 @@ package transport
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 
 	"github.com/bytecodealliance/wasm-tools-go/cm"
@@ -52,14 +51,17 @@ func (r *RoundTrip) RoundTrip(req *http.Request) (*http.Response, error) {
 			return nil, fmt.Errorf("error %v", incomingResponse.Some().OK().Err())
 		}
 		ok := incomingResponse.Some().OK().OK()
-		var body io.ReadCloser
-		if consume := ok.Consume(); consume.IsErr() {
+		consume := ok.Consume()
+		if consume.IsErr() {
 			return nil, fmt.Errorf("error %v", consume.Err())
-		} else if stream := consume.OK().Stream(); stream.IsErr() {
-			return nil, fmt.Errorf("error %v", stream.Err())
-		} else {
-			body = NewReadCloser(*stream.OK())
 		}
+
+		stream := consume.OK().Stream()
+		if stream.IsErr() {
+			return nil, fmt.Errorf("error %v", stream.Err())
+		}
+
+		body := NewReadCloser(*stream.OK())
 
 		response := &http.Response{
 			StatusCode:    int(ok.Status()),

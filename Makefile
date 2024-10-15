@@ -7,3 +7,6 @@ gen-ml:
 
 gen-http: 
 	wit-bindgen-go generate --world client --out ./go/http/gen/ ./coven/http/wit
+
+gen-morph: 
+	wit-bindgen-go generate --world imports --out ./go/morph/gen/ ./coven/morph/wit
