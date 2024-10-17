@@ -26,6 +26,7 @@ func newWriterCloser(s streams.OutputStream) io.WriteCloser {
 
 func (w *morphWriteCloser) Write(p []byte) (int, error) {
 	content := cm.ToList(p)
+	// TODO:: eval if should we do a blocking write and flush
 	writeResult := w.stream.Write(content)
 	if writeResult.IsErr() {
 		writeErr := writeResult.Err()
@@ -43,7 +44,6 @@ func (w *morphWriteCloser) Write(p []byte) (int, error) {
 		}
 		return 0, fmt.Errorf("failed to flush OutputStream %s", flushErr.LastOperationFailed().ToDebugString())
 	}
-
 	return int(len(p)), nil
 }
 
