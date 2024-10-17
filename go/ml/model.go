@@ -1,10 +1,6 @@
 package ml
 
 import (
-	"bytes"
-	"context"
-	"text/template"
-
 	"github.com/bytecodealliance/wasm-tools-go/cm"
 	"github.com/hayride-dev/bindings/go/ml/gen/wasi/nn/graph"
 	"github.com/hayride-dev/bindings/go/ml/gen/wasi/nn/inference"
@@ -17,7 +13,7 @@ type Model struct {
 	options      *ModelOptions
 }
 
-func New(ctx context.Context, options ...Option[*ModelOptions]) (*Model, error) {
+func New(options ...Option[*ModelOptions]) (*Model, error) {
 	opts := defaultModelOptions()
 	for _, opt := range options {
 		if err := opt.Apply(opts); err != nil {
@@ -41,22 +37,12 @@ func New(ctx context.Context, options ...Option[*ModelOptions]) (*Model, error) 
 	return &Model{graphExecCtx: execCtx, options: opts}, nil
 }
 
-func (m *Model) Input(text string, data any) error {
-	templ, err := template.New("prompt").Parse(m.options.systemPrompt + text)
-	if err != nil {
-		return err
-	}
-
-	b := &bytes.Buffer{}
-	if err := templ.Execute(b, data); err != nil {
-		return err
-	}
-
+func (m *Model) Input(name string, text string) error {
 	d := tensor.TensorDimensions(cm.ToList([]uint32{1}))
-	td := tensor.TensorData(cm.ToList([]uint8(b.String())))
+	td := tensor.TensorData(cm.ToList([]uint8(text)))
 	t := tensor.NewTensor(d, tensor.TensorTypeU8, td)
 	// TODO :: validate name ?
-	inputResult := m.graphExecCtx.SetInput("p", t)
+	inputResult := m.graphExecCtx.SetInput(name, t)
 	if inputResult.IsErr() {
 		return &mlErr{inputResult.Err()}
 	}
@@ -64,9 +50,9 @@ func (m *Model) Input(text string, data any) error {
 	return nil
 }
 
-func (m *Model) Output() (string, error) {
+func (m *Model) Output(name string) (string, error) {
 	// TODO :: validate name ?
-	outputResult := m.graphExecCtx.GetOutput("p")
+	outputResult := m.graphExecCtx.GetOutput(name)
 	if outputResult.IsErr() {
 		return "", &mlErr{outputResult.Err()}
 	}
@@ -74,18 +60,10 @@ func (m *Model) Output() (string, error) {
 	return string(tensor.Data().Slice()), nil
 }
 
-func (m *Model) Compute(ctx context.Context) error {
+func (m *Model) Compute() error {
 	computeResult := m.graphExecCtx.Compute()
 	if computeResult.IsErr() {
 		return &mlErr{computeResult.Err()}
 	}
-	return nil
-}
-
-func (m *Model) ResetCtx() error {
-	return nil
-}
-
-func (m *Model) ExtendCtx(text string) error {
 	return nil
 }
