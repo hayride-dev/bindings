@@ -3,8 +3,8 @@ package morph
 import (
 	"context"
 	"fmt"
-	"io"
 
+	"github.com/bytecodealliance/wasm-tools-go/cm"
 	"github.com/hayride-dev/bindings/go/morph/gen/hayride/morph/spawn"
 )
 
@@ -15,29 +15,16 @@ func Spawn() *morph {
 	return &morph{}
 }
 
-func (m *morph) Execute(ctx context.Context, name string, args []byte) (io.ReadCloser, error) {
+func (m *morph) Execute(ctx context.Context, name string, args []string) (string, error) {
 	// one-shot context check
 	if ctx.Err() != nil {
-		return nil, ctx.Err()
+		return "", ctx.Err()
 	}
-
-	writer := spawn.NewWriter()
-	stream := writer.Stream()
-	if stream.IsErr() {
-		return nil, fmt.Errorf("failed to create OutputStream: %s", stream.Err().ToDebugString())
-	}
-
-	w := newWriterCloser(*stream.OK())
-	defer w.Close()
-
-	if _, err := w.Write(args); err != nil {
-		return nil, err
-	}
-
-	result := spawn.Exec(name, *stream.OK())
+	// Guest -> args -> Writer (reader - to get bytes ) -> Host
+	list := cm.ToList([]string(args))
+	result := spawn.Exec(name, list)
 	if result.IsErr() {
-		return nil, fmt.Errorf("failed to read from InputStream: %s", result.Err().ToDebugString())
+		return "", fmt.Errorf("failed to exec morph: %s", result.Err().ToDebugString())
 	}
-
-	return NewReadCloser(*result.OK()), nil
+	return *result.OK(), nil
 }
