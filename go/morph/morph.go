@@ -1,9 +1,6 @@
 package morph
 
 import (
-	"context"
-	"fmt"
-
 	"github.com/bytecodealliance/wasm-tools-go/cm"
 	"github.com/hayride-dev/bindings/go/morph/gen/hayride/morph/spawn"
 )
@@ -15,16 +12,11 @@ func Spawn() *morph {
 	return &morph{}
 }
 
-func (m *morph) Execute(ctx context.Context, name string, args []string) (string, error) {
-	// one-shot context check
-	if ctx.Err() != nil {
-		return "", ctx.Err()
-	}
-	// Guest -> args -> Writer (reader - to get bytes ) -> Host
+func (m *morph) Sync(name string, args []string) (string, error) {
 	list := cm.ToList([]string(args))
-	result := spawn.Exec(name, list)
+	result := spawn.Sync(name, list)
 	if result.IsErr() {
-		return "", fmt.Errorf("failed to exec morph: %s", result.Err().ToDebugString())
+		return "", &morphErr{result.Err()}
 	}
 	return *result.OK(), nil
 }
