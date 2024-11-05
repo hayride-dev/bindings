@@ -26,7 +26,7 @@ func Handle(h http.Handler) {
 	handler = h
 }
 
-func wasiHanlde(request types.IncomingRequest, responseOut types.ResponseOutparam) {
+func wasiHandle(request types.IncomingRequest, responseOut types.ResponseOutparam) {
 	// construct the http.Request and http.ResponseWriter from wasi types
 	req, err := requestFromWASIIncomingRequest(request)
 	if err != nil {
