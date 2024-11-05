@@ -11,8 +11,8 @@ package streams
 
 import (
 	"github.com/bytecodealliance/wasm-tools-go/cm"
-	ioerror "github.com/hayride-dev/bindings/go/http/gen/wasi/io/error"
-	"github.com/hayride-dev/bindings/go/http/gen/wasi/io/poll"
+	ioerror "github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/io/error"
+	"github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/io/poll"
 )
 
 // StreamError represents the imported variant "wasi:io/streams@0.2.0#stream-error".

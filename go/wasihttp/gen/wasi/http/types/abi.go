@@ -4,7 +4,7 @@ package types
 
 import (
 	"github.com/bytecodealliance/wasm-tools-go/cm"
-	monotonicclock "github.com/hayride-dev/bindings/go/http/gen/wasi/clocks/monotonic-clock"
+	monotonicclock "github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/clocks/monotonic-clock"
 	"unsafe"
 )
 

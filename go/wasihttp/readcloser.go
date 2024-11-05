@@ -1,10 +1,10 @@
-package transport
+package wasihttp
 
 import (
 	"fmt"
 	"io"
 
-	"github.com/hayride-dev/bindings/go/http/gen/wasi/io/streams"
+	"github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/io/streams"
 )
 
 type wasiReadCloser struct {
@@ -12,13 +12,13 @@ type wasiReadCloser struct {
 }
 
 // create an io.Reader from the input stream
-func NewReader(s streams.InputStream) io.Reader {
+func newReader(s streams.InputStream) io.Reader {
 	return &wasiReadCloser{
 		stream: s,
 	}
 }
 
-func NewReadCloser(s streams.InputStream) io.ReadCloser {
+func newReadCloser(s streams.InputStream) io.ReadCloser {
 	return &wasiReadCloser{
 		stream: s,
 	}
