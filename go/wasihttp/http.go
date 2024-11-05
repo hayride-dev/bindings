@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	incominghandler.Exports.Handle = wasiHanlde
+	incominghandler.Exports.Handle = wasiHandle
 }
 
 type defaulthandler struct{}
