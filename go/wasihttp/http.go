@@ -34,7 +34,6 @@ func wasiHandle(request types.IncomingRequest, responseOut types.ResponseOutpara
 		return
 	}
 	resp := newWasiResponseWriter(responseOut)
-
 	// call the go handler
 	handler.ServeHTTP(resp, req)
 }
@@ -88,34 +87,25 @@ func methodToWASIMethod(method string) types.Method {
 
 func wasiMethodToString(m types.Method) (string, error) {
 	if m.Connect() {
-		return "CONNECT", nil
-	}
-	if m.Delete() {
-		return "DELETE", nil
-	}
-	if m.Get() {
-		return "GET", nil
-	}
-	if m.Head() {
-		return "HEAD", nil
-	}
-	if m.Options() {
-		return "OPTIONS", nil
-	}
-	if m.Patch() {
-		return "PATCH", nil
-	}
-	if m.Post() {
-		return "POST", nil
-	}
-	if m.Put() {
-		return "PUT", nil
-	}
-	if m.Trace() {
-		return "TRACE", nil
-	}
-	if other := m.Other(); other != nil {
-		return *other, fmt.Errorf("unknown http method 'other'")
+		return http.MethodConnect, nil
+	} else if m.Delete() {
+		return http.MethodDelete, nil
+	} else if m.Get() {
+		return http.MethodGet, nil
+	} else if m.Head() {
+		return http.MethodHead, nil
+	} else if m.Options() {
+		return http.MethodOptions, nil
+	} else if m.Patch() {
+		return http.MethodPatch, nil
+	} else if m.Post() {
+		return http.MethodPost, nil
+	} else if m.Put() {
+		return http.MethodPut, nil
+	} else if m.Trace() {
+		return http.MethodTrace, nil
+	} else if other := m.Other(); other != nil {
+		return *other, fmt.Errorf("unknown http method '%s'", *other)
 	}
 	return "", fmt.Errorf("failed to convert http method")
 }
