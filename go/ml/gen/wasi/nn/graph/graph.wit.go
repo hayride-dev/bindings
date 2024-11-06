@@ -11,7 +11,23 @@ import (
 	"github.com/bytecodealliance/wasm-tools-go/cm"
 	"github.com/hayride-dev/bindings/go/ml/gen/wasi/nn/errors"
 	"github.com/hayride-dev/bindings/go/ml/gen/wasi/nn/inference"
+	"github.com/hayride-dev/bindings/go/ml/gen/wasi/nn/tensor"
 )
+
+// Error represents the imported type alias "wasi:nn/graph@0.2.0-rc-2024-08-19#error".
+//
+// See [errors.Error] for more information.
+type Error = errors.Error
+
+// Tensor represents the imported type alias "wasi:nn/graph@0.2.0-rc-2024-08-19#tensor".
+//
+// See [tensor.Tensor] for more information.
+type Tensor = tensor.Tensor
+
+// GraphExecutionContext represents the imported type alias "wasi:nn/graph@0.2.0-rc-2024-08-19#graph-execution-context".
+//
+// See [inference.GraphExecutionContext] for more information.
+type GraphExecutionContext = inference.GraphExecutionContext
 
 // Graph represents the imported resource "wasi:nn/graph@0.2.0-rc-2024-08-19#graph".
 //
@@ -31,24 +47,16 @@ func (self Graph) ResourceDrop() {
 	return
 }
 
-//go:wasmimport wasi:nn/graph@0.2.0-rc-2024-08-19 [resource-drop]graph
-//go:noescape
-func wasmimport_GraphResourceDrop(self0 uint32)
-
 // InitExecutionContext represents the imported method "init-execution-context".
 //
 //	init-execution-context: func() -> result<graph-execution-context, error>
 //
 //go:nosplit
-func (self Graph) InitExecutionContext() (result cm.Result[inference.GraphExecutionContext, inference.GraphExecutionContext, errors.Error]) {
+func (self Graph) InitExecutionContext() (result cm.Result[GraphExecutionContext, GraphExecutionContext, Error]) {
 	self0 := cm.Reinterpret[uint32](self)
 	wasmimport_GraphInitExecutionContext((uint32)(self0), &result)
 	return
 }
-
-//go:wasmimport wasi:nn/graph@0.2.0-rc-2024-08-19 [method]graph.init-execution-context
-//go:noescape
-func wasmimport_GraphInitExecutionContext(self0 uint32, result *cm.Result[inference.GraphExecutionContext, inference.GraphExecutionContext, errors.Error])
 
 // GraphEncoding represents the enum "wasi:nn/graph@0.2.0-rc-2024-08-19#graph-encoding".
 //
@@ -138,17 +146,13 @@ type GraphBuilder cm.List[uint8]
 //	-> result<graph, error>
 //
 //go:nosplit
-func Load(builder cm.List[GraphBuilder], encoding GraphEncoding, target ExecutionTarget) (result cm.Result[Graph, Graph, errors.Error]) {
+func Load(builder cm.List[GraphBuilder], encoding GraphEncoding, target ExecutionTarget) (result cm.Result[Graph, Graph, Error]) {
 	builder0, builder1 := cm.LowerList(builder)
 	encoding0 := (uint32)(encoding)
 	target0 := (uint32)(target)
 	wasmimport_Load((*GraphBuilder)(builder0), (uint32)(builder1), (uint32)(encoding0), (uint32)(target0), &result)
 	return
 }
-
-//go:wasmimport wasi:nn/graph@0.2.0-rc-2024-08-19 load
-//go:noescape
-func wasmimport_Load(builder0 *GraphBuilder, builder1 uint32, encoding0 uint32, target0 uint32, result *cm.Result[Graph, Graph, errors.Error])
 
 // LoadByName represents the imported function "load-by-name".
 //
@@ -163,12 +167,8 @@ func wasmimport_Load(builder0 *GraphBuilder, builder1 uint32, encoding0 uint32, 
 //	load-by-name: func(name: string) -> result<graph, error>
 //
 //go:nosplit
-func LoadByName(name string) (result cm.Result[Graph, Graph, errors.Error]) {
+func LoadByName(name string) (result cm.Result[Graph, Graph, Error]) {
 	name0, name1 := cm.LowerString(name)
 	wasmimport_LoadByName((*uint8)(name0), (uint32)(name1), &result)
 	return
 }
-
-//go:wasmimport wasi:nn/graph@0.2.0-rc-2024-08-19 load-by-name
-//go:noescape
-func wasmimport_LoadByName(name0 *uint8, name1 uint32, result *cm.Result[Graph, Graph, errors.Error])

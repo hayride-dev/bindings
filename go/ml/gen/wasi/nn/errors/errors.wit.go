@@ -87,10 +87,6 @@ func (self Error) ResourceDrop() {
 	return
 }
 
-//go:wasmimport wasi:nn/errors@0.2.0-rc-2024-08-19 [resource-drop]error
-//go:noescape
-func wasmimport_ErrorResourceDrop(self0 uint32)
-
 // Code represents the imported method "code".
 //
 // Return the error code.
@@ -105,10 +101,6 @@ func (self Error) Code() (result ErrorCode) {
 	return
 }
 
-//go:wasmimport wasi:nn/errors@0.2.0-rc-2024-08-19 [method]error.code
-//go:noescape
-func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
-
 // Data represents the imported method "data".
 //
 // Errors can propagated with backend specific status through a string value.
@@ -121,7 +113,3 @@ func (self Error) Data() (result string) {
 	wasmimport_ErrorData((uint32)(self0), &result)
 	return
 }
-
-//go:wasmimport wasi:nn/errors@0.2.0-rc-2024-08-19 [method]error.data
-//go:noescape
-func wasmimport_ErrorData(self0 uint32, result *string)

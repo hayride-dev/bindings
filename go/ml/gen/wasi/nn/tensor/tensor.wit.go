@@ -93,10 +93,6 @@ func (self Tensor) ResourceDrop() {
 	return
 }
 
-//go:wasmimport wasi:nn/tensor@0.2.0-rc-2024-08-19 [resource-drop]tensor
-//go:noescape
-func wasmimport_TensorResourceDrop(self0 uint32)
-
 // NewTensor represents the imported constructor for resource "tensor".
 //
 //	constructor(dimensions: tensor-dimensions, ty: tensor-type, data: tensor-data)
@@ -111,10 +107,6 @@ func NewTensor(dimensions TensorDimensions, ty TensorType, data TensorData) (res
 	return
 }
 
-//go:wasmimport wasi:nn/tensor@0.2.0-rc-2024-08-19 [constructor]tensor
-//go:noescape
-func wasmimport_NewTensor(dimensions0 *uint32, dimensions1 uint32, ty0 uint32, data0 *uint8, data1 uint32) (result0 uint32)
-
 // Data represents the imported method "data".
 //
 // Return the tensor data.
@@ -127,10 +119,6 @@ func (self Tensor) Data() (result TensorData) {
 	wasmimport_TensorData((uint32)(self0), &result)
 	return
 }
-
-//go:wasmimport wasi:nn/tensor@0.2.0-rc-2024-08-19 [method]tensor.data
-//go:noescape
-func wasmimport_TensorData(self0 uint32, result *TensorData)
 
 // Dimensions represents the imported method "dimensions".
 //
@@ -147,10 +135,6 @@ func (self Tensor) Dimensions() (result TensorDimensions) {
 	return
 }
 
-//go:wasmimport wasi:nn/tensor@0.2.0-rc-2024-08-19 [method]tensor.dimensions
-//go:noescape
-func wasmimport_TensorDimensions(self0 uint32, result *TensorDimensions)
-
 // Ty represents the imported method "ty".
 //
 // Describe the type of element in the tensor (e.g., `f32`).
@@ -164,7 +148,3 @@ func (self Tensor) Ty() (result TensorType) {
 	result = (TensorType)((uint32)(result0))
 	return
 }
-
-//go:wasmimport wasi:nn/tensor@0.2.0-rc-2024-08-19 [method]tensor.ty
-//go:noescape
-func wasmimport_TensorTy(self0 uint32) (result0 uint32)
