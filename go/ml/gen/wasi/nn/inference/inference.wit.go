@@ -13,6 +13,21 @@ import (
 	"github.com/hayride-dev/bindings/go/ml/gen/wasi/nn/tensor"
 )
 
+// Error represents the imported type alias "wasi:nn/inference@0.2.0-rc-2024-08-19#error".
+//
+// See [errors.Error] for more information.
+type Error = errors.Error
+
+// Tensor represents the imported type alias "wasi:nn/inference@0.2.0-rc-2024-08-19#tensor".
+//
+// See [tensor.Tensor] for more information.
+type Tensor = tensor.Tensor
+
+// TensorData represents the type alias "wasi:nn/inference@0.2.0-rc-2024-08-19#tensor-data".
+//
+// See [tensor.TensorData] for more information.
+type TensorData = tensor.TensorData
+
 // GraphExecutionContext represents the imported resource "wasi:nn/inference@0.2.0-rc-2024-08-19#graph-execution-context".
 //
 // Bind a `graph` to the input and output tensors for an inference.
@@ -34,10 +49,6 @@ func (self GraphExecutionContext) ResourceDrop() {
 	return
 }
 
-//go:wasmimport wasi:nn/inference@0.2.0-rc-2024-08-19 [resource-drop]graph-execution-context
-//go:noescape
-func wasmimport_GraphExecutionContextResourceDrop(self0 uint32)
-
 // Compute represents the imported method "compute".
 //
 // Compute the inference on the given inputs.
@@ -50,15 +61,11 @@ func wasmimport_GraphExecutionContextResourceDrop(self0 uint32)
 //	compute: func() -> result<_, error>
 //
 //go:nosplit
-func (self GraphExecutionContext) Compute() (result cm.Result[errors.Error, struct{}, errors.Error]) {
+func (self GraphExecutionContext) Compute() (result cm.Result[Error, struct{}, Error]) {
 	self0 := cm.Reinterpret[uint32](self)
 	wasmimport_GraphExecutionContextCompute((uint32)(self0), &result)
 	return
 }
-
-//go:wasmimport wasi:nn/inference@0.2.0-rc-2024-08-19 [method]graph-execution-context.compute
-//go:noescape
-func wasmimport_GraphExecutionContextCompute(self0 uint32, result *cm.Result[errors.Error, struct{}, errors.Error])
 
 // GetOutput represents the imported method "get-output".
 //
@@ -67,16 +74,12 @@ func wasmimport_GraphExecutionContextCompute(self0 uint32, result *cm.Result[err
 //	get-output: func(name: string) -> result<tensor, error>
 //
 //go:nosplit
-func (self GraphExecutionContext) GetOutput(name string) (result cm.Result[tensor.Tensor, tensor.Tensor, errors.Error]) {
+func (self GraphExecutionContext) GetOutput(name string) (result cm.Result[Tensor, Tensor, Error]) {
 	self0 := cm.Reinterpret[uint32](self)
 	name0, name1 := cm.LowerString(name)
 	wasmimport_GraphExecutionContextGetOutput((uint32)(self0), (*uint8)(name0), (uint32)(name1), &result)
 	return
 }
-
-//go:wasmimport wasi:nn/inference@0.2.0-rc-2024-08-19 [method]graph-execution-context.get-output
-//go:noescape
-func wasmimport_GraphExecutionContextGetOutput(self0 uint32, name0 *uint8, name1 uint32, result *cm.Result[tensor.Tensor, tensor.Tensor, errors.Error])
 
 // SetInput represents the imported method "set-input".
 //
@@ -85,14 +88,10 @@ func wasmimport_GraphExecutionContextGetOutput(self0 uint32, name0 *uint8, name1
 //	set-input: func(name: string, tensor: tensor) -> result<_, error>
 //
 //go:nosplit
-func (self GraphExecutionContext) SetInput(name string, tensor_ tensor.Tensor) (result cm.Result[errors.Error, struct{}, errors.Error]) {
+func (self GraphExecutionContext) SetInput(name string, tensor_ Tensor) (result cm.Result[Error, struct{}, Error]) {
 	self0 := cm.Reinterpret[uint32](self)
 	name0, name1 := cm.LowerString(name)
 	tensor0 := cm.Reinterpret[uint32](tensor_)
 	wasmimport_GraphExecutionContextSetInput((uint32)(self0), (*uint8)(name0), (uint32)(name1), (uint32)(tensor0), &result)
 	return
 }
-
-//go:wasmimport wasi:nn/inference@0.2.0-rc-2024-08-19 [method]graph-execution-context.set-input
-//go:noescape
-func wasmimport_GraphExecutionContextSetInput(self0 uint32, name0 *uint8, name1 uint32, tensor0 uint32, result *cm.Result[errors.Error, struct{}, errors.Error])
