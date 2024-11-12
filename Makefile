@@ -14,5 +14,8 @@ gen-morph:
 gen-silo: 
 	wit-bindgen-go generate --world imports --out ./go/silo/gen/ ./coven/silo/wit
 
+gen-core: 
+	wit-bindgen-go generate --world imports --out ./go/core/gen/ ./coven/core/wit
+
 gen-all:  gen-ml gen-http gen-morph 
 
