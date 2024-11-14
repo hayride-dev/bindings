@@ -1,22 +1,24 @@
 package morph
 
 import (
+	"fmt"
+
 	"github.com/bytecodealliance/wasm-tools-go/cm"
-	"github.com/hayride-dev/bindings/go/morph/gen/hayride/morph/spawn"
+	"github.com/hayride-dev/bindings/go/morph/gen/hayride/silo/threads"
 )
 
 type morph struct {
 }
 
-func Spawn() *morph {
+func New() *morph {
 	return &morph{}
 }
 
-func (m *morph) Sync(name string, args []string) (string, error) {
-	list := cm.ToList([]string(args))
-	result := spawn.Sync(name, list)
+func (p *morph) Spawn(path string, args ...string) (int32, error) {
+	list := cm.ToList(args)
+	result := threads.Spawn(path, list)
 	if result.IsErr() {
-		return "", &morphErr{result.Err()}
+		return -1, fmt.Errorf("failed to spawn thread: %v", result.Err())
 	}
 	return *result.OK(), nil
 }
