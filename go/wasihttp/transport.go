@@ -71,11 +71,6 @@ func (r *Transport) RoundTrip(incomingRequest *http.Request) (*http.Response, er
 		}
 	}
 
-	handleResp := outgoinghandler.Handle(outRequest, cm.Some(r.requestOptions()))
-	if handleResp.Err() != nil {
-		return nil, fmt.Errorf("%v", handleResp.Err())
-	}
-
 	if body != nil {
 		fmt.Println("Copying body")
 		if _, err := io.Copy(adaptedBody, incomingRequest.Body); err != nil {
@@ -98,6 +93,11 @@ func (r *Transport) RoundTrip(incomingRequest *http.Request) (*http.Response, er
 			return nil, fmt.Errorf("failed to finish body: %v", outFinish.Err())
 		}
 		fmt.Println("Finished body")
+	}
+
+	handleResp := outgoinghandler.Handle(outRequest, cm.Some(r.requestOptions()))
+	if handleResp.Err() != nil {
+		return nil, fmt.Errorf("%v", handleResp.Err())
 	}
 
 	futureResponse := handleResp.OK()
