@@ -6,12 +6,12 @@ import (
 	"github.com/bytecodealliance/wasm-tools-go/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:core@0.0.15".
+// This file contains wasmimport and wasmexport declarations for "hayride:core@0.0.16".
 
-//go:wasmimport hayride:core/config@0.0.15 get
+//go:wasmimport hayride:core/config@0.0.16 get
 //go:noescape
 func wasmimport_Get(result *cm.Result[ConfigShape, Config, Error])
 
-//go:wasmimport hayride:core/config@0.0.15 set
+//go:wasmimport hayride:core/config@0.0.16 set
 //go:noescape
 func wasmimport_Set(config0 *uint8, config1 uint32, config2 *uint8, config3 uint32, config4 uint32, config5 *uint8, config6 uint32, config7 *uint8, config8 uint32, config9 *uint8, config10 uint32, result *cm.Result[Error, struct{}, Error])
