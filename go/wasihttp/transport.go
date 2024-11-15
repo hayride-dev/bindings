@@ -75,8 +75,8 @@ func (r *Transport) RoundTrip(incomingRequest *http.Request) (*http.Response, er
 		return nil, fmt.Errorf("%v", handleResp.Err())
 	}
 
-	// NOTE(lxf): If request includes a body, copy it to the adapted wasi body
 	if body != nil {
+		fmt.Println("Copying body")
 		if _, err := io.Copy(adaptedBody, incomingRequest.Body); err != nil {
 			return nil, fmt.Errorf("failed to copy body: %v", err)
 		}
@@ -96,9 +96,9 @@ func (r *Transport) RoundTrip(incomingRequest *http.Request) (*http.Response, er
 		if outFinish.IsErr() {
 			return nil, fmt.Errorf("failed to finish body: %v", outFinish.Err())
 		}
+		fmt.Println("Finished body")
 	}
 
-	// NOTE(lxf): Request is fully sent. Processing response.
 	futureResponse := handleResp.OK()
 
 	// wait until resp is returned
