@@ -59,6 +59,7 @@ func (r *Transport) RoundTrip(incomingRequest *http.Request) (*http.Response, er
 	var adaptedBody io.WriteCloser
 	var body *types.OutgoingBody
 	if incomingRequest.Body != nil {
+		fmt.Println("Acquiring body")
 		bodyRes := outRequest.Body()
 		if bodyRes.IsErr() {
 			return nil, fmt.Errorf("failed to acquire resource handle to request body: %s", bodyRes.Err())
