@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/bytecodealliance/wasm-tools-go/cm"
 	"github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/http/types"
 )
 
@@ -38,25 +37,4 @@ func requestFromWASIIncomingRequest(incoming types.IncomingRequest) (*http.Reque
 	req.Header = wasiHeadertoHeader(incoming.Headers())
 
 	return req, nil
-}
-
-func wasiOutGoingFromRequest(req *http.Request) (types.OutgoingRequest, error) {
-	// headers
-	wasiHeaders := headerToWASIHeader(req.Header)
-	// method
-	wasiMethod := methodToWASIMethod(req.Method)
-	// path
-	wasiPath := cm.Some(req.URL.RequestURI())
-	// scheme
-	wasiScheme := cm.Some(schemeToWASIScheme(req.URL.Scheme))
-	// authority
-	wasiAuthority := cm.Some(req.URL.Host)
-
-	wasiRequest := types.NewOutgoingRequest(wasiHeaders)
-	wasiRequest.SetMethod(wasiMethod)
-	wasiRequest.SetPathWithQuery(wasiPath)
-	wasiRequest.SetScheme(wasiScheme)
-	wasiRequest.SetAuthority(wasiAuthority)
-
-	return wasiRequest, nil
 }
