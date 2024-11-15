@@ -19,19 +19,10 @@ type Transport struct {
 }
 
 func NewWasiRoundTripper() *Transport {
-	return &Transport{}
+	return &Transport{
+		ConnectTimeout: 30 * time.Second,
+	}
 }
-
-// DefaultTransport is the default implementation of [Transport] and is used by [DefaultClient].
-// It is configured use the same timeout value as [net/http.DefaultTransport].
-var DefaultTransport = &Transport{
-	ConnectTimeout: 30 * time.Second, // NOTE(lxf): Same as stdlib http.Transport
-}
-
-// DefaultClient is the default [net/http.Client] that uses [DefaultTransport] to adapt [net/http] to [wasi:http].
-//
-// [wasi:http]: https://github.com/WebAssembly/wasi-http/tree/v0.2.0
-var DefaultClient = &http.Client{Transport: DefaultTransport}
 
 func (r *Transport) requestOptions() types.RequestOptions {
 	options := types.NewRequestOptions()
