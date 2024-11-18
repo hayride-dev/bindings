@@ -1,4 +1,4 @@
-package hayride:silo@0.0.16;
+package hayride:silo@0.0.17;
 
 interface process {
 	/// system error numbers
@@ -14,6 +14,7 @@ interface threads {
 	/// system error numbers
 	type err-no = u32;
 	spawn: func(path: string, args: list<string>) -> result<s32, err-no>;
+	wait: func(thread-id: u32) -> result<s32, err-no>;
 }
 
 world imports {

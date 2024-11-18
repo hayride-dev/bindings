@@ -22,3 +22,11 @@ func (p *morph) Spawn(path string, args ...string) (int32, error) {
 	}
 	return *result.OK(), nil
 }
+
+func (p *morph) Wait(threadID uint32) (int32, error) {
+	result := threads.Wait(threadID)
+	if result.IsErr() {
+		return -1, fmt.Errorf("thread error: %v", result.Err())
+	}
+	return 0, nil
+}

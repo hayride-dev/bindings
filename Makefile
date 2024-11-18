@@ -1,6 +1,6 @@
-.PHONY: gen-ml
+.PHONY: gen-ml gen-http gen-morph gen-silo gen-core gen
 
-default: gen-ml
+default: gen
 
 gen-ml:
 	wit-bindgen-go generate --world imports --out ./go/ml/gen/ ./coven/ai/wit
@@ -17,5 +17,5 @@ gen-silo:
 gen-core: 
 	wit-bindgen-go generate --world imports --out ./go/core/gen/ ./coven/core/wit
 
-gen-all:  gen-ml gen-http gen-morph 
+gen:  gen-ml gen-http gen-morph gen-silo gen-core
 
