@@ -5,7 +5,6 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/bytecodealliance/wasm-tools-go/cm"
 	"github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/http/types"
 )
 
@@ -40,23 +39,52 @@ func requestFromWASIIncomingRequest(incoming types.IncomingRequest) (*http.Reque
 	return req, nil
 }
 
-func wasiOutGoingFromRequest(req *http.Request) (types.OutgoingRequest, error) {
-	// headers
-	wasiHeaders := headerToWASIHeader(req.Header)
-	// method
-	wasiMethod := methodToWASIMethod(req.Method)
-	// path
-	wasiPath := cm.Some(req.URL.RequestURI())
-	// scheme
-	wasiScheme := cm.Some(schemeToWASIScheme(req.URL.Scheme))
-	// authority
-	wasiAuthority := cm.Some(req.URL.Host)
+// WASItoHTTPRequest takes an [IncomingRequest] and returns a [net/http.Request] representation of it.
+func WASItoHTTPRequest(incoming types.IncomingRequest) (req *http.Request, err error) {
+	method, err := wasiMethodToString(incoming.Method())
+	if err != nil {
+		return nil, err
+	}
 
-	wasiRequest := types.NewOutgoingRequest(wasiHeaders)
-	wasiRequest.SetMethod(wasiMethod)
-	wasiRequest.SetPathWithQuery(wasiPath)
-	wasiRequest.SetScheme(wasiScheme)
-	wasiRequest.SetAuthority(wasiAuthority)
+	authority := "localhost"
+	if auth := incoming.Authority(); !auth.None() {
+		authority = *auth.Some()
+	}
 
-	return wasiRequest, nil
+	pathWithQuery := "/"
+	if p := incoming.PathWithQuery(); !p.None() {
+		pathWithQuery = *p.Some()
+	}
+
+	body, trailers, err := NewIncomingBodyTrailer(incoming)
+	if err != nil {
+		switch method {
+		case http.MethodGet,
+			http.MethodHead,
+			http.MethodDelete,
+			http.MethodConnect,
+			http.MethodOptions,
+			http.MethodTrace:
+		default:
+			return nil, fmt.Errorf("failed to consume incoming request: %w", err)
+		}
+	}
+
+	url := fmt.Sprintf("http://%s%s", authority, pathWithQuery)
+	req, err = http.NewRequest(method, url, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Trailer = trailers
+
+	headers := incoming.Headers()
+
+	req.Header = wasiHeadertoHeader(headers)
+	headers.ResourceDrop()
+
+	req.Host = authority
+	req.URL.Host = authority
+	req.RequestURI = pathWithQuery
+
+	return req, nil
 }

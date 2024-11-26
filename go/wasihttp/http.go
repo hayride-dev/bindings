@@ -28,7 +28,7 @@ func Handle(h http.Handler) {
 
 func wasiHandle(request types.IncomingRequest, responseOut types.ResponseOutparam) {
 	// construct the http.Request and http.ResponseWriter from wasi types
-	req, err := requestFromWASIIncomingRequest(request)
+	req, err := WASItoHTTPRequest(request)
 	if err != nil {
 		fmt.Printf("failed to convert wasi/http/types.IncomingRequest to http.Request: %s\n", err)
 		return

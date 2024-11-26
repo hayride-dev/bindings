@@ -1,30 +1,14 @@
-package hayride:morph@0.0.12;
-
-interface errors {
-	enum error-code {
-		invalid-argument,
-		timeout,
-		runtime-error,
-		unsupported-operation,
-		too-large,
-		unknown
-	}
-	resource error {
-
-		/// Return the error code.
-		code: func() -> error-code;
-
-		/// Errors can propagated with backend specific status through a string value.
-		data: func() -> string;
-	}
-}
-
-interface spawn {
-	use errors.{error};
-	sync: func(name: string, args: list<string>) -> result<string, error>;
-}
+package hayride:morph@0.0.17;
 
 world imports {
-	import errors;
-	import spawn;
+	import hayride:silo/threads@0.0.17;
+}
+
+package hayride:silo@0.0.17 {
+	interface threads {
+		/// system error numbers
+		type err-no = u32;
+		spawn: func(path: string, args: list<string>) -> result<s32, err-no>;
+		wait: func(thread-id: u32) -> result<s32, err-no>;
+	}
 }
