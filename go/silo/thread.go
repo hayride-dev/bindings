@@ -1,20 +1,20 @@
-package morph
+package silo
 
 import (
 	"fmt"
 
 	"github.com/bytecodealliance/wasm-tools-go/cm"
-	"github.com/hayride-dev/bindings/go/morph/gen/hayride/silo/threads"
+	"github.com/hayride-dev/bindings/go/silo/gen/hayride/silo/threads"
 )
 
-type morph struct {
+type Thread struct {
 }
 
-func New() *morph {
-	return &morph{}
+func NewThread() *Thread {
+	return &Thread{}
 }
 
-func (p *morph) Spawn(path string, args ...string) (int32, error) {
+func (p *Thread) Spawn(path string, args ...string) (int32, error) {
 	list := cm.ToList(args)
 	result := threads.Spawn(path, list)
 	if result.IsErr() {
@@ -23,7 +23,7 @@ func (p *morph) Spawn(path string, args ...string) (int32, error) {
 	return *result.OK(), nil
 }
 
-func (p *morph) Wait(threadID uint32) (int32, error) {
+func (p *Thread) Wait(threadID uint32) (int32, error) {
 	result := threads.Wait(threadID)
 	if result.IsErr() {
 		return -1, fmt.Errorf("thread error: %v", result.Err())
