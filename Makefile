@@ -8,5 +8,8 @@ gen-http:
 gen-silo: 
 	wit-bindgen-go generate --world imports --out ./go/silo/gen/ ./coven/silo/wit
 
-gen: gen-http gen-silo 
+gen-socket: 
+	wit-bindgen-go generate --world exports --out ./go/socket/gen/ ./coven/socket/wit
+
+gen: gen-http gen-silo gen-socket 
 
