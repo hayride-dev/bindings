@@ -1,4 +1,4 @@
-package hayride:http@0.0.19;
+package hayride:http@0.0.20;
 
 world client-server {
 	import wasi:io/poll@0.2.0;
