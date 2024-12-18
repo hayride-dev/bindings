@@ -14,19 +14,20 @@ func NewThread() *Thread {
 	return &Thread{}
 }
 
-func (p *Thread) Spawn(path string, args ...string) (int32, error) {
+func (p *Thread) Spawn(path string, function string, args ...string) (int32, error) {
 	list := cm.ToList(args)
-	result := threads.Spawn(path, list)
+	result := threads.Spawn(path, function, list)
 	if result.IsErr() {
 		return -1, fmt.Errorf("failed to spawn thread: %v", result.Err())
 	}
 	return *result.OK(), nil
 }
 
-func (p *Thread) Wait(threadID uint32) (int32, error) {
+func (p *Thread) Wait(threadID uint32) ([]byte, error) {
 	result := threads.Wait(threadID)
 	if result.IsErr() {
-		return -1, fmt.Errorf("thread error: %v", result.Err())
+		return nil, fmt.Errorf("thread error: %v", result.Err())
 	}
-	return 0, nil
+
+	return result.OK().Slice(), nil
 }
