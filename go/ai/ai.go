@@ -1,40 +1,90 @@
 package ai
 
 import (
+	"unsafe"
+
 	"github.com/hayride-dev/bindings/go/ai/gen/hayride/ai/agent"
 	"go.bytecodealliance.org/cm"
 )
 
+var defaultAgent = &agentResource{}
+
 func init() {
-	agent.Exports.Initialize = initalize
-	agent.Exports.Error.Destructor = destructor
-	agent.Exports.Error.Code = code
-	agent.Exports.Error.Data = data
-
+	agent.Exports.Initialize = initialize
+	agent.Exports.Agent.Constructor = constructor
+	// agent.Exports.Agent.Destructor = destructor
+	agent.Exports.Agent.Description = description
 }
 
-type A interface {
-	Description() string
-	Capabilities() ([]string, error)
-	Enhance(components []string) error
+func New(description string, components []string) (*agentResource, error) {
+	defaultAgent.description = description
+	defaultAgent.components = components
+	return defaultAgent, nil
 }
 
-func Initialize(a A) error {
-	bb := b{a: a}
-	agent.Exports.Agent.Constructor = bb.constructor
-	return nil
+func initialize() cm.Result[agent.Agent, agent.Agent, agent.Error] {
+	ptr := unsafe.Pointer(defaultAgent)
+	// Convert the pointer address to uint32 (truncated on 64-bit systems)
+	address := uint32(uintptr(ptr))
+	rep := cm.Rep(address)
+
+	a := agent.AgentResourceNew(rep)
+	result := cm.OK[cm.Result[agent.Agent, agent.Agent, agent.Error]](a)
+	return result
 }
 
-func initalize() (result cm.Result[agent.Agent, agent.Agent, agent.Error]) {
-	return
+// Component representation of an agent resource
+type agentResource struct {
+	description string
+	components  []string
 }
 
 type agentError struct {
+	code agent.ErrorCode
 }
 
-// Resource destructor.
+func constructor(description string, components cm.List[string]) (result agent.Agent) {
+	// Create a new resource.
+	a := &agentResource{
+		description: description,
+		components:  components.Slice(),
+	}
+
+	ptr := unsafe.Pointer(a)
+	// Convert the pointer address to uint32 (truncated on 64-bit systems)
+	address := uint32(uintptr(ptr))
+	rep := cm.Rep(address)
+
+	return agent.AgentResourceNew(rep)
+}
+
+/*
 func destructor(self cm.Rep) {
-	//e.code.
+	agent := agent.AgentResourceNew(self)
+	agent.ResourceDrop()
+}
+*/
+
+func description(rep cm.Rep) string {
+	// Convert unsafe pointer rep to agentResource
+	ptr := unsafe.Pointer(uintptr(rep))
+	a := (*agentResource)(ptr)
+
+	return a.description
+}
+
+/*
+func enhance(rep cm.Rep, components cm.List[string]) (result cm.Result[agent.Error, struct{}, agent.Error]) {
+	ptr := unsafe.Pointer(uintptr(rep))
+	a := (*agentResource)(ptr)
+
+	a.components = append(a.components, components.Slice()...)
+
+	// TODO: Check for duplicates
+	// result = cm.OK[agent.Error, struct{}, agent.Error]()
+	result = cm.Err()
+
+	return
 }
 
 // Code represents the caller-defined, exported method "code".
@@ -42,17 +92,10 @@ func destructor(self cm.Rep) {
 // return the error code.
 //
 //	code: func() -> error-code
-func code(self cm.Rep) (result agent.ErrorCode) {
-	switch self {
-	case cm.Rep(agent.ErrorCodeInvalidArgument):
-		return agent.ErrorCodeInvalidArgument
-	case cm.Rep(agent.ErrorCodeMissingCapability):
-		return agent.ErrorCodeMissingCapability
-	case cm.Rep(agent.ErrorCodeRuntimeError):
-		return agent.ErrorCodeRuntimeError
-	default:
-		return agent.ErrorCodeUnknown
-	}
+func (b *agentView) code(self cm.Rep) (result agent.ErrorCode) {
+	// TODO: Handle the case where the resource is not an agentError.
+	err := b.table[self].(agentError)
+	return err.code
 }
 
 // Data represents the caller-defined, exported method "data".
@@ -60,45 +103,9 @@ func code(self cm.Rep) (result agent.ErrorCode) {
 // errors can propagated with backend specific status through a string value.
 //
 //	data: func() -> string
-func data(self cm.Rep) (result string) {
-	switch self {
-	case cm.Rep(agent.ErrorCodeInvalidArgument):
-		return agent.ErrorCodeInvalidArgument.String()
-	case cm.Rep(agent.ErrorCodeMissingCapability):
-		return agent.ErrorCodeMissingCapability.String()
-	case cm.Rep(agent.ErrorCodeRuntimeError):
-		return agent.ErrorCodeRuntimeError.String()
-	default:
-		return agent.ErrorCodeUnknown.String()
-	}
+func (b *agentView) data(self cm.Rep) (result string) {
+	// TODO: Handle the case where the resource is not an agentError.
+	err := b.table[self].(agentError)
+	return err.code.String()
 }
-
-type agentView struct {
-	a        A
-	resource agent.Agent
-}
-
-func (b *agentView) constructor(description string, components cm.List[string]) (result agent.Agent) {
-	b.resource = agent.AgentResourceNew(cm.Rep(0))
-	agent.AgentResourceNew(cm.Rep(0))
-	return b.resource
-}
-
-func (b *agentView) destructor(self cm.Rep) {
-	b.resource.ResourceDrop()
-}
-
-func (b *agentView) description(self cm.Rep) string {
-	return b.a.Description()
-}
-
-func (b *agentView) enhance(self cm.Rep, components cm.List[string]) (result cm.Result[struct{}, agent.Error, agent.Error]) {
-	if err := b.a.Enhance(components.Slice()); err != nil {
-		ae := agentError{}
-		e := agent.ErrorResourceNew(cm.Rep(ae))
-
-		return cm.Err[struct{}, agent.Error, agent.Error](e)
-	}
-
-	return cm.Ok[agent.Error, struct{}, agent.Error](struct{}{})
-}
+*/
