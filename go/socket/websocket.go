@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/bytecodealliance/wasm-tools-go/cm"
 	"github.com/hayride-dev/bindings/go/socket/gen/hayride/socket/websocket"
 	"github.com/hayride-dev/bindings/go/socket/gen/wasi/io/streams"
+	"go.bytecodealliance.org/cm"
 )
 
 func init() {

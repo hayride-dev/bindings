@@ -6,11 +6,10 @@ import (
 )
 
 func init() {
-	errorView := &errorView{}
 	agent.Exports.Initialize = initalize
-	agent.Exports.Error.Destructor = errorView.Destructor
-	agent.Exports.Error.Code = errorView.Code
-	agent.Exports.Error.Data = errorView.Data
+	agent.Exports.Error.Destructor = destructor
+	agent.Exports.Error.Code = code
+	agent.Exports.Error.Data = data
 
 }
 
@@ -95,8 +94,8 @@ func (b *agentView) description(self cm.Rep) string {
 
 func (b *agentView) enhance(self cm.Rep, components cm.List[string]) (result cm.Result[struct{}, agent.Error, agent.Error]) {
 	if err := b.a.Enhance(components.Slice()); err != nil {
-		ae := errorView{}
-		e := agent.ErrorResourceNew(cm.Rep(0))
+		ae := agentError{}
+		e := agent.ErrorResourceNew(cm.Rep(ae))
 
 		return cm.Err[struct{}, agent.Error, agent.Error](e)
 	}

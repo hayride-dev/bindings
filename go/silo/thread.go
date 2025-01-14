@@ -3,8 +3,8 @@ package silo
 import (
 	"fmt"
 
-	"github.com/bytecodealliance/wasm-tools-go/cm"
 	"github.com/hayride-dev/bindings/go/silo/gen/hayride/silo/threads"
+	"go.bytecodealliance.org/cm"
 )
 
 type Thread struct {
