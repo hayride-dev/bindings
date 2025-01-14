@@ -1,4 +1,2 @@
-github.com/bytecodealliance/wasm-tools-go v0.3.2 h1:LKni9PS8yCG5/A79L8tcTKthgf7WN5RZD83W1m6wEE0=
-github.com/bytecodealliance/wasm-tools-go v0.3.2/go.mod h1:fdysX1+SiPxcIhdpg8TLhoxz23k28/5cQ0/L9J4mgig=
 go.bytecodealliance.org/cm v0.1.0 h1:78Rk4d5rgir5Hm+LMFpDWhjmFBWrKDFPSKUwDBj+nwo=
 go.bytecodealliance.org/cm v0.1.0/go.mod h1:NZ2UT0DyGhBfpIPOxPMCuG6g1YTR4YF3xweD7mHX5VQ=

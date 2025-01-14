@@ -3,109 +3,77 @@ package ai
 import (
 	"unsafe"
 
-	"github.com/hayride-dev/bindings/go/ai/gen/hayride/ai/agent"
+	wasiagent "github.com/hayride-dev/bindings/go/ai/gen/hayride/ai/agent"
 	"go.bytecodealliance.org/cm"
 )
 
 var defaultAgent = &agentResource{}
 
 func init() {
-	agent.Exports.Initialize = initialize
-	agent.Exports.Agent.Constructor = constructor
-	// agent.Exports.Agent.Destructor = destructor
-	agent.Exports.Agent.Description = description
+	wasiagent.Exports.Initialize = initialize
+	wasiagent.Exports.Agent.Description = description
+	wasiagent.Exports.Agent.Enhance = enhance
+	wasiagent.Exports.Agent.Capabilities = capabilities
 }
 
-func New(description string, components []string) (*agentResource, error) {
-	defaultAgent.description = description
-	defaultAgent.components = components
-	return defaultAgent, nil
+type Agent interface {
+	Description() string
+	Capabilities() []string
+	Enhance(components []string) error
 }
 
-func initialize() cm.Result[agent.Agent, agent.Agent, agent.Error] {
+func New(agent Agent) error {
+	defaultAgent.agent = agent
+	return nil
+}
+
+func initialize() cm.Result[wasiagent.Agent, wasiagent.Agent, wasiagent.Error] {
 	ptr := unsafe.Pointer(defaultAgent)
 	// Convert the pointer address to uint32 (truncated on 64-bit systems)
 	address := uint32(uintptr(ptr))
 	rep := cm.Rep(address)
 
-	a := agent.AgentResourceNew(rep)
-	result := cm.OK[cm.Result[agent.Agent, agent.Agent, agent.Error]](a)
+	a := wasiagent.AgentResourceNew(rep)
+	result := cm.OK[cm.Result[wasiagent.Agent, wasiagent.Agent, wasiagent.Error]](a)
 	return result
 }
 
 // Component representation of an agent resource
 type agentResource struct {
-	description string
-	components  []string
+	agent Agent
 }
 
 type agentError struct {
-	code agent.ErrorCode
+	code wasiagent.ErrorCode
 }
-
-func constructor(description string, components cm.List[string]) (result agent.Agent) {
-	// Create a new resource.
-	a := &agentResource{
-		description: description,
-		components:  components.Slice(),
-	}
-
-	ptr := unsafe.Pointer(a)
-	// Convert the pointer address to uint32 (truncated on 64-bit systems)
-	address := uint32(uintptr(ptr))
-	rep := cm.Rep(address)
-
-	return agent.AgentResourceNew(rep)
-}
-
-/*
-func destructor(self cm.Rep) {
-	agent := agent.AgentResourceNew(self)
-	agent.ResourceDrop()
-}
-*/
 
 func description(rep cm.Rep) string {
 	// Convert unsafe pointer rep to agentResource
 	ptr := unsafe.Pointer(uintptr(rep))
 	a := (*agentResource)(ptr)
 
-	return a.description
+	return a.agent.Description()
 }
 
-/*
-func enhance(rep cm.Rep, components cm.List[string]) (result cm.Result[agent.Error, struct{}, agent.Error]) {
+func enhance(rep cm.Rep, components cm.List[string]) (result cm.Result[wasiagent.Error, struct{}, wasiagent.Error]) {
 	ptr := unsafe.Pointer(uintptr(rep))
 	a := (*agentResource)(ptr)
 
-	a.components = append(a.components, components.Slice()...)
+	err := a.agent.Enhance(components.Slice())
+	if err != nil {
+		resourceErr := wasiagent.ErrorResourceNew(cm.Rep(wasiagent.ErrorCodeRuntimeError))
+		return cm.Err[cm.Result[wasiagent.Error, struct{}, wasiagent.Error]](resourceErr)
+	}
 
-	// TODO: Check for duplicates
-	// result = cm.OK[agent.Error, struct{}, agent.Error]()
-	result = cm.Err()
-
-	return
+	ok := struct{}{}
+	return cm.OK[cm.Result[wasiagent.Error, struct{}, wasiagent.Error]](ok)
 }
 
-// Code represents the caller-defined, exported method "code".
-//
-// return the error code.
-//
-//	code: func() -> error-code
-func (b *agentView) code(self cm.Rep) (result agent.ErrorCode) {
-	// TODO: Handle the case where the resource is not an agentError.
-	err := b.table[self].(agentError)
-	return err.code
+func capabilities(rep cm.Rep) cm.Result[cm.List[string], cm.List[string], wasiagent.Error] {
+	ptr := unsafe.Pointer(uintptr(rep))
+	a := (*agentResource)(ptr)
+	caps := a.agent.Capabilities()
+	list := cm.ToList[[]string](caps)
+	result := cm.OK[cm.Result[cm.List[string], cm.List[string], wasiagent.Error]](list)
+	return result
 }
-
-// Data represents the caller-defined, exported method "data".
-//
-// errors can propagated with backend specific status through a string value.
-//
-//	data: func() -> string
-func (b *agentView) data(self cm.Rep) (result string) {
-	// TODO: Handle the case where the resource is not an agentError.
-	err := b.table[self].(agentError)
-	return err.code.String()
-}
-*/
