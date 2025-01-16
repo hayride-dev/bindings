@@ -8,11 +8,11 @@
 package types
 
 import (
-	"github.com/bytecodealliance/wasm-tools-go/cm"
 	monotonicclock "github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/clocks/monotonic-clock"
 	ioerror "github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/io/error"
 	"github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/io/poll"
 	"github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/io/streams"
+	"go.bytecodealliance.org/cm"
 )
 
 // Duration represents the type alias "wasi:http/types@0.2.0#duration".
@@ -248,9 +248,9 @@ func (v Scheme) String() string {
 //		info-code: option<u16>,
 //	}
 type DNSErrorPayload struct {
-	_        cm.HostLayout
-	Rcode    cm.Option[string]
-	InfoCode cm.Option[uint16]
+	_        cm.HostLayout     `json:"-"`
+	Rcode    cm.Option[string] `json:"rcode"`
+	InfoCode cm.Option[uint16] `json:"info-code"`
 }
 
 // TLSAlertReceivedPayload represents the record "wasi:http/types@0.2.0#TLS-alert-received-payload".
@@ -262,9 +262,9 @@ type DNSErrorPayload struct {
 //		alert-message: option<string>,
 //	}
 type TLSAlertReceivedPayload struct {
-	_            cm.HostLayout
-	AlertID      cm.Option[uint8]
-	AlertMessage cm.Option[string]
+	_            cm.HostLayout     `json:"-"`
+	AlertID      cm.Option[uint8]  `json:"alert-id"`
+	AlertMessage cm.Option[string] `json:"alert-message"`
 }
 
 // FieldSizePayload represents the record "wasi:http/types@0.2.0#field-size-payload".
@@ -276,9 +276,9 @@ type TLSAlertReceivedPayload struct {
 //		field-size: option<u32>,
 //	}
 type FieldSizePayload struct {
-	_         cm.HostLayout
-	FieldName cm.Option[string]
-	FieldSize cm.Option[uint32]
+	_         cm.HostLayout     `json:"-"`
+	FieldName cm.Option[string] `json:"field-name"`
+	FieldSize cm.Option[uint32] `json:"field-size"`
 }
 
 // ErrorCode represents the variant "wasi:http/types@0.2.0#error-code".
@@ -1018,7 +1018,7 @@ func (self Fields) Has(name FieldKey) (result bool) {
 	self0 := cm.Reinterpret[uint32](self)
 	name0, name1 := cm.LowerString(name)
 	result0 := wasmimport_FieldsHas((uint32)(self0), (*uint8)(name0), (uint32)(name1))
-	result = cm.U32ToBool((uint32)(result0))
+	result = (bool)(cm.U32ToBool((uint32)(result0)))
 	return
 }
 
@@ -1305,7 +1305,7 @@ func (self OutgoingRequest) SetAuthority(authority cm.Option[string]) (result cm
 	self0 := cm.Reinterpret[uint32](self)
 	authority0, authority1, authority2 := lower_OptionString(authority)
 	result0 := wasmimport_OutgoingRequestSetAuthority((uint32)(self0), (uint32)(authority0), (*uint8)(authority1), (uint32)(authority2))
-	result = (cm.BoolResult)(cm.U32ToBool((uint32)(result0)))
+	result = (cm.BoolResult)((bool)(cm.U32ToBool((uint32)(result0))))
 	return
 }
 
@@ -1321,7 +1321,7 @@ func (self OutgoingRequest) SetMethod(method Method) (result cm.BoolResult) {
 	self0 := cm.Reinterpret[uint32](self)
 	method0, method1, method2 := lower_Method(method)
 	result0 := wasmimport_OutgoingRequestSetMethod((uint32)(self0), (uint32)(method0), (*uint8)(method1), (uint32)(method2))
-	result = (cm.BoolResult)(cm.U32ToBool((uint32)(result0)))
+	result = (cm.BoolResult)((bool)(cm.U32ToBool((uint32)(result0))))
 	return
 }
 
@@ -1338,7 +1338,7 @@ func (self OutgoingRequest) SetPathWithQuery(pathWithQuery cm.Option[string]) (r
 	self0 := cm.Reinterpret[uint32](self)
 	pathWithQuery0, pathWithQuery1, pathWithQuery2 := lower_OptionString(pathWithQuery)
 	result0 := wasmimport_OutgoingRequestSetPathWithQuery((uint32)(self0), (uint32)(pathWithQuery0), (*uint8)(pathWithQuery1), (uint32)(pathWithQuery2))
-	result = (cm.BoolResult)(cm.U32ToBool((uint32)(result0)))
+	result = (cm.BoolResult)((bool)(cm.U32ToBool((uint32)(result0))))
 	return
 }
 
@@ -1355,7 +1355,7 @@ func (self OutgoingRequest) SetScheme(scheme cm.Option[Scheme]) (result cm.BoolR
 	self0 := cm.Reinterpret[uint32](self)
 	scheme0, scheme1, scheme2, scheme3 := lower_OptionScheme(scheme)
 	result0 := wasmimport_OutgoingRequestSetScheme((uint32)(self0), (uint32)(scheme0), (uint32)(scheme1), (*uint8)(scheme2), (uint32)(scheme3))
-	result = (cm.BoolResult)(cm.U32ToBool((uint32)(result0)))
+	result = (cm.BoolResult)((bool)(cm.U32ToBool((uint32)(result0))))
 	return
 }
 
@@ -1448,7 +1448,7 @@ func (self RequestOptions) SetBetweenBytesTimeout(duration cm.Option[Duration]) 
 	self0 := cm.Reinterpret[uint32](self)
 	duration0, duration1 := lower_OptionDuration(duration)
 	result0 := wasmimport_RequestOptionsSetBetweenBytesTimeout((uint32)(self0), (uint32)(duration0), (uint64)(duration1))
-	result = (cm.BoolResult)(cm.U32ToBool((uint32)(result0)))
+	result = (cm.BoolResult)((bool)(cm.U32ToBool((uint32)(result0))))
 	return
 }
 
@@ -1464,7 +1464,7 @@ func (self RequestOptions) SetConnectTimeout(duration cm.Option[Duration]) (resu
 	self0 := cm.Reinterpret[uint32](self)
 	duration0, duration1 := lower_OptionDuration(duration)
 	result0 := wasmimport_RequestOptionsSetConnectTimeout((uint32)(self0), (uint32)(duration0), (uint64)(duration1))
-	result = (cm.BoolResult)(cm.U32ToBool((uint32)(result0)))
+	result = (cm.BoolResult)((bool)(cm.U32ToBool((uint32)(result0))))
 	return
 }
 
@@ -1480,7 +1480,7 @@ func (self RequestOptions) SetFirstByteTimeout(duration cm.Option[Duration]) (re
 	self0 := cm.Reinterpret[uint32](self)
 	duration0, duration1 := lower_OptionDuration(duration)
 	result0 := wasmimport_RequestOptionsSetFirstByteTimeout((uint32)(self0), (uint32)(duration0), (uint64)(duration1))
-	result = (cm.BoolResult)(cm.U32ToBool((uint32)(result0)))
+	result = (cm.BoolResult)((bool)(cm.U32ToBool((uint32)(result0))))
 	return
 }
 
@@ -1824,7 +1824,7 @@ func (self OutgoingResponse) SetStatusCode(statusCode StatusCode) (result cm.Boo
 	self0 := cm.Reinterpret[uint32](self)
 	statusCode0 := (uint32)(statusCode)
 	result0 := wasmimport_OutgoingResponseSetStatusCode((uint32)(self0), (uint32)(statusCode0))
-	result = (cm.BoolResult)(cm.U32ToBool((uint32)(result0)))
+	result = (cm.BoolResult)((bool)(cm.U32ToBool((uint32)(result0))))
 	return
 }
 

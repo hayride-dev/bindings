@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/bytecodealliance/wasm-tools-go/cm"
 	monotonicclock "github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/clocks/monotonic-clock"
 	outgoinghandler "github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/http/outgoing-handler"
 	"github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/http/types"
+	"go.bytecodealliance.org/cm"
 )
 
 var _ http.RoundTripper = (*Transport)(nil)

@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/bytecodealliance/wasm-tools-go/cm"
 	"github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/http/types"
 	"github.com/hayride-dev/bindings/go/wasihttp/gen/wasi/io/streams"
+	"go.bytecodealliance.org/cm"
 )
 
 type BodyConsumer interface {
