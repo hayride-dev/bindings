@@ -12,7 +12,7 @@ gen-socket:
 	wit-bindgen-go generate --world exports --out ./go/socket/gen/ coven/socket/wit
 
 gen-ai:
-	wit-bindgen-go generate --out ./go/ai/gen/ coven/ai/wit
+	wit-bindgen-go generate --world exports --out ./go/ai/gen/ coven/ai/wit
 
 gen: gen-http gen-silo gen-socket 
 
