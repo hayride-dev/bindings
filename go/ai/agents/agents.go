@@ -36,7 +36,28 @@ func New(options ...Option[*AgentOptions]) error {
 	wasiagents.Exports.Get = s.wasiGet
 	wasiagents.Exports.Enhance = s.wasiEnhance
 
+	wasiagents.Exports.Error.Code = code
+	wasiagents.Exports.Error.Data = data
+
 	return nil
+}
+
+func code(self cm.Rep) (result wasiagents.ErrorCode) {
+	switch self {
+	case cm.Rep(wasiagents.ErrorCodeEnhanceError):
+		return wasiagents.ErrorCodeEnhanceError
+	default:
+		return wasiagents.ErrorCodeUnknown
+	}
+}
+
+func data(self cm.Rep) string {
+	switch self {
+	case cm.Rep(wasiagents.ErrorCodeEnhanceError):
+		return wasiagents.ErrorCodeEnhanceError.String()
+	default:
+		return wasiagents.ErrorCodeUnknown.String()
+	}
 }
 
 func (a *store) wasiSet(wasiAgent types.Agent) (result cm.Result[wasiagents.Error, struct{}, wasiagents.Error]) {

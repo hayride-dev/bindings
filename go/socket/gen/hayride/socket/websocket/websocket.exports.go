@@ -2,7 +2,7 @@
 
 package websocket
 
-// Exports represents the caller-defined exports from "hayride:socket/websocket@0.0.24".
+// Exports represents the caller-defined exports from "hayride:socket/websocket@0.0.27".
 var Exports struct {
 	// Handle represents the caller-defined, exported function "handle".
 	//
