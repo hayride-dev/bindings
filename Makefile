@@ -14,5 +14,5 @@ gen-socket:
 gen-ai:
 	wit-bindgen-go generate --world exports --out ./go/ai/gen/ coven/ai/wit
 
-gen: gen-http gen-silo gen-socket 
+gen: gen-http gen-silo gen-socket gen-ai
 
