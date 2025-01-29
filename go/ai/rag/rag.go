@@ -33,7 +33,7 @@ func NewConnection(dsn string, options ...Option[*RagOptions]) (*ragConnection, 
 	}, nil
 }
 
-func NewTransformer(embeddingType transformer.EmbeddingType, model string, dataColumn string, vectorColumn string) rag.Transformer {
+func NewTransformer(embeddingType EmbeddingType, model string, dataColumn string, vectorColumn string) Transformer {
 	return transformer.NewTransformer(embeddingType, model, dataColumn, vectorColumn)
 }
 
@@ -55,7 +55,7 @@ func (c *ragConnection) Embed(table string, data string) error {
 	return nil
 }
 
-func (c *ragConnection) Query(table string, data string, options []rag.RagOption) ([]string, error) {
+func (c *ragConnection) Query(table string, data string, options []RagOption) ([]string, error) {
 	list := cm.ToList(options)
 
 	result := c.conn.Query(table, data, list)
