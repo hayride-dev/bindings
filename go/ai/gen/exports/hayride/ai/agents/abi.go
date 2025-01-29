@@ -3,7 +3,7 @@
 package agents
 
 import (
-	"github.com/hayride-dev/bindings/go/ai/gen/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/ai/gen/exports/hayride/ai/types"
 	"go.bytecodealliance.org/cm"
 	"unsafe"
 )

@@ -1,8 +1,8 @@
 package agents
 
 import (
-	wasiagents "github.com/hayride-dev/bindings/go/ai/gen/hayride/ai/agents"
-	"github.com/hayride-dev/bindings/go/ai/gen/hayride/ai/types"
+	wasiagents "github.com/hayride-dev/bindings/go/ai/gen/exports/hayride/ai/agents"
+	"github.com/hayride-dev/bindings/go/ai/gen/exports/hayride/ai/types"
 	"go.bytecodealliance.org/cm"
 )
 

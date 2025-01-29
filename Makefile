@@ -11,8 +11,11 @@ gen-silo:
 gen-socket: 
 	wit-bindgen-go generate --world exports --out ./go/socket/gen/ coven/socket/wit
 
-gen-ai:
-	wit-bindgen-go generate --world exports --out ./go/ai/gen/ coven/ai/wit
+gen-ai-exports:
+	wit-bindgen-go generate --world exports --out ./go/ai/gen/exports coven/ai/wit
 
-gen: gen-http gen-silo gen-socket gen-ai
+gen-ai-imports:
+	wit-bindgen-go generate --world imports --out ./go/ai/gen/imports coven/ai/wit
+
+gen: gen-http gen-silo gen-socket gen-ai-exports gen-ai-imports
 
