@@ -59,7 +59,6 @@ func (r *Transport) RoundTrip(incomingRequest *http.Request) (*http.Response, er
 	var adaptedBody io.WriteCloser
 	var body *types.OutgoingBody
 	if incomingRequest.Body != nil {
-		fmt.Println("Acquiring body")
 		bodyRes := outRequest.Body()
 		if bodyRes.IsErr() {
 			return nil, fmt.Errorf("failed to acquire resource handle to request body: %s", bodyRes.Err())
@@ -72,7 +71,6 @@ func (r *Transport) RoundTrip(incomingRequest *http.Request) (*http.Response, er
 	}
 
 	if body != nil {
-		fmt.Println("Copying body")
 		if _, err := io.Copy(adaptedBody, incomingRequest.Body); err != nil {
 			return nil, fmt.Errorf("failed to copy body: %v", err)
 		}
@@ -92,7 +90,6 @@ func (r *Transport) RoundTrip(incomingRequest *http.Request) (*http.Response, er
 		if outFinish.IsErr() {
 			return nil, fmt.Errorf("failed to finish body: %v", outFinish.Err())
 		}
-		fmt.Println("Finished body")
 	}
 
 	handleResp := outgoinghandler.Handle(outRequest, cm.Some(r.requestOptions()))
