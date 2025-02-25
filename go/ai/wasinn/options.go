@@ -1,4 +1,4 @@
-package llm
+package wasinn
 
 type ModelOptions struct {
 	name       string

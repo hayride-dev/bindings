@@ -7,28 +7,28 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.30".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.31".
 
-//go:wasmimport hayride:ai/agents@0.0.30 [resource-drop]error
+//go:wasmimport hayride:ai/agents@0.0.31 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/agents@0.0.30 [method]error.code
+//go:wasmimport hayride:ai/agents@0.0.31 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/agents@0.0.30 [method]error.data
+//go:wasmimport hayride:ai/agents@0.0.31 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/agents@0.0.30 set
+//go:wasmimport hayride:ai/agents@0.0.31 set
 //go:noescape
 func wasmimport_Set(agent0 *uint8, agent1 uint32, agent2 *uint8, agent3 uint32, agent4 *types.Tool, agent5 uint32, result *cm.Result[Error, struct{}, Error])
 
-//go:wasmimport hayride:ai/agents@0.0.30 get
+//go:wasmimport hayride:ai/agents@0.0.31 get
 //go:noescape
 func wasmimport_Get(name0 *uint8, name1 uint32, result *cm.Result[AgentShape, Agent, Error])
 
-//go:wasmimport hayride:ai/agents@0.0.30 enhance
+//go:wasmimport hayride:ai/agents@0.0.31 enhance
 //go:noescape
 func wasmimport_Enhance(agent0 *uint8, agent1 uint32, agent2 *uint8, agent3 uint32, agent4 *types.Tool, agent5 uint32, tools0 *Tool, tools1 uint32, result *cm.Result[Error, struct{}, Error])

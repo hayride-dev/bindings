@@ -6,16 +6,16 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.30".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.31".
 
-//go:wasmimport hayride:ai/graph-stream@0.0.30 [resource-drop]graph-stream
+//go:wasmimport hayride:ai/graph-stream@0.0.31 [resource-drop]graph-stream
 //go:noescape
 func wasmimport_GraphStreamResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/graph-stream@0.0.30 [method]graph-stream.init-execution-context-stream
+//go:wasmimport hayride:ai/graph-stream@0.0.31 [method]graph-stream.init-execution-context-stream
 //go:noescape
 func wasmimport_GraphStreamInitExecutionContextStream(self0 uint32, result *cm.Result[GraphExecutionContextStream, GraphExecutionContextStream, Error])
 
-//go:wasmimport hayride:ai/graph-stream@0.0.30 load-by-name
+//go:wasmimport hayride:ai/graph-stream@0.0.31 load-by-name
 //go:noescape
 func wasmimport_LoadByName(name0 *uint8, name1 uint32, result *cm.Result[GraphStream, GraphStream, Error])
