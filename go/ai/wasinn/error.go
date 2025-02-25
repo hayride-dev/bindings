@@ -1,4 +1,4 @@
-package llm
+package wasinn
 
 import (
 	"github.com/hayride-dev/bindings/go/ai/gen/imports/wasi/io/streams"
