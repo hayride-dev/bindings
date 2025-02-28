@@ -139,6 +139,6 @@ func (t TensorStream) Read(p []byte) (int, error) {
 
 		return 0, &streamErr{data.Err()}
 	}
-	copy(p, data.OK().Slice())
-	return len(p), nil
+	n := copy(p, data.OK().Slice())
+	return n, nil
 }
