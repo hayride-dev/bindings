@@ -6,36 +6,36 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.32".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.33".
 
-//go:wasmimport hayride:ai/tools@0.0.32 [resource-drop]error
+//go:wasmimport hayride:ai/tools@0.0.33 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/tools@0.0.32 [method]error.code
+//go:wasmimport hayride:ai/tools@0.0.33 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/tools@0.0.32 [method]error.data
+//go:wasmimport hayride:ai/tools@0.0.33 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/tools@0.0.32 [resource-drop]future-result
+//go:wasmimport hayride:ai/tools@0.0.33 [resource-drop]future-result
 //go:noescape
 func wasmimport_FutureResultResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/tools@0.0.32 [method]future-result.get
+//go:wasmimport hayride:ai/tools@0.0.33 [method]future-result.get
 //go:noescape
 func wasmimport_FutureResultGet(self0 uint32, result *cm.Result[cm.List[uint8], cm.List[uint8], Error])
 
-//go:wasmimport hayride:ai/tools@0.0.32 [method]future-result.subscribe
+//go:wasmimport hayride:ai/tools@0.0.33 [method]future-result.subscribe
 //go:noescape
 func wasmimport_FutureResultSubscribe(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/tools@0.0.32 format
+//go:wasmimport hayride:ai/tools@0.0.33 format
 //go:noescape
 func wasmimport_Format(model0 *uint8, model1 uint32, tool0 *uint8, tool1 uint32, tool2 *uint8, tool3 uint32, result *string)
 
-//go:wasmimport hayride:ai/tools@0.0.32 invoke
+//go:wasmimport hayride:ai/tools@0.0.33 invoke
 //go:noescape
 func wasmimport_Invoke(tool0 *uint8, tool1 uint32, tool2 *uint8, tool3 uint32, function0 *uint8, function1 uint32, args0 *string, args1 uint32, result *cm.Result[FutureResult, FutureResult, Error])
