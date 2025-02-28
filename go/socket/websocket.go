@@ -14,11 +14,7 @@ func init() {
 }
 
 type Handler interface {
-	Handle(msg string, writer Writer)
-}
-
-type Writer interface {
-	Write(buf []byte) (int, error)
+	Handle(msg string, writer io.Writer)
 }
 
 type websocketWriter struct {
@@ -41,7 +37,7 @@ func (w *websocketWriter) Write(buf []byte) (int, error) {
 
 type defaulthandler struct{}
 
-func (dh *defaulthandler) Handle(msg string, writer Writer) {
+func (dh *defaulthandler) Handle(msg string, writer io.Writer) {
 	writer.Write([]byte("websocket handler undefined"))
 }
 

@@ -15,7 +15,6 @@ import (
 type Wasinn struct {
 	graphExecCtx       *inference.GraphExecutionContext
 	graphExecCtxStream *inferencestream.GraphExecutionContextStream
-	inputTensor        *tensor.Tensor
 	options            *ModelOptions
 }
 
@@ -128,20 +127,19 @@ type TensorStream struct {
 }
 
 // Read will read the next `len` bytes from the stream
-// will return empty byte slice if the stream is closed
-func (t TensorStream) Read(len uint64) ([]byte, error) {
-	data := t.stream.Read(len)
+// will return empty byte slice if the stream is closed.
+// blocks until the data is available
+func (t TensorStream) Read(p []byte) (int, error) {
+	t.stream.Subscribe().Block()
+	data := t.stream.Read(uint64(len(p)))
 	if data.IsErr() {
 		if data.Err().Closed() {
-			return nil, nil
+			return 0, nil
 		}
 
-		return nil, &streamErr{data.Err()}
+		return 0, &streamErr{data.Err()}
 	}
-
-	return data.OK().Slice(), nil
-}
-
-func (t TensorStream) Block() {
-	t.stream.Subscribe().Block()
+	n := copy(p, data.OK().Slice())
+	p = p[:n]
+	return len(p), nil
 }
