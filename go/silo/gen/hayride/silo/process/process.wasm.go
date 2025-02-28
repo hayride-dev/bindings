@@ -6,16 +6,16 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:silo@0.0.32".
+// This file contains wasmimport and wasmexport declarations for "hayride:silo@0.0.33".
 
-//go:wasmimport hayride:silo/process@0.0.32 spawn
+//go:wasmimport hayride:silo/process@0.0.33 spawn
 //go:noescape
 func wasmimport_Spawn(path0 *uint8, path1 uint32, args0 *string, args1 uint32, result *cm.Result[int32, int32, ErrNo])
 
-//go:wasmimport hayride:silo/process@0.0.32 wait
+//go:wasmimport hayride:silo/process@0.0.33 wait
 //go:noescape
 func wasmimport_Wait(pid0 uint32, result *cm.Result[int32, int32, ErrNo])
 
-//go:wasmimport hayride:silo/process@0.0.32 kill
+//go:wasmimport hayride:silo/process@0.0.33 kill
 //go:noescape
 func wasmimport_Kill(pid0 uint32, sig0 uint32, result *cm.Result[int32, int32, ErrNo])
