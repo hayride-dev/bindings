@@ -28,6 +28,6 @@ func Handle(h Handler) {
 }
 
 func websocketHandle(text string, out websocket.OutputStream) {
-	w := wasiio.NewWriter(uint32(out))
+	w := wasiio.Clone(uint32(out))
 	handler.Handle(text, w)
 }

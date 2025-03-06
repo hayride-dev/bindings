@@ -17,7 +17,7 @@ type WasiWriter interface {
 	Ptr() uint32
 }
 
-func NewWriter(ptr uint32) WasiWriter {
+func Clone(ptr uint32) WasiWriter {
 	outstream := cm.Reinterpret[streams.OutputStream](ptr)
 	return &wasiWriter{
 		output: outstream,
