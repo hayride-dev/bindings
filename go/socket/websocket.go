@@ -1,12 +1,10 @@
 package socket
 
 import (
-	"fmt"
 	"io"
 
+	wasiio "github.com/hayride-dev/bindings/go/io"
 	"github.com/hayride-dev/bindings/go/socket/gen/hayride/socket/websocket"
-	"github.com/hayride-dev/bindings/go/socket/gen/wasi/io/streams"
-	"go.bytecodealliance.org/cm"
 )
 
 func init() {
@@ -15,24 +13,6 @@ func init() {
 
 type Handler interface {
 	Handle(msg string, writer io.Writer)
-}
-
-type websocketWriter struct {
-	stream *streams.OutputStream
-}
-
-func (w *websocketWriter) Write(buf []byte) (int, error) {
-	contents := cm.ToList(buf)
-	writeResult := w.stream.Write(contents)
-	if writeResult.IsErr() {
-		if writeResult.Err().Closed() {
-			return 0, io.EOF
-		}
-
-		return 0, fmt.Errorf("failed to write to response body's stream: %s", writeResult.Err().LastOperationFailed().ToDebugString())
-	}
-	w.stream.BlockingFlush()
-	return int(contents.Len()), nil
 }
 
 type defaulthandler struct{}
@@ -48,6 +28,6 @@ func Handle(h Handler) {
 }
 
 func websocketHandle(text string, out websocket.OutputStream) {
-	writer := &websocketWriter{stream: &out}
-	handler.Handle(text, writer)
+	w := wasiio.NewWriter(uint32(out))
+	handler.Handle(text, w)
 }
