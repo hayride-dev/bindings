@@ -1,4 +1,4 @@
-package hayride:ai@0.0.35;
+package hayride:ai@0.0.36;
 
 interface transformer { 
     enum embedding-type {

@@ -1,4 +1,4 @@
-package hayride:ai@0.0.35;
+package hayride:ai@0.0.36;
 
 interface model {
     use types.{message};
@@ -6,6 +6,10 @@ interface model {
     use wasi:io/streams@0.2.0.{output-stream};
 
     enum error-code {
+        context-encode,
+        message-decode,
+        compute-error,
+        unexpected-message-type,
         format-error,
         unknown
     }
