@@ -5,14 +5,13 @@ import (
 	"io"
 	"unsafe"
 
+	"github.com/hayride-dev/bindings/go/exports/ai/types"
 	wasiio "github.com/hayride-dev/bindings/go/imports/io"
 	inferencestream "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/inference-stream"
 	witModel "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
 	tensorstream "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/tensor-stream"
-	"github.com/hayride-dev/bindings/go/shared/ai/format"
-	"github.com/hayride-dev/bindings/go/shared/ai/msg"
 
-	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/types"
+	witTypes "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/nn/tensor"
 	"go.bytecodealliance.org/cm"
 )
@@ -21,7 +20,7 @@ var impl *wacModel
 
 func init() {
 	impl = &wacModel{
-		history: make([]*msg.Message, 0),
+		history: make([]*types.Message, 0),
 	}
 	witModel.Exports.Model.Constructor = impl.wacConstructorfunc
 	witModel.Exports.Model.Push = impl.wacPush
@@ -52,15 +51,15 @@ func (t tensorStream) Read(p []byte) (int, error) {
 	return len(p), nil
 }
 
-func Model(m format.Formatter) error {
+func Model(m Formatter) error {
 	impl.formatter = m
 	return nil
 }
 
 type wacModel struct {
-	formatter format.Formatter
+	formatter Formatter
 	model     witModel.GraphExecutionContextStream
-	history   []*msg.Message
+	history   []*types.Message
 	ref       cm.Rep
 }
 
@@ -76,24 +75,24 @@ func (w *wacModel) wacPush(self cm.Rep, messages cm.List[witModel.Message]) (res
 		return cm.Err[cm.Result[witModel.Error, struct{}, witModel.Error]](wasiErr)
 	}
 	for _, message := range messages.Slice() {
-		content := make([]msg.Content, 0)
+		content := make([]types.Content, 0)
 		for _, c := range message.Content.Slice() {
 			if !c.None() {
 				switch message.Content.Data().String() {
 				case "text":
-					content = append(content, &msg.TextContent{
+					content = append(content, &types.TextContent{
 						Text:        c.Text().Text,
 						ContentType: c.Text().ContentType,
 					})
 				case "tool-input":
-					content = append(content, &msg.ToolInput{
+					content = append(content, &types.ToolInput{
 						ID:          c.ToolInput().ID,
 						Name:        c.ToolInput().Name,
 						Input:       c.ToolInput().Input,
 						ContentType: c.ToolInput().ContentType,
 					})
 				case "tool-output":
-					content = append(content, &msg.ToolOutput{
+					content = append(content, &types.ToolOutput{
 						ID:          c.ToolOutput().ID,
 						Name:        c.ToolOutput().Name,
 						Output:      c.ToolOutput().Output,
@@ -102,8 +101,8 @@ func (w *wacModel) wacPush(self cm.Rep, messages cm.List[witModel.Message]) (res
 				}
 			}
 		}
-		w.history = append(w.history, &msg.Message{
-			Role:    msg.Role(message.Role),
+		w.history = append(w.history, &types.Message{
+			Role:    types.Role(message.Role),
 			Content: content,
 		})
 	}
@@ -172,18 +171,18 @@ func (w *wacModel) wacCompute(self cm.Rep, output cm.Rep) (result cm.Result[witM
 		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
 	}
 
-	content := make([]types.Content, 0)
+	content := make([]witTypes.Content, 0)
 	for _, c := range response.Content {
 		switch c.Type() {
 		case "text":
-			c := c.(*msg.TextContent)
-			content = append(content, types.ContentText(types.TextContent{
+			c := c.(*types.TextContent)
+			content = append(content, witTypes.ContentText(witTypes.TextContent{
 				Text:        c.Text,
 				ContentType: c.ContentType,
 			}))
 		case "tool-input":
-			c := c.(*msg.ToolInput)
-			content = append(content, types.ContentToolInput(types.ToolInput{
+			c := c.(*types.ToolInput)
+			content = append(content, witTypes.ContentToolInput(witTypes.ToolInput{
 				ContentType: c.ContentType,
 				ID:          c.ID,
 				Name:        c.Name,
@@ -196,7 +195,7 @@ func (w *wacModel) wacCompute(self cm.Rep, output cm.Rep) (result cm.Result[witM
 	}
 
 	resp := witModel.Message{
-		Role:    types.RoleAssistant,
+		Role:    witTypes.RoleAssistant,
 		Content: cm.ToList(content),
 	}
 

@@ -4,43 +4,43 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/hayride-dev/bindings/go/imports/ai/types"
 	wasiio "github.com/hayride-dev/bindings/go/imports/io"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agent"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
-	"github.com/hayride-dev/bindings/go/shared/ai/msg"
+	witAgent "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agent"
+	witTypes "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
 	"go.bytecodealliance.org/cm"
 )
 
-func Invoke(message *msg.Message, w io.Writer) error {
+func Invoke(message *types.Message, w io.Writer) error {
 	if _, ok := w.(wasiio.WasiWriter); !ok {
 		return fmt.Errorf("expected io.WasiWriter, got %T", w)
 	}
-	// wasi message
-	if message.Role != msg.RoleUser {
+
+	if message.Role != types.RoleUser {
 		return fmt.Errorf("expected user role")
 	}
-	content := make([]types.Content, 0)
+	content := make([]witTypes.Content, 0)
 	for _, c := range message.Content {
 		switch c.Type() {
 		case "text":
-			textContent := c.(*msg.TextContent)
-			content = append(content, types.ContentText(types.TextContent{
+			textContent := c.(*types.TextContent)
+			content = append(content, witTypes.ContentText(witTypes.TextContent{
 				Text:        textContent.Text,
 				ContentType: textContent.ContentType,
 			}))
 		}
 	}
 
-	witMsg := types.Message{
-		Role:    types.Role(message.Role),
+	witMsg := witTypes.Message{
+		Role:    witTypes.Role(message.Role),
 		Content: cm.ToList(content),
 	}
 
 	wasiStream := w.(wasiio.WasiWriter)
 	ptr := wasiStream.Ptr()
-	output := agent.OutputStream(cm.Rep(ptr))
+	output := witAgent.OutputStream(cm.Rep(ptr))
 
-	result := agent.Invoke(witMsg, output)
+	result := witAgent.Invoke(witMsg, output)
 
 	if result.IsErr() {
 		return fmt.Errorf("invoke error: %s", result.Err().Data())

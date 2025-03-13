@@ -3,14 +3,14 @@ package agent
 import (
 	"io"
 
+	"github.com/hayride-dev/bindings/go/exports/ai/types"
 	wasiio "github.com/hayride-dev/bindings/go/imports/io"
 	witAgent "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/agent"
-	"github.com/hayride-dev/bindings/go/shared/ai/msg"
 	"go.bytecodealliance.org/cm"
 )
 
 type Agent interface {
-	Invoke(msg *msg.Message, w io.Writer) error
+	Invoke(msg *types.Message, w io.Writer) error
 }
 
 func init() {
@@ -32,19 +32,19 @@ func wacInvoke(message witAgent.Message, output witAgent.OutputStream) cm.Result
 
 	w := wasiio.Clone(uint32(output))
 
-	content := make([]msg.Content, 0)
+	content := make([]types.Content, 0)
 	for _, c := range message.Content.Slice() {
 		switch c.String() {
 		case "text":
-			content = append(content, &msg.TextContent{
+			content = append(content, &types.TextContent{
 				Text:        c.Text().Text,
 				ContentType: c.Text().ContentType,
 			})
 		}
 	}
 
-	m := &msg.Message{
-		Role:    msg.Role(message.Role),
+	m := &types.Message{
+		Role:    types.Role(message.Role),
 		Content: content,
 	}
 

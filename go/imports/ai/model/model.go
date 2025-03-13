@@ -6,16 +6,16 @@ import (
 
 	"go.bytecodealliance.org/cm"
 
+	"github.com/hayride-dev/bindings/go/imports/ai/types"
 	wasiio "github.com/hayride-dev/bindings/go/imports/io"
 	witGraph "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
 	witModel "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
 	witTypes "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
-	"github.com/hayride-dev/bindings/go/shared/ai/msg"
 )
 
 type Model interface {
-	Push(messages ...*msg.Message) error
-	Compute(io.Writer) (*msg.Message, error)
+	Push(messages ...*types.Message) error
+	Compute(io.Writer) (*types.Message, error)
 }
 
 type wacModel struct {
@@ -24,20 +24,20 @@ type wacModel struct {
 
 // Push take a list of messages, convert them to a list of imports.Message
 // and call imported push
-func (i *wacModel) Push(messages ...*msg.Message) error {
+func (i *wacModel) Push(messages ...*types.Message) error {
 	msgs := make([]witTypes.Message, 0)
 	for _, message := range messages {
 		content := make([]witTypes.Content, 0)
 		for _, c := range message.Content {
 			switch c.Type() {
 			case "text":
-				textContent := c.(*msg.TextContent)
+				textContent := c.(*types.TextContent)
 				content = append(content, witTypes.ContentText(witTypes.TextContent{
 					Text:        textContent.Text,
 					ContentType: textContent.ContentType,
 				}))
 			case "tool-input":
-				toolContent := c.(*msg.ToolInput)
+				toolContent := c.(*types.ToolInput)
 				content = append(content, witTypes.ContentToolInput(witTypes.ToolInput{
 					ContentType: toolContent.ContentType,
 					ID:          toolContent.ID,
@@ -45,7 +45,7 @@ func (i *wacModel) Push(messages ...*msg.Message) error {
 					Input:       toolContent.Input,
 				}))
 			case "tool-output":
-				toolResult := c.(*msg.ToolOutput)
+				toolResult := c.(*types.ToolOutput)
 				content = append(content, witTypes.ContentToolOutput(witTypes.ToolOutput{
 					ContentType: toolResult.ContentType,
 					ID:          toolResult.ID,
@@ -66,7 +66,7 @@ func (i *wacModel) Push(messages ...*msg.Message) error {
 	return nil
 }
 
-func (i *wacModel) Compute(w io.Writer) (*msg.Message, error) {
+func (i *wacModel) Compute(w io.Writer) (*types.Message, error) {
 	if _, ok := w.(wasiio.WasiWriter); !ok {
 		return nil, fmt.Errorf("expected io.WasiWriter, got %T", w)
 	}
@@ -87,16 +87,16 @@ func (i *wacModel) Compute(w io.Writer) (*msg.Message, error) {
 		return nil, fmt.Errorf("expected assistant role, got %v", witMsg.Role)
 	}
 
-	content := make([]msg.Content, 0)
+	content := make([]types.Content, 0)
 	for _, c := range witMsg.Content.Slice() {
 		switch c.String() {
 		case "text":
-			content = append(content, &msg.TextContent{
+			content = append(content, &types.TextContent{
 				Text:        c.Text().Text,
 				ContentType: c.Text().ContentType,
 			})
 		case "tool-input":
-			content = append(content, &msg.ToolInput{
+			content = append(content, &types.ToolInput{
 				ContentType: c.ToolInput().ContentType,
 				ID:          c.ToolInput().ID,
 				Name:        c.ToolInput().Name,
@@ -107,8 +107,8 @@ func (i *wacModel) Compute(w io.Writer) (*msg.Message, error) {
 		}
 	}
 
-	response := &msg.Message{
-		Role:    msg.Role(witMsg.Role),
+	response := &types.Message{
+		Role:    types.Role(witMsg.Role),
 		Content: content,
 	}
 
