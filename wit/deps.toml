@@ -1,0 +1,6 @@
+io = "https://github.com/WebAssembly/wasi-io/archive/refs/tags/v0.2.0.tar.gz"
+wasi-nn = "https://github.com/WebAssembly/wasi-nn/archive/refs/tags/0.2.0-rc-2024-10-28.tar.gz"
+http = "https://github.com/WebAssembly/wasi-http/archive/refs/tags/v0.2.0.tar.gz"
+silo = "https://github.com/hayride-dev/coven/releases/download/v0.0.35/hayride_silo_v0.0.35.tar.gz"
+ai = "https://github.com/hayride-dev/coven/releases/download/v0.0.35/hayride_ai_v0.0.35.tar.gz"
+socket = "https://github.com/hayride-dev/coven/releases/download/v0.0.35/hayride_socket_v0.0.35.tar.gz"
