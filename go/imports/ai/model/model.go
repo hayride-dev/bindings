@@ -36,6 +36,14 @@ func (i *wacModel) Push(messages ...*types.Message) error {
 					Text:        textContent.Text,
 					ContentType: textContent.ContentType,
 				}))
+			case "tool-schema":
+				toolSchema := c.(*types.ToolSchema)
+				content = append(content, witTypes.ContentToolSchema(witTypes.ToolSchema{
+					ID:           toolSchema.ID,
+					Name:         toolSchema.Name,
+					Description:  toolSchema.Description,
+					ParamsSchema: toolSchema.ParamsSchema,
+				}))
 			case "tool-input":
 				toolContent := c.(*types.ToolInput)
 				content = append(content, witTypes.ContentToolInput(witTypes.ToolInput{

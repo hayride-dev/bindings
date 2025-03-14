@@ -84,6 +84,13 @@ func (w *wacModel) wacPush(self cm.Rep, messages cm.List[witModel.Message]) (res
 						Text:        c.Text().Text,
 						ContentType: c.Text().ContentType,
 					})
+				case "tool-schema":
+					content = append(content, &types.ToolSchema{
+						ID:           c.ToolSchema().ID,
+						Name:         c.ToolSchema().Name,
+						Description:  c.ToolSchema().Description,
+						ParamsSchema: c.ToolSchema().ParamsSchema,
+					})
 				case "tool-input":
 					content = append(content, &types.ToolInput{
 						ID:          c.ToolInput().ID,
