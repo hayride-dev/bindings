@@ -123,7 +123,7 @@ func (w *wacModel) wacCompute(self cm.Rep, output cm.Rep) (result cm.Result[witM
 
 	ctx, err := w.formatter.Encode(w.history...)
 	if err != nil {
-		wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeUnknown))
+		wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeContextEncode))
 		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
 	}
 
@@ -142,7 +142,7 @@ func (w *wacModel) wacCompute(self cm.Rep, output cm.Rep) (result cm.Result[witM
 	inputList := cm.ToList(inputs)
 	computeResult := w.model.Compute(inputList)
 	if computeResult.IsErr() {
-		wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeUnknown))
+		wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeComputeError))
 		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
 	}
 
@@ -161,12 +161,12 @@ func (w *wacModel) wacCompute(self cm.Rep, output cm.Rep) (result cm.Result[witM
 		if len == 0 || err == io.EOF {
 			break
 		} else if err != nil {
-			wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeUnknown))
+			wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeComputeError))
 			return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
 		}
 
 		if _, err := writer.Write(p[:len]); err != nil {
-			wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeUnknown))
+			wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeComputeError))
 			return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
 		}
 		text = append(text, p[:len]...)
@@ -174,7 +174,7 @@ func (w *wacModel) wacCompute(self cm.Rep, output cm.Rep) (result cm.Result[witM
 
 	response, err := w.formatter.Decode([]byte(text))
 	if err != nil {
-		wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeUnknown))
+		wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeMessageDecode))
 		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
 	}
 
@@ -196,7 +196,7 @@ func (w *wacModel) wacCompute(self cm.Rep, output cm.Rep) (result cm.Result[witM
 				Input:       c.Input,
 			}))
 		default:
-			wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeUnknown))
+			wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeUnexpectedMessageType))
 			return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
 		}
 	}
