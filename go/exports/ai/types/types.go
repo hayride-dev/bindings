@@ -6,6 +6,7 @@ type Message = msg.Message
 type Role = msg.Role
 type Content = msg.Content
 type TextContent = msg.TextContent
+type ToolSchema = msg.ToolSchema
 type ToolInput = msg.ToolInput
 type ToolOutput = msg.ToolOutput
 

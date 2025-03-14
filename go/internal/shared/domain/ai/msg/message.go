@@ -20,6 +20,17 @@ func (t *TextContent) Type() string {
 	return "text"
 }
 
+type ToolSchema struct {
+	ID           string `json:"id"`
+	Name         string `json:"name"`
+	Description  string `json:"description"`
+	ParamsSchema string `json:"params-schema"`
+}
+
+func (t *ToolSchema) Type() string {
+	return "tool-schema"
+}
+
 type ToolInput struct {
 	ContentType string `json:"content-type"`
 	ID          string `json:"id"`

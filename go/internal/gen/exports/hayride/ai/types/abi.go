@@ -7,8 +7,8 @@ import (
 	"unsafe"
 )
 
-// ToolInputShape is used for storage in variant or result types.
-type ToolInputShape struct {
+// ToolSchemaShape is used for storage in variant or result types.
+type ToolSchemaShape struct {
 	_     cm.HostLayout
-	shape [unsafe.Sizeof(ToolInput{})]byte
+	shape [unsafe.Sizeof(ToolSchema{})]byte
 }
