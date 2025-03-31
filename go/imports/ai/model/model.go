@@ -61,11 +61,12 @@ func (i *wacModel) Push(messages ...*types.Message) error {
 					Output:      toolResult.Output,
 				}))
 			}
-			msgs = append(msgs, witTypes.Message{
-				Role:    witTypes.Role(message.Role),
-				Content: cm.ToList(content),
-			})
 		}
+
+		msgs = append(msgs, witTypes.Message{
+			Role:    witTypes.Role(message.Role),
+			Content: cm.ToList(content),
+		})
 	}
 	result := i.m.Push(cm.ToList(msgs))
 	if result.IsErr() {
