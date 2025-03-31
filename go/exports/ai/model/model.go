@@ -78,32 +78,36 @@ func (w *wacModel) wacPush(self cm.Rep, messages cm.List[witModel.Message]) (res
 		content := make([]types.Content, 0)
 		for _, c := range message.Content.Slice() {
 			if !c.None() {
-				switch message.Content.Data().String() {
+				switch c.String() {
 				case "text":
+					value := c.Text()
 					content = append(content, &types.TextContent{
-						Text:        c.Text().Text,
-						ContentType: c.Text().ContentType,
+						Text:        value.Text,
+						ContentType: value.ContentType,
 					})
 				case "tool-schema":
+					value := c.ToolSchema()
 					content = append(content, &types.ToolSchema{
-						ID:           c.ToolSchema().ID,
-						Name:         c.ToolSchema().Name,
-						Description:  c.ToolSchema().Description,
-						ParamsSchema: c.ToolSchema().ParamsSchema,
+						ID:           value.ID,
+						Name:         value.Name,
+						Description:  value.Description,
+						ParamsSchema: value.ParamsSchema,
 					})
 				case "tool-input":
+					value := c.ToolInput()
 					content = append(content, &types.ToolInput{
-						ID:          c.ToolInput().ID,
-						Name:        c.ToolInput().Name,
-						Input:       c.ToolInput().Input,
-						ContentType: c.ToolInput().ContentType,
+						ID:          value.ID,
+						Name:        value.Name,
+						Input:       value.Input,
+						ContentType: value.ContentType,
 					})
 				case "tool-output":
+					value := c.ToolOutput()
 					content = append(content, &types.ToolOutput{
-						ID:          c.ToolOutput().ID,
-						Name:        c.ToolOutput().Name,
-						Output:      c.ToolOutput().Output,
-						ContentType: c.ToolOutput().ContentType,
+						ID:          value.ID,
+						Name:        value.Name,
+						Output:      value.Output,
+						ContentType: value.ContentType,
 					})
 				}
 			}
