@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/io/streams"
+	"go.bytecodealliance.org/cm"
 )
 
 type wasiReadCloser struct {
@@ -21,6 +22,13 @@ func NewReader(s streams.InputStream) io.Reader {
 func NewReadCloser(s streams.InputStream) io.ReadCloser {
 	return &wasiReadCloser{
 		stream: s,
+	}
+}
+
+func CloneReader(ptr uint32) io.ReadCloser {
+	stream := cm.Reinterpret[streams.InputStream](ptr)
+	return &wasiReadCloser{
+		stream: stream,
 	}
 }
 

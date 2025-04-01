@@ -12,12 +12,12 @@ func init() {
 }
 
 type Handler interface {
-	Handle(msg string, writer io.Writer)
+	Handle(reader io.ReadCloser, writer io.Writer)
 }
 
 type defaulthandler struct{}
 
-func (dh *defaulthandler) Handle(msg string, writer io.Writer) {
+func (dh *defaulthandler) Handle(reader io.ReadCloser, writer io.Writer) {
 	writer.Write([]byte("websocket handler undefined"))
 }
 
@@ -27,7 +27,8 @@ func Handle(h Handler) {
 	handler = h
 }
 
-func websocketHandle(text string, out websocket.OutputStream) {
-	w := wasiio.Clone(uint32(out))
-	handler.Handle(text, w)
+func websocketHandle(input websocket.InputStream, output websocket.OutputStream) {
+	w := wasiio.Clone(uint32(output))
+	reader := wasiio.CloneReader(uint32(input))
+	handler.Handle(reader, w)
 }
