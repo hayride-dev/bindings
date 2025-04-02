@@ -6,30 +6,30 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.38".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.39".
 
-//go:wasmimport [export]hayride:ai/model@0.0.38 [resource-new]error
+//go:wasmimport [export]hayride:ai/model@0.0.39 [resource-new]error
 //go:noescape
 func wasmimport_ErrorResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:ai/model@0.0.38 [resource-rep]error
+//go:wasmimport [export]hayride:ai/model@0.0.39 [resource-rep]error
 //go:noescape
 func wasmimport_ErrorResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:ai/model@0.0.38 [resource-drop]error
+//go:wasmimport [export]hayride:ai/model@0.0.39 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:ai/model@0.0.38#[dtor]error
-//export hayride:ai/model@0.0.38#[dtor]error
+//go:wasmexport hayride:ai/model@0.0.39#[dtor]error
+//export hayride:ai/model@0.0.39#[dtor]error
 func wasmexport_ErrorDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Error.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:ai/model@0.0.38#[method]error.code
-//export hayride:ai/model@0.0.38#[method]error.code
+//go:wasmexport hayride:ai/model@0.0.39#[method]error.code
+//export hayride:ai/model@0.0.39#[method]error.code
 func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result := Exports.Error.Code(self)
@@ -37,8 +37,8 @@ func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	return
 }
 
-//go:wasmexport hayride:ai/model@0.0.38#[method]error.data
-//export hayride:ai/model@0.0.38#[method]error.data
+//go:wasmexport hayride:ai/model@0.0.39#[method]error.data
+//export hayride:ai/model@0.0.39#[method]error.data
 func wasmexport_ErrorData(self0 uint32) (result *string) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result_ := Exports.Error.Data(self)
@@ -46,28 +46,28 @@ func wasmexport_ErrorData(self0 uint32) (result *string) {
 	return
 }
 
-//go:wasmimport [export]hayride:ai/model@0.0.38 [resource-new]model
+//go:wasmimport [export]hayride:ai/model@0.0.39 [resource-new]model
 //go:noescape
 func wasmimport_ModelResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:ai/model@0.0.38 [resource-rep]model
+//go:wasmimport [export]hayride:ai/model@0.0.39 [resource-rep]model
 //go:noescape
 func wasmimport_ModelResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:ai/model@0.0.38 [resource-drop]model
+//go:wasmimport [export]hayride:ai/model@0.0.39 [resource-drop]model
 //go:noescape
 func wasmimport_ModelResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:ai/model@0.0.38#[dtor]model
-//export hayride:ai/model@0.0.38#[dtor]model
+//go:wasmexport hayride:ai/model@0.0.39#[dtor]model
+//export hayride:ai/model@0.0.39#[dtor]model
 func wasmexport_ModelDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Model.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:ai/model@0.0.38#[constructor]model
-//export hayride:ai/model@0.0.38#[constructor]model
+//go:wasmexport hayride:ai/model@0.0.39#[constructor]model
+//export hayride:ai/model@0.0.39#[constructor]model
 func wasmexport_Constructor(graph0 uint32) (result0 uint32) {
 	graph := cm.Reinterpret[GraphExecutionContextStream]((uint32)(graph0))
 	result := Exports.Model.Constructor(graph)
@@ -75,8 +75,8 @@ func wasmexport_Constructor(graph0 uint32) (result0 uint32) {
 	return
 }
 
-//go:wasmexport hayride:ai/model@0.0.38#[method]model.compute
-//export hayride:ai/model@0.0.38#[method]model.compute
+//go:wasmexport hayride:ai/model@0.0.39#[method]model.compute
+//export hayride:ai/model@0.0.39#[method]model.compute
 func wasmexport_ModelCompute(self0 uint32, output0 uint32) (result *cm.Result[MessageShape, Message, Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	output := cm.Reinterpret[cm.Rep]((uint32)(output0))
@@ -85,8 +85,8 @@ func wasmexport_ModelCompute(self0 uint32, output0 uint32) (result *cm.Result[Me
 	return
 }
 
-//go:wasmexport hayride:ai/model@0.0.38#[method]model.push
-//export hayride:ai/model@0.0.38#[method]model.push
+//go:wasmexport hayride:ai/model@0.0.39#[method]model.push
+//export hayride:ai/model@0.0.39#[method]model.push
 func wasmexport_ModelPush(self0 uint32, messages0 *Message, messages1 uint32) (result *cm.Result[Error, struct{}, Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	messages := cm.LiftList[cm.List[Message]]((*Message)(messages0), (uint32)(messages1))

@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:ai/agent@0.0.38".
+// Exports represents the caller-defined exports from "hayride:ai/agent@0.0.39".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:ai/agent@0.0.38#error".
+	// Error represents the caller-defined exports for resource "hayride:ai/agent@0.0.39#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
@@ -32,6 +32,6 @@ var Exports struct {
 
 	// Invoke represents the caller-defined, exported function "invoke".
 	//
-	//	invoke: func(msg: message, output: output-stream) -> result<_, error>
-	Invoke func(msg Message, output OutputStream) (result cm.Result[Error, struct{}, Error])
+	//	invoke: func(msg: message, output: borrow<output-stream>) -> result<_, error>
+	Invoke func(msg Message, output cm.Rep) (result cm.Result[Error, struct{}, Error])
 }

@@ -1,5 +1,5 @@
 [ai]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.38/hayride_ai_v0.0.38.tar.gz"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.39/hayride_ai_v0.0.39.tar.gz"
 sha256 = "d95c5c601dd9b79555c2d644dfed6f000bb2d9875b2895d0096b9ffbbef21151"
 sha512 = "cd527083c64f03601e96f72f75fc3cde51e4b09fe14ce38ba0c1aa6f5c20e94f8d071a4eca2f804a0e9b3e079bd7ddce03b307a076a1ff74b830b3785e5278ad"
 
@@ -31,12 +31,12 @@ sha256 = "7371d03c037d924caba2587fb2e7c5773a0d3c5fcecbf7971e0e0ba57973c53d"
 sha512 = "964c4e8925a53078e4d94ba907b54f89a0b7e154f46823a505391471466c17f53c8692682e5c85771712acd88b348686173fc07c53a3cfe3d301b8cd8ddd0de4"
 
 [silo]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.38/hayride_silo_v0.0.38.tar.gz"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.39/hayride_silo_v0.0.39.tar.gz"
 sha256 = "db7d8654eefef96d1b2ed8f53ae6fd46b372ba0f593c1bf845cc3f029b21f813"
 sha512 = "dde19f97b8a6f613e0bbbddc5c1bd18a0255ac3e76b1bd9841626378372bcf71d311d0d88db66eb41d0cffaa60c60e7d3b0409720278232bc0bec6e69c306bb5"
 
 [socket]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.38/hayride_socket_v0.0.38.tar.gz"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.39/hayride_socket_v0.0.39.tar.gz"
 sha256 = "a0e176044b3cbfaf05f5c42d2c26a2746654d610ae1ed9b30c03bdc39e9d8053"
 sha512 = "9c378ba01b55b3a3c1259426b8d41369080988490f5d2f3a304e1f19ab8d04ba145bc09de88a1fc8a113eeff01c7b7fc5b9a8e8049e3df92e1ab45a94026aa8c"
 
