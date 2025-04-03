@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/io/streams"
+	"go.bytecodealliance.org/cm"
 )
 
 type wasiReadCloser struct {
@@ -24,7 +25,15 @@ func NewReadCloser(s streams.InputStream) io.ReadCloser {
 	}
 }
 
+func CloneReader(ptr uint32) io.ReadCloser {
+	stream := cm.Reinterpret[streams.InputStream](ptr)
+	return &wasiReadCloser{
+		stream: stream,
+	}
+}
+
 func (w *wasiReadCloser) Read(p []byte) (int, error) {
+	w.stream.Subscribe().Block()
 	readResult := w.stream.Read(uint64(len(p)))
 	if readResult.IsErr() {
 		readErr := readResult.Err()
@@ -34,9 +43,9 @@ func (w *wasiReadCloser) Read(p []byte) (int, error) {
 		return 0, fmt.Errorf("failed to read from InputStream %s", readErr.LastOperationFailed().ToDebugString())
 	}
 
-	readList := readResult.OK()
-	copy(p, readList.Slice())
-	return int(readList.Len()), nil
+	data := readResult.OK().Slice()
+	copy(p, data)
+	return int(len(data)), nil
 }
 
 func (w *wasiReadCloser) Close() error {

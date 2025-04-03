@@ -24,13 +24,14 @@ func Register(agent Agent) error {
 	return nil
 }
 
-func wacInvoke(message witAgent.Message, output witAgent.OutputStream) cm.Result[witAgent.Error, struct{}, witAgent.Error] {
+func wacInvoke(message witAgent.Message, output cm.Rep) cm.Result[witAgent.Error, struct{}, witAgent.Error] {
 	if a == nil {
 		agentErr := witAgent.ErrorResourceNew(cm.Rep(witAgent.ErrorCodeUnknown))
 		return cm.Err[cm.Result[witAgent.Error, struct{}, witAgent.Error]](agentErr)
 	}
 
 	w := wasiio.Clone(uint32(output))
+	defer witAgent.OutputStream(cm.Rep(uint32(output))).ResourceDrop()
 
 	content := make([]types.Content, 0)
 	for _, c := range message.Content.Slice() {

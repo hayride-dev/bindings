@@ -6,13 +6,13 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:socket@0.0.37".
+// This file contains wasmimport and wasmexport declarations for "hayride:socket@0.0.39".
 
-//go:wasmexport hayride:socket/websocket@0.0.37#handle
-//export hayride:socket/websocket@0.0.37#handle
-func wasmexport_Handle(text0 *uint8, text1 uint32, out0 uint32) {
-	text := cm.LiftString[string]((*uint8)(text0), (uint32)(text1))
-	out := cm.Reinterpret[OutputStream]((uint32)(out0))
-	Exports.Handle(text, out)
+//go:wasmexport hayride:socket/websocket@0.0.39#handle
+//export hayride:socket/websocket@0.0.39#handle
+func wasmexport_Handle(input0 uint32, output0 uint32) {
+	input := cm.Reinterpret[InputStream]((uint32)(input0))
+	output := cm.Reinterpret[OutputStream]((uint32)(output0))
+	Exports.Handle(input, output)
 	return
 }
