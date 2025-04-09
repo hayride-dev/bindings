@@ -11,23 +11,23 @@ import (
 
 	witModel "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
 	witTypes "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
-	"github.com/hayride-dev/bindings/go/internal/shared/domain/ai"
+	"github.com/hayride-dev/bindings/go/shared/domain/ai"
 	"go.bytecodealliance.org/cm"
 )
 
-type wacFormatter struct {
-	format witModel.Format
-}
+type Formatter cm.Resource
 
-func (f *wacFormatter) Encode(messages ...*ai.Message) ([]byte, error) {
+func (f Formatter) Encode(messages ...*ai.Message) ([]byte, error) {
 	return nil, nil
 }
 
-func (f *wacFormatter) Decode(data []byte) (*ai.Message, error) {
+func (f Formatter) Decode(data []byte) (*ai.Message, error) {
 	if len(data) == 0 {
 		return nil, nil
 	}
-	result := f.format.Decode(cm.ToList(data))
+
+	wformat := cm.Reinterpret[witModel.Format](f)
+	result := wformat.Decode(cm.ToList(data))
 	if result.IsErr() {
 		return nil, fmt.Errorf("decode error: %s", result.Err().Data())
 	}
@@ -58,9 +58,6 @@ func (f *wacFormatter) Decode(data []byte) (*ai.Message, error) {
 	}, nil
 }
 
-func modelFormatter() *wacFormatter {
-	return &wacFormatter{
-		// connect the wac'd format component
-		format: witModel.NewFormat(),
-	}
+func NewFormatter() Formatter {
+	return Formatter(witModel.NewFormat())
 }

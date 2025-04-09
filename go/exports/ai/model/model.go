@@ -69,58 +69,6 @@ func (w *wacModel) wacConstructorfunc(graph witModel.GraphExecutionContextStream
 	return witModel.ModelResourceNew(w.ref)
 }
 
-func (w *wacModel) wacPush(self cm.Rep, messages cm.List[witModel.Message]) (result cm.Result[witModel.Error, struct{}, witModel.Error]) {
-	if impl == nil {
-		wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeUnknown))
-		return cm.Err[cm.Result[witModel.Error, struct{}, witModel.Error]](wasiErr)
-	}
-	for _, message := range messages.Slice() {
-		content := make([]types.Content, 0)
-		for _, c := range message.Content.Slice() {
-			if !c.None() {
-				switch c.String() {
-				case "text":
-					value := c.Text()
-					content = append(content, &types.TextContent{
-						Text:        value.Text,
-						ContentType: value.ContentType,
-					})
-				case "tool-schema":
-					value := c.ToolSchema()
-					content = append(content, &types.ToolSchema{
-						ID:           value.ID,
-						Name:         value.Name,
-						Description:  value.Description,
-						ParamsSchema: value.ParamsSchema,
-					})
-				case "tool-input":
-					value := c.ToolInput()
-					content = append(content, &types.ToolInput{
-						ID:          value.ID,
-						Name:        value.Name,
-						Input:       value.Input,
-						ContentType: value.ContentType,
-					})
-				case "tool-output":
-					value := c.ToolOutput()
-					content = append(content, &types.ToolOutput{
-						ID:          value.ID,
-						Name:        value.Name,
-						Output:      value.Output,
-						ContentType: value.ContentType,
-					})
-				}
-			}
-		}
-		w.history = append(w.history, &types.Message{
-			Role:    types.Role(message.Role),
-			Content: content,
-		})
-	}
-
-	return cm.OK[cm.Result[witModel.Error, struct{}, witModel.Error]](struct{}{})
-}
-
 func (w *wacModel) wacCompute(self cm.Rep, output cm.Rep) (result cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]) {
 	writer := wasiio.Clone(uint32(output))
 	defer witModel.OutputStream(cm.Rep(uint32(output))).ResourceDrop()

@@ -9,23 +9,15 @@ import (
 
 	witContext "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/context"
 	witTypes "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
-	"github.com/hayride-dev/bindings/go/internal/shared/domain/ai"
+	"github.com/hayride-dev/bindings/go/shared/domain/ai"
 	"go.bytecodealliance.org/cm"
 )
 
-type Context interface {
-	Push(messages ...*ai.Message) error
-	Messages() ([]*ai.Message, error)
-	Next() (*ai.Message, error)
-}
-
-type wacContext struct {
-	ctx witContext.Context
-}
+type Context cm.Resource
 
 // Push take a list of messages, convert them to a list of wit Messages
 // and call imported context push
-func (c *wacContext) Push(messages ...*ai.Message) error {
+func (c Context) Push(messages ...*ai.Message) error {
 	msgs := make([]witTypes.Message, 0)
 	for _, message := range messages {
 		content := make([]witTypes.Content, 0)
@@ -70,7 +62,10 @@ func (c *wacContext) Push(messages ...*ai.Message) error {
 			Content: cm.ToList(content),
 		})
 	}
-	result := c.ctx.Push(cm.ToList(msgs))
+
+	witContext := cm.Reinterpret[witContext.Context](c)
+
+	result := witContext.Push(cm.ToList(msgs))
 	if result.IsErr() {
 		// TODO: handle error result
 		return fmt.Errorf("failed to push message")
@@ -80,9 +75,11 @@ func (c *wacContext) Push(messages ...*ai.Message) error {
 
 // Messages take a list of messages, convert them to a list of wit Messages
 // and call imported context push
-func (c *wacContext) Messages() ([]*ai.Message, error) {
+func (c Context) Messages() ([]*ai.Message, error) {
 	msgs := make([]*ai.Message, 0)
-	result := c.ctx.Messages()
+
+	witContext := cm.Reinterpret[witContext.Context](c)
+	result := witContext.Messages()
 	if result.IsErr() {
 		// TODO: handle error result
 		return nil, fmt.Errorf("failed to get messages")
@@ -133,8 +130,9 @@ func (c *wacContext) Messages() ([]*ai.Message, error) {
 	return msgs, nil
 }
 
-func (c *wacContext) Next() (*ai.Message, error) {
-	result := c.ctx.Next()
+func (c Context) Next() (*ai.Message, error) {
+	witContext := cm.Reinterpret[witContext.Context](c)
+	result := witContext.Next()
 	if result.IsErr() {
 		// TODO : handle error result
 		return nil, fmt.Errorf("failed to get next message")
@@ -182,9 +180,7 @@ func (c *wacContext) Next() (*ai.Message, error) {
 	}, nil
 }
 
-func NewContext() *wacContext {
-	return &wacContext{
-		// connect the wac'd context component
-		ctx: witContext.NewContext(),
-	}
+// Create the resource
+func NewContext() Context {
+	return Context(witContext.NewContext())
 }

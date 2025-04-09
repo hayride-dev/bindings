@@ -6,19 +6,13 @@ import (
 	witGraph "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
 	witModel "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
 	witTypes "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
-	"github.com/hayride-dev/bindings/go/internal/shared/domain/ai"
+	"github.com/hayride-dev/bindings/go/shared/domain/ai"
 	"go.bytecodealliance.org/cm"
 )
 
-type Model interface {
-	Compute(messages []*ai.Message) (*ai.Message, error)
-}
+type Model cm.Resource
 
-type wacModel struct {
-	m witModel.Model
-}
-
-func (i *wacModel) Compute(messages []*ai.Message) (*ai.Message, error) {
+func (m Model) Compute(messages []*ai.Message) (*ai.Message, error) {
 	msgs := make([]witTypes.Message, 0)
 	for _, message := range messages {
 		content := make([]witTypes.Content, 0)
@@ -64,7 +58,8 @@ func (i *wacModel) Compute(messages []*ai.Message) (*ai.Message, error) {
 		})
 	}
 	// compute will use the output writer to stream data, result is the "complete" message
-	result := i.m.Compute(cm.ToList(msgs))
+	wModel := cm.Reinterpret[witModel.Model](m)
+	result := wModel.Compute(cm.ToList(msgs))
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to compute")
 	}
@@ -107,23 +102,22 @@ func New(options ...Option[*ModelOptions]) (Model, error) {
 	opts := defaultModelOptions()
 	for _, opt := range options {
 		if err := opt.Apply(opts); err != nil {
-			return nil, err
+			return cm.ResourceNone, err
 		}
 	}
 
 	result := witGraph.LoadByName(opts.name)
 	if result.IsErr() {
-		return nil, fmt.Errorf("failed to load graph")
+		return cm.ResourceNone, fmt.Errorf("failed to load graph")
 	}
 	model := result.OK()
 
 	resultCtxStream := model.InitExecutionContextStream()
 	if result.IsErr() {
-		return nil, fmt.Errorf("failed to init execution graph context stream")
+		return cm.ResourceNone, fmt.Errorf("failed to init execution graph context stream")
 	}
 	stream := *resultCtxStream.OK()
 	format := witModel.NewFormat()
 
-	return &wacModel{
-		m: witModel.NewModel(format, stream)}, nil
+	return Model(witModel.NewModel(format, stream)), nil
 }

@@ -1,4 +1,4 @@
-package hayride:silo@0.0.40;
+package hayride:silo@0.0.41;
 
 world imports {
     // used for inter-instances aysnc processing and communication

@@ -1,4 +1,4 @@
-package hayride:ai@0.0.40;
+package hayride:ai@0.0.41;
 
 interface agent {
     use context.{context};
@@ -18,9 +18,7 @@ interface agent {
     }
 
     resource agent {
-        constructor(name: string, instruction: string);
-        name: func() -> string;
-        instruction: func() -> string;
+        constructor();
         invoke: func(ctx: borrow<context>, model: borrow<model>) -> result<list<message>, error>;
     }
 }

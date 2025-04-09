@@ -1,7 +1,7 @@
 [ai]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.40/hayride_ai_v0.0.40.tar.gz"
-sha256 = "422a8d4fe4633c8752fb19a4dfe4c59c56f861c9de106939707e66a3fbfbd621"
-sha512 = "51715122f7079b50f7fc4a6a56732c5c6151641789332dd3bb3e91c17899f7bd0f2bae2754f8263d1b6781ae0e34e63839bf48800779d1ea5091f7ce6d91bbf9"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.41/hayride_ai_v0.0.41.tar.gz"
+sha256 = "ab0e51131d6d10375f9a44e073b1ed0ce9bc10e3d1e35eeb19d951becbde17e4"
+sha512 = "c9cb4d192c9682f11b147ccb19535d40daa8b41a5a519960d5f43bfaf498513a5ffae4bfe640da0a4f0d715e9d4459816efa8aff12979dc5541f20f3d8d1f82e"
 
 [cli]
 sha256 = "285865a31d777181b075f39e92bcfe59c89cd6bacce660be1b9a627646956258"
@@ -31,14 +31,14 @@ sha256 = "7371d03c037d924caba2587fb2e7c5773a0d3c5fcecbf7971e0e0ba57973c53d"
 sha512 = "964c4e8925a53078e4d94ba907b54f89a0b7e154f46823a505391471466c17f53c8692682e5c85771712acd88b348686173fc07c53a3cfe3d301b8cd8ddd0de4"
 
 [silo]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.40/hayride_silo_v0.0.40.tar.gz"
-sha256 = "0336e0bbc0f3c5a2e3bf72a10b38f228d481a6c17b3eeab3e9f98bbe8f933a53"
-sha512 = "d2a64d319fd5a8443f763d060d89e1f2850dc1273d4a8b075f3a2858230bf976df5145fa63826e8ed4ec0852269a912af8a3b0b753491daeabd455de0223be93"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.41/hayride_silo_v0.0.41.tar.gz"
+sha256 = "ebbfb21cb418e89e189554078d191d6f797536e399bcf96e56d8492487f021d8"
+sha512 = "d792ffd6109f65ccd62e34c4620fd6691b1bb8ef6fa276e663570f5869e675e2c278d19090285974c2575044a6c2cfcf5a472bf2be66ba23f1e13c2178f78ef8"
 
 [socket]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.40/hayride_socket_v0.0.40.tar.gz"
-sha256 = "f22fecf18adc45faaadc8306ce078686db2174b918f501971ddb218157d17f9a"
-sha512 = "aca9ec458b387d5551485a00d27d7914a4be21cfa2afca3b2b7096621ffe304436eaa9ab2462ecfbb62a87e0a3edee1c879848818d83240025a66eb47e8814f3"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.41/hayride_socket_v0.0.41.tar.gz"
+sha256 = "49911eeb99ffa82d4d738084d5b0416c3374c10dcf5ed79c3588ee0f3ec48678"
+sha512 = "7042796ef7799089963b0f6fb6a235fbc91ad9dce62b7aca816865da0708ec3b609d0173d8f0769f4ebcfab46749d0d6f9aee7fe8dccead920ea83accfe653df"
 
 [sockets]
 sha256 = "622bd28bbeb43736375dc02bd003fd3a016ff8ee91e14bab488325c6b38bf966"
