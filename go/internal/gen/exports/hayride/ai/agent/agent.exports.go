@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:ai/agent@0.0.39".
+// Exports represents the caller-defined exports from "hayride:ai/agent@0.0.41".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:ai/agent@0.0.39#error".
+	// Error represents the caller-defined exports for resource "hayride:ai/agent@0.0.41#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
@@ -30,8 +30,22 @@ var Exports struct {
 		Data func(self cm.Rep) (result string)
 	}
 
-	// Invoke represents the caller-defined, exported function "invoke".
-	//
-	//	invoke: func(msg: message, output: borrow<output-stream>) -> result<_, error>
-	Invoke func(msg Message, output cm.Rep) (result cm.Result[Error, struct{}, Error])
+	// Agent represents the caller-defined exports for resource "hayride:ai/agent@0.0.41#agent".
+	Agent struct {
+		// Destructor represents the caller-defined, exported destructor for resource "agent".
+		//
+		// Resource destructor.
+		Destructor func(self cm.Rep)
+
+		// Constructor represents the caller-defined, exported constructor for resource "agent".
+		//
+		//	constructor()
+		Constructor func() (result Agent)
+
+		// Invoke represents the caller-defined, exported method "invoke".
+		//
+		//	invoke: func(ctx: borrow<context>, model: borrow<model>) -> result<list<message>,
+		//	error>
+		Invoke func(self cm.Rep, ctx cm.Rep, model_ cm.Rep) (result cm.Result[cm.List[Message], cm.List[Message], Error])
+	}
 }

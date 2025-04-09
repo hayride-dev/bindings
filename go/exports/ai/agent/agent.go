@@ -1,59 +1,106 @@
 package agent
 
 import (
-	"io"
+	"unsafe"
 
-	"github.com/hayride-dev/bindings/go/exports/ai/types"
-	wasiio "github.com/hayride-dev/bindings/go/imports/io"
+	"github.com/hayride-dev/bindings/go/imports/ai/ctx"
+	"github.com/hayride-dev/bindings/go/imports/ai/model"
 	witAgent "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/agent"
+	witTypes "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/shared/domain/ai"
 	"go.bytecodealliance.org/cm"
 )
 
-type Agent interface {
-	Invoke(msg *types.Message, w io.Writer) error
+type invokeFunc func(ctx ctx.Context, model model.Model) ([]*ai.Message, error)
+
+type resource struct {
+	name        string
+	instruction string
+	invokeFunc  invokeFunc
 }
+
+var agent *resource
 
 func init() {
-	witAgent.Exports.Invoke = wacInvoke
+	agent = &resource{}
+	witAgent.Exports.Agent.Constructor = agent.constructor
+	witAgent.Exports.Agent.Invoke = agent.invoke
 }
 
-var a Agent
-
-func Register(agent Agent) error {
-	a = agent
-	return nil
+func Export(name string, instruction string, f func(ctx ctx.Context, model model.Model) ([]*ai.Message, error)) {
+	agent.name = name
+	agent.instruction = instruction
+	agent.invokeFunc = f
 }
 
-func wacInvoke(message witAgent.Message, output cm.Rep) cm.Result[witAgent.Error, struct{}, witAgent.Error] {
-	if a == nil {
-		agentErr := witAgent.ErrorResourceNew(cm.Rep(witAgent.ErrorCodeUnknown))
-		return cm.Err[cm.Result[witAgent.Error, struct{}, witAgent.Error]](agentErr)
+func (a *resource) constructor() witAgent.Agent {
+	return witAgent.AgentResourceNew(cm.Rep(uintptr(unsafe.Pointer(&agent))))
+}
+
+func (a *resource) invoke(self cm.Rep, ctx_ cm.Rep, model_ cm.Rep) (result cm.Result[cm.List[witTypes.Message], cm.List[witTypes.Message], witAgent.Error]) {
+	context := ctx.Context(ctx_)
+	model := model.Model(model_)
+
+	systemprompt := &ai.Message{
+		Role:    ai.RoleSystem,
+		Content: []ai.Content{&ai.TextContent{Text: a.instruction}},
 	}
 
-	w := wasiio.Clone(uint32(output))
-	defer witAgent.OutputStream(cm.Rep(uint32(output))).ResourceDrop()
+	// TODO: eval a way to avoid setting this on each invoke
+	context.Push(systemprompt)
 
-	content := make([]types.Content, 0)
-	for _, c := range message.Content.Slice() {
-		switch c.String() {
-		case "text":
-			content = append(content, &types.TextContent{
-				Text:        c.Text().Text,
-				ContentType: c.Text().ContentType,
-			})
-		}
-	}
-
-	m := &types.Message{
-		Role:    types.Role(message.Role),
-		Content: content,
-	}
-
-	err := a.Invoke(m, w)
+	msgs, err := a.invokeFunc(context, model)
 	if err != nil {
-		agentErr := witAgent.ErrorResourceNew(cm.Rep(witAgent.ErrorCodeUnknown))
-		return cm.Err[cm.Result[witAgent.Error, struct{}, witAgent.Error]](agentErr)
+		wasiErr := witAgent.ErrorResourceNew(cm.Rep(witAgent.ErrorCodeInvokeError))
+		return cm.Err[cm.Result[cm.List[witTypes.Message], cm.List[witTypes.Message], witAgent.Error]](wasiErr)
 	}
 
-	return cm.OK[cm.Result[witAgent.Error, struct{}, witAgent.Error]](struct{}{})
+	context.Push(msgs...)
+
+	witMsgs := make([]witTypes.Message, 0)
+	for _, m := range msgs {
+		content := make([]witTypes.Content, 0)
+		for _, c := range m.Content {
+			switch c.Type() {
+			case "text":
+				textContent := c.(*ai.TextContent)
+				content = append(content, witTypes.ContentText(witTypes.TextContent{
+					Text:        textContent.Text,
+					ContentType: textContent.ContentType,
+				}))
+			case "tool-schema":
+				toolSchema := c.(*ai.ToolSchema)
+				content = append(content, witTypes.ContentToolSchema(witTypes.ToolSchema{
+					ID:           toolSchema.ID,
+					Name:         toolSchema.Name,
+					Description:  toolSchema.Description,
+					ParamsSchema: toolSchema.ParamsSchema,
+				}))
+			case "tool-input":
+				toolContent := c.(*ai.ToolInput)
+				content = append(content, witTypes.ContentToolInput(witTypes.ToolInput{
+					ContentType: toolContent.ContentType,
+					ID:          toolContent.ID,
+					Name:        toolContent.Name,
+					Input:       toolContent.Input,
+				}))
+			case "tool-output":
+				toolResult := c.(*ai.ToolOutput)
+				content = append(content, witTypes.ContentToolOutput(witTypes.ToolOutput{
+					ContentType: toolResult.ContentType,
+					ID:          toolResult.ID,
+					Name:        toolResult.Name,
+					Output:      toolResult.Output,
+				}))
+			default:
+				return cm.Err[cm.Result[cm.List[witTypes.Message], cm.List[witTypes.Message], witAgent.Error]](witAgent.ErrorResourceNew(cm.Rep(witAgent.ErrorCodeUnknown)))
+			}
+		}
+		witMsgs = append(witMsgs, witTypes.Message{
+			Role:    witTypes.Role(m.Role),
+			Content: cm.ToList(content),
+		})
+	}
+
+	return cm.OK[cm.Result[cm.List[witTypes.Message], cm.List[witTypes.Message], witAgent.Error]](cm.ToList(witMsgs))
 }

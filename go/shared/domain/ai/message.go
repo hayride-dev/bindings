@@ -1,6 +1,14 @@
-package msg
+package ai
 
 type Role uint8
+
+const (
+	RoleUser Role = iota
+	RoleAssistant
+	RoleSystem
+	RoleTool
+	RoleUnknown
+)
 
 type Message struct {
 	Role    Role      `json:"role"`
@@ -16,7 +24,7 @@ type TextContent struct {
 	ContentType string `json:"content-type"`
 }
 
-func (t *TextContent) Type() string {
+func (t TextContent) Type() string {
 	return "text"
 }
 
@@ -27,7 +35,7 @@ type ToolSchema struct {
 	ParamsSchema string `json:"params-schema"`
 }
 
-func (t *ToolSchema) Type() string {
+func (t ToolSchema) Type() string {
 	return "tool-schema"
 }
 
@@ -38,7 +46,7 @@ type ToolInput struct {
 	Input       string `json:"input"`
 }
 
-func (t *ToolInput) Type() string {
+func (t ToolInput) Type() string {
 	return "tool-input"
 }
 
@@ -49,6 +57,6 @@ type ToolOutput struct {
 	Output      string `json:"output"`
 }
 
-func (t *ToolOutput) Type() string {
+func (t ToolOutput) Type() string {
 	return "tool-output"
 }

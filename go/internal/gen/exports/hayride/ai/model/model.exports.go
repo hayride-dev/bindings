@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:ai/model@0.0.39".
+// Exports represents the caller-defined exports from "hayride:ai/model@0.0.41".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:ai/model@0.0.39#error".
+	// Error represents the caller-defined exports for resource "hayride:ai/model@0.0.41#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
@@ -30,26 +30,44 @@ var Exports struct {
 		Data func(self cm.Rep) (result string)
 	}
 
-	// Model represents the caller-defined exports for resource "hayride:ai/model@0.0.39#model".
+	// Format represents the caller-defined exports for resource "hayride:ai/model@0.0.41#format".
+	Format struct {
+		// Destructor represents the caller-defined, exported destructor for resource "format".
+		//
+		// Resource destructor.
+		Destructor func(self cm.Rep)
+
+		// Constructor represents the caller-defined, exported constructor for resource "format".
+		//
+		//	constructor()
+		Constructor func() (result Format)
+
+		// Decode represents the caller-defined, exported method "decode".
+		//
+		//	decode: func(raw: list<u8>) -> result<message, error>
+		Decode func(self cm.Rep, raw cm.List[uint8]) (result cm.Result[MessageShape, Message, Error])
+
+		// Encode represents the caller-defined, exported method "encode".
+		//
+		//	encode: func(messages: list<message>) -> result<list<u8>, error>
+		Encode func(self cm.Rep, messages cm.List[Message]) (result cm.Result[cm.List[uint8], cm.List[uint8], Error])
+	}
+
+	// Model represents the caller-defined exports for resource "hayride:ai/model@0.0.41#model".
 	Model struct {
 		// Destructor represents the caller-defined, exported destructor for resource "model".
 		//
 		// Resource destructor.
 		Destructor func(self cm.Rep)
 
-		// Constructor represents the caller-defined, exported constructor for resource "model".
+		// ExportConstructor represents the caller-defined, exported constructor for resource "model".
 		//
-		//	constructor(graph: graph-execution-context-stream)
-		Constructor func(graph GraphExecutionContextStream) (result Model)
+		//	constructor(format: format, graph: graph-execution-context-stream)
+		ExportConstructor func(format Format, graph GraphExecutionContextStream) (result Model)
 
 		// Compute represents the caller-defined, exported method "compute".
 		//
-		//	compute: func(output: borrow<output-stream>) -> result<message, error>
-		Compute func(self cm.Rep, output cm.Rep) (result cm.Result[MessageShape, Message, Error])
-
-		// Push represents the caller-defined, exported method "push".
-		//
-		//	push: func(messages: list<message>) -> result<_, error>
-		Push func(self cm.Rep, messages cm.List[Message]) (result cm.Result[Error, struct{}, Error])
+		//	compute: func(messages: list<message>) -> result<message, error>
+		Compute func(self cm.Rep, messages cm.List[Message]) (result cm.Result[MessageShape, Message, Error])
 	}
 }

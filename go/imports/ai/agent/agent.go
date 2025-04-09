@@ -2,49 +2,72 @@ package agent
 
 import (
 	"fmt"
-	"io"
 
-	"github.com/hayride-dev/bindings/go/imports/ai/types"
-	wasiio "github.com/hayride-dev/bindings/go/imports/io"
+	"github.com/hayride-dev/bindings/go/imports/ai/ctx"
+	"github.com/hayride-dev/bindings/go/imports/ai/model"
 	witAgent "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agent"
-	witTypes "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
+	witContext "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/context"
+	"github.com/hayride-dev/bindings/go/shared/domain/ai"
+
 	"go.bytecodealliance.org/cm"
 )
 
-func Invoke(message *types.Message, w io.Writer) error {
-	if _, ok := w.(wasiio.WasiWriter); !ok {
-		return fmt.Errorf("expected io.WasiWriter, got %T", w)
-	}
+type Agent cm.Resource
 
-	if message.Role != types.RoleUser {
-		return fmt.Errorf("expected user role")
-	}
-	content := make([]witTypes.Content, 0)
-	for _, c := range message.Content {
-		switch c.Type() {
-		case "text":
-			textContent := c.(*types.TextContent)
-			content = append(content, witTypes.ContentText(witTypes.TextContent{
-				Text:        textContent.Text,
-				ContentType: textContent.ContentType,
-			}))
-		}
-	}
+func NewAgent() Agent {
+	return Agent(witAgent.NewAgent())
+}
 
-	witMsg := witTypes.Message{
-		Role:    witTypes.Role(message.Role),
-		Content: cm.ToList(content),
-	}
-
-	wasiStream := w.(wasiio.WasiWriter)
-	ptr := wasiStream.Ptr()
-	output := witAgent.OutputStream(cm.Rep(ptr))
-
-	result := witAgent.Invoke(witMsg, output)
-
+func (a Agent) Invoke(ctx ctx.Context, model model.Model) ([]*ai.Message, error) {
+	wa := cm.Reinterpret[witAgent.Agent](a)
+	wctx := cm.Reinterpret[witContext.Context](ctx)
+	wmodel := cm.Reinterpret[witAgent.Model](model)
+	result := wa.Invoke(wctx, wmodel)
 	if result.IsErr() {
-		return fmt.Errorf("invoke error: %s", result.Err().Data())
+		// TODO: handle error
+		return nil, fmt.Errorf("failed to invoke agent")
 	}
 
-	return nil
+	msgs := make([]*ai.Message, 0)
+	for _, m := range result.OK().Slice() {
+		content := make([]ai.Content, 0)
+		for _, c := range m.Content.Slice() {
+			switch c.String() {
+			case "text":
+				content = append(content, &ai.TextContent{
+					Text:        c.Text().Text,
+					ContentType: c.Text().ContentType,
+				})
+			case "tool-schema":
+				content = append(content, &ai.ToolSchema{
+					ID:           c.ToolSchema().ID,
+					Name:         c.ToolSchema().Name,
+					Description:  c.ToolSchema().Description,
+					ParamsSchema: c.ToolSchema().ParamsSchema,
+				})
+			case "tool-input":
+				content = append(content, &ai.ToolInput{
+					ContentType: c.ToolInput().ContentType,
+					ID:          c.ToolInput().ID,
+					Name:        c.ToolInput().Name,
+					Input:       c.ToolInput().Input,
+				})
+			case "tool-output":
+				content = append(content, &ai.ToolOutput{
+					ContentType: c.ToolOutput().ContentType,
+					ID:          c.ToolOutput().ID,
+					Name:        c.ToolOutput().Name,
+					Output:      c.ToolOutput().Output,
+				})
+			default:
+				return nil, fmt.Errorf("unknown content type: %s", c.String())
+			}
+		}
+		msgs = append(msgs, &ai.Message{
+			Role:    ai.Role(m.Role),
+			Content: content,
+		})
+	}
+
+	return msgs, nil
 }

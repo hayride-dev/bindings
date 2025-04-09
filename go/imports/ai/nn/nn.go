@@ -5,7 +5,6 @@ import (
 
 	graphstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
 	inferencestream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/inference-stream"
-	tensorstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/tensor-stream"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/nn/graph"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/nn/inference"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/nn/tensor"
@@ -92,7 +91,7 @@ func (w *NeuralNetwork) Compute(namedTensors map[string]string) (string, error) 
 	return string(outputs.Data().F1.Data().Slice()), nil
 }
 
-func (w *NeuralNetwork) ComputeStreaming(namedTensors map[string]string) (*TensorStream, error) {
+func (w *NeuralNetwork) ComputeStreaming(namedTensors map[string]string) (TensorStream, error) {
 	inputs := []inferencestream.NamedTensor{}
 	for name, text := range namedTensors {
 		d := tensor.TensorDimensions(cm.ToList([]uint32{1}))
@@ -110,28 +109,22 @@ func (w *NeuralNetwork) ComputeStreaming(namedTensors map[string]string) (*Tenso
 
 	computeResult := w.graphExecCtxStream.Compute(inputList)
 	if computeResult.IsErr() {
-		return nil, &wasinnErr{computeResult.Err()}
+		return cm.ResourceNone, &wasinnErr{computeResult.Err()}
 	}
+	stream := computeResult.OK().F1
 
-	// Expecting only a single tensor as output
-	// If multiple input is supported we could check the name of the named tensor for output matching
-	tensorStream := &TensorStream{
-		stream: computeResult.OK().F1,
-	}
-
-	return tensorStream, nil
+	return TensorStream(stream), nil
 }
 
-type TensorStream struct {
-	stream tensorstream.TensorStream
-}
+type TensorStream cm.Resource
 
 // Read will read the next `len` bytes from the stream
 // will return empty byte slice if the stream is closed.
 // blocks until the data is available
 func (t TensorStream) Read(p []byte) (int, error) {
-	t.stream.Subscribe().Block()
-	data := t.stream.Read(uint64(len(p)))
+	ts := cm.Reinterpret[inferencestream.TensorStream](t)
+	ts.Subscribe().Block()
+	data := ts.Read(uint64(len(p)))
 	if data.IsErr() {
 		if data.Err().Closed() {
 			return 0, nil
