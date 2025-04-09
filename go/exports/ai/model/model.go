@@ -8,7 +8,6 @@ import (
 	witModel "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
 
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/nn/tensor"
-
 	"go.bytecodealliance.org/cm"
 )
 
