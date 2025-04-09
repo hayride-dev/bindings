@@ -6,13 +6,15 @@ import (
 	"github.com/hayride-dev/bindings/go/shared/domain/ai"
 )
 
+// TODO :: Remove from bindings
+
 var _ Context = (*inMemoryContext)(nil)
 
 type inMemoryContext struct {
 	context []*ai.Message
 }
 
-func newInmemoryCtx() *inMemoryContext {
+func NewInmemoryCtx() *inMemoryContext {
 	return &inMemoryContext{
 		context: make([]*ai.Message, 0),
 	}
