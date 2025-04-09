@@ -27,7 +27,7 @@ func init() {
 	witAgent.Exports.Agent.Invoke = agent.wacInvoke
 }
 
-func New(name string, instruction string, f func(ctx ctx.Context, model model.Model) ([]*ai.Message, error)) {
+func Export(name string, instruction string, f func(ctx ctx.Context, model model.Model) ([]*ai.Message, error)) {
 	agent.name = name
 	agent.instruction = instruction
 	agent.invokeFunc = f
@@ -45,6 +45,8 @@ func (a *wacAgent) wacInvoke(self cm.Rep, ctx_ cm.Rep, model_ cm.Rep) (result cm
 		Role:    ai.RoleSystem,
 		Content: []ai.Content{&ai.TextContent{Text: a.instruction}},
 	}
+
+	// TODO: eval a way to avoid setting this on each invoke
 	context.Push(systemprompt)
 
 	msgs, err := a.invokeFunc(context, model)

@@ -25,7 +25,6 @@ func (a Agent) Invoke(ctx ctx.Context, model model.Model) ([]*ai.Message, error)
 	result := wa.Invoke(wctx, wmodel)
 	if result.IsErr() {
 		// TODO: handle error
-		result.Err().Code().String()
 		return nil, fmt.Errorf("failed to invoke agent")
 	}
 

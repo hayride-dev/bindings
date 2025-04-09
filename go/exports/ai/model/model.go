@@ -1,108 +1,81 @@
 package model
 
 import (
-	"fmt"
 	"io"
-	"unsafe"
 
-	"github.com/hayride-dev/bindings/go/exports/ai/types"
-	wasiio "github.com/hayride-dev/bindings/go/imports/io"
+	"github.com/hayride-dev/bindings/go/imports/ai/nn"
 	inferencestream "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/inference-stream"
 	witModel "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
-	tensorstream "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/tensor-stream"
 
-	witTypes "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/nn/tensor"
+
 	"go.bytecodealliance.org/cm"
 )
 
-var impl *wacModel
+var formatter Formatter
+var formatResourceTableInstance = formatResourceTable{rep: 0, resources: make(map[cm.Rep]Formatter)}
+var modelResourceTableInstance = modelResourceTable{rep: 0, resources: make(map[cm.Rep]*modelResource)}
 
 func init() {
-	impl = &wacModel{
-		history: make([]*types.Message, 0),
+	// TODO:: error exports
+	// do we need a resource table?
+
+	// format exports
+	witModel.Exports.Format.Constructor = formatResourceTableInstance.constructor
+	witModel.Exports.Format.Encode = formatResourceTableInstance.encode
+	witModel.Exports.Format.Decode = formatResourceTableInstance.decode
+	witModel.Exports.Format.Destructor = formatResourceTableInstance.destructor
+	// model exports
+	witModel.Exports.Model.ExportConstructor = modelResourceTableInstance.exportConstructor
+	witModel.Exports.Model.Compute = modelResourceTableInstance.compute
+}
+
+type modelResourceTable struct {
+	rep       cm.Rep
+	resources map[cm.Rep]*modelResource
+}
+
+type modelResource struct {
+	format witModel.Format
+	graph  witModel.GraphExecutionContextStream
+}
+
+func Export(f Formatter) {
+	formatter = f
+}
+
+func (w *modelResourceTable) exportConstructor(f witModel.Format, graph witModel.GraphExecutionContextStream) witModel.Model {
+	resource := &modelResource{f, graph}
+	w.rep++
+	w.resources[w.rep] = resource
+	return witModel.ModelResourceNew(w.rep)
+}
+
+func (w *modelResourceTable) compute(self cm.Rep, messages cm.List[witModel.Message]) cm.Result[witModel.MessageShape, witModel.Message, witModel.Error] {
+	if _, ok := w.resources[self]; !ok {
+		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeComputeError)))
 	}
-	witModel.Exports.Model.Constructor = impl.wacConstructorfunc
-	witModel.Exports.Model.Push = impl.wacPush
-	witModel.Exports.Model.Compute = impl.wacCompute
-}
-
-// TODO :: this likely should be moved - or figure out how to make it a io.reader that can
-// be used as the wasi stream wit
-type tensorStream struct {
-	stream tensorstream.TensorStream
-}
-
-// Read will read the next `len` bytes from the stream
-// will return empty byte slice if the stream is closed.
-// blocks until the data is available
-func (t tensorStream) Read(p []byte) (int, error) {
-	t.stream.Subscribe().Block()
-	data := t.stream.Read(uint64(len(p)))
-	if data.IsErr() {
-		if data.Err().Closed() {
-			return 0, nil
-		}
-
-		return 0, fmt.Errorf("failed to read from stream: %v", data.Err())
+	resource := w.resources[self]
+	result := formatResourceTableInstance.encode(cm.Rep(resource.format), messages)
+	if result.IsErr() {
+		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeContextEncode)))
 	}
-	n := copy(p, data.OK().Slice())
-	p = p[:n]
-	return len(p), nil
-}
-
-func Model(m Formatter) error {
-	impl.formatter = m
-	return nil
-}
-
-type wacModel struct {
-	formatter Formatter
-	model     witModel.GraphExecutionContextStream
-	history   []*types.Message
-	ref       cm.Rep
-}
-
-func (w *wacModel) wacConstructorfunc(graph witModel.GraphExecutionContextStream) (result witModel.Model) {
-	w.model = graph
-	w.ref = cm.Rep(uintptr(unsafe.Pointer(&impl)))
-	return witModel.ModelResourceNew(w.ref)
-}
-
-func (w *wacModel) wacCompute(self cm.Rep, output cm.Rep) (result cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]) {
-	writer := wasiio.Clone(uint32(output))
-	defer witModel.OutputStream(cm.Rep(uint32(output))).ResourceDrop()
-
-	ctx, err := w.formatter.Encode(w.history...)
-	if err != nil {
-		wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeContextEncode))
-		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
-	}
-
 	d := tensor.TensorDimensions(cm.ToList([]uint32{1}))
-	td := tensor.TensorData(cm.ToList(ctx))
+	td := tensor.TensorData(cm.ToList(result.OK().Slice()))
 	t := tensor.NewTensor(d, tensor.TensorTypeU8, td)
-
-	// TODO :: add support for named configuration
 	inputs := []inferencestream.NamedTensor{
 		{
 			F0: "user",
 			F1: t,
 		},
 	}
-
-	inputList := cm.ToList(inputs)
-	computeResult := w.model.Compute(inputList)
-	if computeResult.IsErr() {
-		wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeComputeError))
-		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
+	graphResult := resource.graph.Compute(cm.ToList(inputs))
+	if graphResult.IsErr() {
+		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeComputeError)))
 	}
 
-	stream := computeResult.OK().F1
-	ts := &tensorStream{
-		stream: stream,
-	}
-
+	stream := graphResult.OK().F1
+	ts := nn.TensorStream(stream)
 	// read the output from the stream
 	text := make([]byte, 0)
 	for {
@@ -116,50 +89,20 @@ func (w *wacModel) wacCompute(self cm.Rep, output cm.Rep) (result cm.Result[witM
 			wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeComputeError))
 			return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
 		}
-
-		if _, err := writer.Write(p[:len]); err != nil {
-			wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeComputeError))
-			return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
-		}
+		/*
+			// Removed:: example exposing raw tensor stream
+			// this is commented out until there is a good way to return an AI message stream
+			if _, err := writer.Write(p[:len]); err != nil {
+				wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeComputeError))
+				return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
+			}
+		*/
 		text = append(text, p[:len]...)
 	}
 
-	response, err := w.formatter.Decode([]byte(text))
-	if err != nil {
-		wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeMessageDecode))
-		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
+	decodeResult := formatResourceTableInstance.decode(cm.Rep(resource.format), cm.ToList(text))
+	if decodeResult.IsErr() {
+		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeContextDecode)))
 	}
-
-	content := make([]witTypes.Content, 0)
-	for _, c := range response.Content {
-		switch c.Type() {
-		case "text":
-			c := c.(*types.TextContent)
-			content = append(content, witTypes.ContentText(witTypes.TextContent{
-				Text:        c.Text,
-				ContentType: c.ContentType,
-			}))
-		case "tool-input":
-			c := c.(*types.ToolInput)
-			content = append(content, witTypes.ContentToolInput(witTypes.ToolInput{
-				ContentType: c.ContentType,
-				ID:          c.ID,
-				Name:        c.Name,
-				Input:       c.Input,
-			}))
-		default:
-			wasiErr := witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeUnexpectedMessageType))
-			return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](wasiErr)
-		}
-	}
-
-	resp := witModel.Message{
-		Role:    witTypes.RoleAssistant,
-		Content: cm.ToList(content),
-	}
-
-	// store model response in model context
-	w.wacPush(w.ref, cm.ToList([]witModel.Message{resp}))
-
-	return cm.OK[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](resp)
+	return cm.OK[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](*decodeResult.OK())
 }

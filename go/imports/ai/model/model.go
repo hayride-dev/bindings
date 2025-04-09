@@ -12,6 +12,30 @@ import (
 
 type Model cm.Resource
 
+func New(options ...Option[*ModelOptions]) (Model, error) {
+	opts := defaultModelOptions()
+	for _, opt := range options {
+		if err := opt.Apply(opts); err != nil {
+			return cm.ResourceNone, err
+		}
+	}
+
+	result := witGraph.LoadByName(opts.name)
+	if result.IsErr() {
+		return cm.ResourceNone, fmt.Errorf("failed to load graph")
+	}
+	graph := result.OK()
+	resultCtxStream := graph.InitExecutionContextStream()
+	if result.IsErr() {
+		return cm.ResourceNone, fmt.Errorf("failed to init execution graph context stream")
+	}
+	stream := *resultCtxStream.OK()
+
+	format := witModel.NewFormat()
+
+	return Model(witModel.NewModel(format, stream)), nil
+}
+
 func (m Model) Compute(messages []*ai.Message) (*ai.Message, error) {
 	msgs := make([]witTypes.Message, 0)
 	for _, message := range messages {
@@ -96,28 +120,4 @@ func (m Model) Compute(messages []*ai.Message) (*ai.Message, error) {
 	}
 
 	return response, nil
-}
-
-func New(options ...Option[*ModelOptions]) (Model, error) {
-	opts := defaultModelOptions()
-	for _, opt := range options {
-		if err := opt.Apply(opts); err != nil {
-			return cm.ResourceNone, err
-		}
-	}
-
-	result := witGraph.LoadByName(opts.name)
-	if result.IsErr() {
-		return cm.ResourceNone, fmt.Errorf("failed to load graph")
-	}
-	model := result.OK()
-
-	resultCtxStream := model.InitExecutionContextStream()
-	if result.IsErr() {
-		return cm.ResourceNone, fmt.Errorf("failed to init execution graph context stream")
-	}
-	stream := *resultCtxStream.OK()
-	format := witModel.NewFormat()
-
-	return Model(witModel.NewModel(format, stream)), nil
 }

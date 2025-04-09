@@ -1,8 +1,6 @@
 package model
 
 import (
-	"unsafe"
-
 	witModel "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
 	witTypes "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/types"
 
@@ -15,30 +13,34 @@ type Formatter interface {
 	Decode([]byte) (*ai.Message, error)
 }
 
-type wacFormat struct {
-	f Formatter
+type formatResourceTable struct {
+	rep       cm.Rep
+	resources map[cm.Rep]Formatter
 }
 
-var format *wacFormat
-
-func init() {
-	format = &wacFormat{}
-	witModel.Exports.Format.Constructor = format.wacConstructorfunc
+func (f *formatResourceTable) constructor() witModel.Format {
+	f.rep++
+	f.resources[f.rep] = formatter
+	return witModel.FormatResourceNew(f.rep)
 }
 
-func NewFormat(formatter Formatter) {
-	format.f = formatter
+func (f *formatResourceTable) encode(self cm.Rep, messages cm.List[witModel.Message]) cm.Result[cm.List[uint8], cm.List[uint8], witModel.Error] {
+	if _, ok := f.resources[self]; !ok {
+		return cm.Err[cm.Result[cm.List[uint8], cm.List[uint8], witModel.Error]](witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeContextEncode)))
+	}
+	f.resources[self].Encode(nil)
+	return cm.OK[cm.Result[cm.List[uint8], cm.List[uint8], witModel.Error]](cm.List[uint8]{})
 }
 
-func (f *wacFormat) wacConstructorfunc() witModel.Format {
-	return witModel.FormatResourceNew(cm.Rep(uintptr(unsafe.Pointer(f))))
-}
-
-func (f *wacFormat) wacEncode(self cm.Rep, messages cm.List[witModel.Message]) (result cm.Result[witModel.Error, []byte, witModel.Error]) {
-	return cm.OK[cm.Result[witModel.Error, []byte, witModel.Error]](nil)
-}
-
-func (f *wacFormat) wacDecode(self cm.Rep, data []byte) (result cm.Result[witModel.Error, witModel.Message, witModel.Error]) {
+func (f *formatResourceTable) decode(self cm.Rep, raw cm.List[uint8]) cm.Result[witModel.MessageShape, witModel.Message, witModel.Error] {
+	if _, ok := f.resources[self]; !ok {
+		return cm.Err[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeContextDecode)))
+	}
+	f.resources[self].Decode(nil)
 	msg := witTypes.Message{}
-	return cm.OK[cm.Result[witModel.Error, witModel.Message, witModel.Error]](msg)
+	return cm.OK[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](msg)
+}
+
+func (f *formatResourceTable) destructor(self cm.Rep) {
+	delete(f.resources, self)
 }

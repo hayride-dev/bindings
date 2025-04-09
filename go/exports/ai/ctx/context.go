@@ -29,14 +29,8 @@ type wacContext struct {
 	ctx Context
 }
 
-func New(options ...Option[*CtxOptions]) error {
-	opts := defaultModelOptions()
-	for _, opt := range options {
-		if err := opt.Apply(opts); err != nil {
-			return err
-		}
-	}
-	impl.ctx = opts.ctx
+func Ctx(ctx Context) error {
+	impl.ctx = ctx
 	return nil
 }
 
@@ -45,7 +39,6 @@ func (c *wacContext) wacConstructorfunc() witContext.Context {
 }
 
 func (c *wacContext) wacPush(self cm.Rep, messages cm.List[witContext.Message]) (result cm.Result[witContext.Error, struct{}, witContext.Error]) {
-
 	c.ctx.Push(nil)
 	// Implementation of wacPush
 	return cm.OK[cm.Result[witContext.Error, struct{}, witContext.Error]](struct{}{})
