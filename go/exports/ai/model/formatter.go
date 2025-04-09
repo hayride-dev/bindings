@@ -24,6 +24,10 @@ func (f *formatResourceTable) constructor() witModel.Format {
 	return witModel.FormatResourceNew(f.rep)
 }
 
+func (f *formatResourceTable) destructor(self cm.Rep) {
+	delete(f.resources, self)
+}
+
 func (f *formatResourceTable) encode(self cm.Rep, messages cm.List[witModel.Message]) cm.Result[cm.List[uint8], cm.List[uint8], witModel.Error] {
 	if _, ok := f.resources[self]; !ok {
 		return cm.Err[cm.Result[cm.List[uint8], cm.List[uint8], witModel.Error]](witModel.ErrorResourceNew(cm.Rep(witModel.ErrorCodeContextEncode)))
@@ -125,8 +129,4 @@ func (f *formatResourceTable) decode(self cm.Rep, raw cm.List[uint8]) cm.Result[
 		Content: cm.ToList(content),
 	}
 	return cm.OK[cm.Result[witModel.MessageShape, witModel.Message, witModel.Error]](msg)
-}
-
-func (f *formatResourceTable) destructor(self cm.Rep) {
-	delete(f.resources, self)
 }

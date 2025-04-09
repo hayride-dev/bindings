@@ -13,18 +13,18 @@ import (
 
 type invokeFunc func(ctx ctx.Context, model model.Model) ([]*ai.Message, error)
 
-type wacAgent struct {
+type resource struct {
 	name        string
 	instruction string
 	invokeFunc  invokeFunc
 }
 
-var agent *wacAgent
+var agent *resource
 
 func init() {
-	agent = &wacAgent{}
-	witAgent.Exports.Agent.Constructor = agent.wacConstructorfunc
-	witAgent.Exports.Agent.Invoke = agent.wacInvoke
+	agent = &resource{}
+	witAgent.Exports.Agent.Constructor = agent.constructor
+	witAgent.Exports.Agent.Invoke = agent.invoke
 }
 
 func Export(name string, instruction string, f func(ctx ctx.Context, model model.Model) ([]*ai.Message, error)) {
@@ -33,11 +33,11 @@ func Export(name string, instruction string, f func(ctx ctx.Context, model model
 	agent.invokeFunc = f
 }
 
-func (a *wacAgent) wacConstructorfunc() witAgent.Agent {
+func (a *resource) constructor() witAgent.Agent {
 	return witAgent.AgentResourceNew(cm.Rep(uintptr(unsafe.Pointer(&agent))))
 }
 
-func (a *wacAgent) wacInvoke(self cm.Rep, ctx_ cm.Rep, model_ cm.Rep) (result cm.Result[cm.List[witTypes.Message], cm.List[witTypes.Message], witAgent.Error]) {
+func (a *resource) invoke(self cm.Rep, ctx_ cm.Rep, model_ cm.Rep) (result cm.Result[cm.List[witTypes.Message], cm.List[witTypes.Message], witAgent.Error]) {
 	context := ctx.Context(ctx_)
 	model := model.Model(model_)
 

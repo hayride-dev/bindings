@@ -26,6 +26,7 @@ func init() {
 	witContext.Exports.Context.Push = ctxResourceTableInstance.push
 	witContext.Exports.Context.Messages = ctxResourceTableInstance.messages
 	witContext.Exports.Context.Next = ctxResourceTableInstance.next
+	witContext.Exports.Context.Destructor = ctxResourceTableInstance.destructor
 
 }
 
@@ -38,6 +39,10 @@ func (c *ctxResourceTable) constructor() witContext.Context {
 	c.rep++
 	c.resources[c.rep] = ctx
 	return witContext.ContextResourceNew(c.rep)
+}
+
+func (c *ctxResourceTable) destructor(self cm.Rep) {
+	delete(c.resources, self)
 }
 
 func (c *ctxResourceTable) push(self cm.Rep, messages cm.List[witContext.Message]) (result cm.Result[witContext.Error, struct{}, witContext.Error]) {

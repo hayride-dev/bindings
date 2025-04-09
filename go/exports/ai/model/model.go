@@ -27,6 +27,7 @@ func init() {
 	// model exports
 	witModel.Exports.Model.ExportConstructor = modelResourceTableInstance.exportConstructor
 	witModel.Exports.Model.Compute = modelResourceTableInstance.compute
+	witModel.Exports.Model.Destructor = modelResourceTableInstance.destructor
 }
 
 type modelResourceTable struct {
@@ -48,6 +49,10 @@ func (w *modelResourceTable) exportConstructor(f witModel.Format, graph witModel
 	w.rep++
 	w.resources[w.rep] = resource
 	return witModel.ModelResourceNew(w.rep)
+}
+
+func (w *modelResourceTable) destructor(self cm.Rep) {
+	delete(w.resources, self)
 }
 
 func (w *modelResourceTable) compute(self cm.Rep, messages cm.List[witModel.Message]) cm.Result[witModel.MessageShape, witModel.Message, witModel.Error] {
