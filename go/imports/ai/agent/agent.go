@@ -3,10 +3,8 @@ package agent
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/imports/ai/ctx"
-	"github.com/hayride-dev/bindings/go/imports/ai/model"
 	witAgent "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agent"
-	witContext "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/context"
+	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/shared/domain/ai"
 
 	"go.bytecodealliance.org/cm"
@@ -18,11 +16,55 @@ func NewAgent() Agent {
 	return Agent(witAgent.NewAgent())
 }
 
-func (a Agent) Invoke(ctx ctx.Context, model model.Model) ([]*ai.Message, error) {
+func (a Agent) Invoke(messages []*ai.Message) ([]*ai.Message, error) {
 	wa := cm.Reinterpret[witAgent.Agent](a)
-	wctx := cm.Reinterpret[witContext.Context](ctx)
-	wmodel := cm.Reinterpret[witAgent.Model](model)
-	result := wa.Invoke(wctx, wmodel)
+
+	witMsgs := make([]types.Message, 0)
+	for _, m := range messages {
+		content := make([]types.Content, 0)
+		for _, c := range m.Content {
+			switch c.Type() {
+			case "text":
+				textContent := c.(*ai.TextContent)
+				content = append(content, types.ContentText(types.TextContent{
+					Text:        textContent.Text,
+					ContentType: textContent.ContentType,
+				}))
+			case "tool-schema":
+				toolSchema := c.(*ai.ToolSchema)
+				content = append(content, types.ContentToolSchema(types.ToolSchema{
+					ID:           toolSchema.ID,
+					Name:         toolSchema.Name,
+					Description:  toolSchema.Description,
+					ParamsSchema: toolSchema.ParamsSchema,
+				}))
+			case "tool-input":
+				toolContent := c.(*ai.ToolInput)
+				content = append(content, types.ContentToolInput(types.ToolInput{
+					ContentType: toolContent.ContentType,
+					ID:          toolContent.ID,
+					Name:        toolContent.Name,
+					Input:       toolContent.Input,
+				}))
+			case "tool-output":
+				toolResult := c.(*ai.ToolOutput)
+				content = append(content, types.ContentToolOutput(types.ToolOutput{
+					ContentType: toolResult.ContentType,
+					ID:          toolResult.ID,
+					Name:        toolResult.Name,
+					Output:      toolResult.Output,
+				}))
+			default:
+				return nil, fmt.Errorf("unknown content type: %s", c.Type())
+			}
+		}
+		witMsgs = append(witMsgs, types.Message{
+			Role:    types.Role(m.Role),
+			Content: cm.ToList(content),
+		})
+	}
+
+	result := wa.Invoke(cm.ToList(witMsgs))
 	if result.IsErr() {
 		// TODO: handle error
 		return nil, fmt.Errorf("failed to invoke agent")

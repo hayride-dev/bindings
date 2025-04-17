@@ -3,7 +3,6 @@
 package model
 
 import (
-	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/types"
 	"go.bytecodealliance.org/cm"
 	"unsafe"
 )
@@ -11,5 +10,5 @@ import (
 // MessageShape is used for storage in variant or result types.
 type MessageShape struct {
 	_     cm.HostLayout
-	shape [unsafe.Sizeof(types.Message{})]byte
+	shape [unsafe.Sizeof(Message{})]byte
 }

@@ -84,7 +84,7 @@ const (
 	GraphEncodingAutodetect
 )
 
-var stringsGraphEncoding = [7]string{
+var _GraphEncodingStrings = [7]string{
 	"openvino",
 	"onnx",
 	"tensorflow",
@@ -96,8 +96,21 @@ var stringsGraphEncoding = [7]string{
 
 // String implements [fmt.Stringer], returning the enum case name of e.
 func (e GraphEncoding) String() string {
-	return stringsGraphEncoding[e]
+	return _GraphEncodingStrings[e]
 }
+
+// MarshalText implements [encoding.TextMarshaler].
+func (e GraphEncoding) MarshalText() ([]byte, error) {
+	return []byte(e.String()), nil
+}
+
+// UnmarshalText implements [encoding.TextUnmarshaler], unmarshaling into an enum
+// case. Returns an error if the supplied text is not one of the enum cases.
+func (e *GraphEncoding) UnmarshalText(text []byte) error {
+	return _GraphEncodingUnmarshalCase(e, text)
+}
+
+var _GraphEncodingUnmarshalCase = cm.CaseUnmarshaler[GraphEncoding](_GraphEncodingStrings[:])
 
 // ExecutionTarget represents the enum "wasi:nn/graph@0.2.0-rc-2024-10-28#execution-target".
 //
@@ -116,7 +129,7 @@ const (
 	ExecutionTargetTpu
 )
 
-var stringsExecutionTarget = [3]string{
+var _ExecutionTargetStrings = [3]string{
 	"cpu",
 	"gpu",
 	"tpu",
@@ -124,8 +137,21 @@ var stringsExecutionTarget = [3]string{
 
 // String implements [fmt.Stringer], returning the enum case name of e.
 func (e ExecutionTarget) String() string {
-	return stringsExecutionTarget[e]
+	return _ExecutionTargetStrings[e]
 }
+
+// MarshalText implements [encoding.TextMarshaler].
+func (e ExecutionTarget) MarshalText() ([]byte, error) {
+	return []byte(e.String()), nil
+}
+
+// UnmarshalText implements [encoding.TextUnmarshaler], unmarshaling into an enum
+// case. Returns an error if the supplied text is not one of the enum cases.
+func (e *ExecutionTarget) UnmarshalText(text []byte) error {
+	return _ExecutionTargetUnmarshalCase(e, text)
+}
+
+var _ExecutionTargetUnmarshalCase = cm.CaseUnmarshaler[ExecutionTarget](_ExecutionTargetStrings[:])
 
 // GraphBuilder represents the list "wasi:nn/graph@0.2.0-rc-2024-10-28#graph-builder".
 //

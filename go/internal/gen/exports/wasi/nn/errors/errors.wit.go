@@ -54,7 +54,7 @@ const (
 	ErrorCodeUnknown
 )
 
-var stringsErrorCode = [9]string{
+var _ErrorCodeStrings = [9]string{
 	"invalid-argument",
 	"invalid-encoding",
 	"timeout",
@@ -68,8 +68,21 @@ var stringsErrorCode = [9]string{
 
 // String implements [fmt.Stringer], returning the enum case name of e.
 func (e ErrorCode) String() string {
-	return stringsErrorCode[e]
+	return _ErrorCodeStrings[e]
 }
+
+// MarshalText implements [encoding.TextMarshaler].
+func (e ErrorCode) MarshalText() ([]byte, error) {
+	return []byte(e.String()), nil
+}
+
+// UnmarshalText implements [encoding.TextUnmarshaler], unmarshaling into an enum
+// case. Returns an error if the supplied text is not one of the enum cases.
+func (e *ErrorCode) UnmarshalText(text []byte) error {
+	return _ErrorCodeUnmarshalCase(e, text)
+}
+
+var _ErrorCodeUnmarshalCase = cm.CaseUnmarshaler[ErrorCode](_ErrorCodeStrings[:])
 
 // Error represents the imported resource "wasi:nn/errors@0.2.0-rc-2024-10-28#error".
 //
