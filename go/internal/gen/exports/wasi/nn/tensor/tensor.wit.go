@@ -45,7 +45,7 @@ const (
 	TensorTypeI64
 )
 
-var stringsTensorType = [7]string{
+var _TensorTypeStrings = [7]string{
 	"FP16",
 	"FP32",
 	"FP64",
@@ -57,8 +57,21 @@ var stringsTensorType = [7]string{
 
 // String implements [fmt.Stringer], returning the enum case name of e.
 func (e TensorType) String() string {
-	return stringsTensorType[e]
+	return _TensorTypeStrings[e]
 }
+
+// MarshalText implements [encoding.TextMarshaler].
+func (e TensorType) MarshalText() ([]byte, error) {
+	return []byte(e.String()), nil
+}
+
+// UnmarshalText implements [encoding.TextUnmarshaler], unmarshaling into an enum
+// case. Returns an error if the supplied text is not one of the enum cases.
+func (e *TensorType) UnmarshalText(text []byte) error {
+	return _TensorTypeUnmarshalCase(e, text)
+}
+
+var _TensorTypeUnmarshalCase = cm.CaseUnmarshaler[TensorType](_TensorTypeStrings[:])
 
 // TensorData represents the list "wasi:nn/tensor@0.2.0-rc-2024-10-28#tensor-data".
 //

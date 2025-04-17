@@ -167,7 +167,7 @@ func (self *Method) Other() *string {
 	return cm.Case[string](self, 9)
 }
 
-var stringsMethod = [10]string{
+var _MethodStrings = [10]string{
 	"get",
 	"head",
 	"post",
@@ -182,7 +182,7 @@ var stringsMethod = [10]string{
 
 // String implements [fmt.Stringer], returning the variant case name of v.
 func (v Method) String() string {
-	return stringsMethod[v.Tag()]
+	return _MethodStrings[v.Tag()]
 }
 
 // Scheme represents the variant "wasi:http/types@0.2.0#scheme".
@@ -228,7 +228,7 @@ func (self *Scheme) Other() *string {
 	return cm.Case[string](self, 2)
 }
 
-var stringsScheme = [3]string{
+var _SchemeStrings = [3]string{
 	"HTTP",
 	"HTTPS",
 	"other",
@@ -236,7 +236,7 @@ var stringsScheme = [3]string{
 
 // String implements [fmt.Stringer], returning the variant case name of v.
 func (v Scheme) String() string {
-	return stringsScheme[v.Tag()]
+	return _SchemeStrings[v.Tag()]
 }
 
 // DNSErrorPayload represents the record "wasi:http/types@0.2.0#DNS-error-payload".
@@ -749,7 +749,7 @@ func (self *ErrorCode) InternalError() *cm.Option[string] {
 	return cm.Case[cm.Option[string]](self, 38)
 }
 
-var stringsErrorCode = [39]string{
+var _ErrorCodeStrings = [39]string{
 	"DNS-timeout",
 	"DNS-error",
 	"destination-not-found",
@@ -793,7 +793,7 @@ var stringsErrorCode = [39]string{
 
 // String implements [fmt.Stringer], returning the variant case name of v.
 func (v ErrorCode) String() string {
-	return stringsErrorCode[v.Tag()]
+	return _ErrorCodeStrings[v.Tag()]
 }
 
 // HeaderError represents the variant "wasi:http/types@0.2.0#header-error".
@@ -823,7 +823,7 @@ const (
 	HeaderErrorImmutable
 )
 
-var stringsHeaderError = [3]string{
+var _HeaderErrorStrings = [3]string{
 	"invalid-syntax",
 	"forbidden",
 	"immutable",
@@ -831,8 +831,21 @@ var stringsHeaderError = [3]string{
 
 // String implements [fmt.Stringer], returning the enum case name of e.
 func (e HeaderError) String() string {
-	return stringsHeaderError[e]
+	return _HeaderErrorStrings[e]
 }
+
+// MarshalText implements [encoding.TextMarshaler].
+func (e HeaderError) MarshalText() ([]byte, error) {
+	return []byte(e.String()), nil
+}
+
+// UnmarshalText implements [encoding.TextUnmarshaler], unmarshaling into an enum
+// case. Returns an error if the supplied text is not one of the enum cases.
+func (e *HeaderError) UnmarshalText(text []byte) error {
+	return _HeaderErrorUnmarshalCase(e, text)
+}
+
+var _HeaderErrorUnmarshalCase = cm.CaseUnmarshaler[HeaderError](_HeaderErrorStrings[:])
 
 // FieldKey represents the string "wasi:http/types@0.2.0#field-key".
 //
