@@ -12,9 +12,8 @@ import (
 type invokeFunc func(messages []*ai.Message) ([]*ai.Message, error)
 
 type resource struct {
-	name        string
-	instruction string
-	invokeFunc  invokeFunc
+	name       string
+	invokeFunc invokeFunc
 }
 
 var agent *resource
@@ -25,9 +24,8 @@ func init() {
 	witAgent.Exports.Agent.Invoke = agent.invoke
 }
 
-func Export(name string, instruction string, f invokeFunc) {
+func Export(name string, f func(messages []*ai.Message) ([]*ai.Message, error)) {
 	agent.name = name
-	agent.instruction = instruction
 	agent.invokeFunc = f
 }
 
