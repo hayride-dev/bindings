@@ -1,7 +1,7 @@
 package ctx
 
 import (
-	witContext "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/context"
+	witContext "github.com/hayride-dev/bindings/go/gen/exports/hayride/ai/context"
 	"go.bytecodealliance.org/cm"
 )
 

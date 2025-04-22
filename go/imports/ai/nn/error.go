@@ -1,8 +1,8 @@
 package nn
 
 import (
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/io/streams"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/nn/errors"
+	"github.com/hayride-dev/bindings/go/gen/imports/wasi/io/streams"
+	"github.com/hayride-dev/bindings/go/gen/imports/wasi/nn/errors"
 )
 
 type wasinnErr struct {

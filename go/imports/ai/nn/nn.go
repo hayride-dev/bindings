@@ -3,11 +3,11 @@ package nn
 import (
 	"errors"
 
-	graphstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
-	inferencestream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/inference-stream"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/nn/graph"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/nn/inference"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/nn/tensor"
+	graphstream "github.com/hayride-dev/bindings/go/gen/imports/hayride/ai/graph-stream"
+	inferencestream "github.com/hayride-dev/bindings/go/gen/imports/hayride/ai/inference-stream"
+	"github.com/hayride-dev/bindings/go/gen/imports/wasi/nn/graph"
+	"github.com/hayride-dev/bindings/go/gen/imports/wasi/nn/inference"
+	"github.com/hayride-dev/bindings/go/gen/imports/wasi/nn/tensor"
 	"go.bytecodealliance.org/cm"
 )
 

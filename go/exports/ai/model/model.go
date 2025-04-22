@@ -3,11 +3,11 @@ package model
 import (
 	"io"
 
+	inferencestream "github.com/hayride-dev/bindings/go/gen/exports/hayride/ai/inference-stream"
+	witModel "github.com/hayride-dev/bindings/go/gen/exports/hayride/ai/model"
 	"github.com/hayride-dev/bindings/go/imports/ai/nn"
-	inferencestream "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/inference-stream"
-	witModel "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
 
-	"github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/nn/tensor"
+	"github.com/hayride-dev/bindings/go/gen/exports/wasi/nn/tensor"
 	"go.bytecodealliance.org/cm"
 )
 

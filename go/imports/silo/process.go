@@ -3,7 +3,7 @@ package silo
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/silo/process"
+	"github.com/hayride-dev/bindings/go/gen/imports/hayride/silo/process"
 	"go.bytecodealliance.org/cm"
 )
 

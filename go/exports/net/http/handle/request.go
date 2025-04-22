@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/http/types"
+	"github.com/hayride-dev/bindings/go/gen/exports/wasi/http/types"
 )
 
 // WASItoHTTPRequest takes an [IncomingRequest] and returns a [net/http.Request] representation of it.

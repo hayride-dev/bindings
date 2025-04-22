@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/http/types"
-	"github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/io/streams"
+	"github.com/hayride-dev/bindings/go/gen/exports/wasi/http/types"
+	"github.com/hayride-dev/bindings/go/gen/exports/wasi/io/streams"
 	"go.bytecodealliance.org/cm"
 )
 

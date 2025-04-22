@@ -1,7 +1,7 @@
 package agent
 
 import (
-	witAgent "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/agent"
+	witAgent "github.com/hayride-dev/bindings/go/gen/exports/hayride/ai/agent"
 	"go.bytecodealliance.org/cm"
 )
 

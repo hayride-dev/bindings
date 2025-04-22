@@ -1,7 +1,7 @@
 package model
 
 import (
-	witModel "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
+	witModel "github.com/hayride-dev/bindings/go/gen/exports/hayride/ai/model"
 	"go.bytecodealliance.org/cm"
 )
 
