@@ -7,6 +7,7 @@ for interacting with a imported context resource.
 import (
 	"fmt"
 
+	"github.com/hayride-dev/bindings/go/gen/domain/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/context"
 	"go.bytecodealliance.org/cm"
 )
@@ -15,10 +16,16 @@ type Context cm.Resource
 
 // Push take a list of messages, convert them to a list of wit Messages
 // and call imported context push
-func (c Context) Push(messages ...context.Message) error {
+func (c Context) Push(messages ...types.Message) error {
 	witContext := cm.Reinterpret[context.Context](c)
 
-	result := witContext.Push(cm.ToList(messages))
+	// Convert types.Message to context.Message
+	witMessages := make([]context.Message, len(messages))
+	for i, msg := range messages {
+		witMessages[i] = cm.Reinterpret[context.Message](msg)
+	}
+
+	result := witContext.Push(cm.ToList(witMessages))
 	if result.IsErr() {
 		// TODO: handle error result
 		return fmt.Errorf("failed to push message")
@@ -27,7 +34,7 @@ func (c Context) Push(messages ...context.Message) error {
 }
 
 // Messages returns the list of messages in the context
-func (c Context) Messages() ([]context.Message, error) {
+func (c Context) Messages() ([]types.Message, error) {
 	witContext := cm.Reinterpret[context.Context](c)
 	result := witContext.Messages()
 	if result.IsErr() {
@@ -36,10 +43,17 @@ func (c Context) Messages() ([]context.Message, error) {
 	}
 	witMessages := result.OK()
 
-	return witMessages.Slice(), nil
+	// Convert context.Message to types.Message
+	witMessagesSlice := witMessages.Slice()
+	msgs := make([]types.Message, len(witMessagesSlice))
+	for i, msg := range witMessagesSlice {
+		msgs[i] = cm.Reinterpret[types.Message](msg)
+	}
+
+	return msgs, nil
 }
 
-func (c Context) Next() (*context.Message, error) {
+func (c Context) Next() (*types.Message, error) {
 	witContext := cm.Reinterpret[context.Context](c)
 	result := witContext.Next()
 	if result.IsErr() {
@@ -47,7 +61,8 @@ func (c Context) Next() (*context.Message, error) {
 		return nil, fmt.Errorf("failed to get next message")
 	}
 
-	return result.OK(), nil
+	msg := cm.Reinterpret[*types.Message](result.OK())
+	return msg, nil
 }
 
 // Create the resource
