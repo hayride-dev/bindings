@@ -1,4 +1,4 @@
-package model
+package models
 
 type ModelOptions struct {
 	name       string

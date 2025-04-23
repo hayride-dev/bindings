@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 
-	incominghandler "github.com/hayride-dev/bindings/go/gen/exports/wasi/http/incoming-handler"
-	"github.com/hayride-dev/bindings/go/gen/exports/wasi/http/types"
+	incominghandler "github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/http/incoming-handler"
+	"github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/http/types"
 	"go.bytecodealliance.org/cm"
 )
 

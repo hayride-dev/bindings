@@ -1,6 +1,6 @@
 package rag
 
-import "github.com/hayride-dev/bindings/go/gen/imports/hayride/ai/rag"
+import "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/rag"
 
 type ragErr struct {
 	e *rag.Error

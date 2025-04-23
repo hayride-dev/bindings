@@ -1,7 +1,8 @@
 package ctx
 
 import (
-	witContext "github.com/hayride-dev/bindings/go/gen/exports/hayride/ai/context"
+	"github.com/hayride-dev/bindings/go/gen/domain/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/context"
 	"go.bytecodealliance.org/cm"
 )
 
@@ -9,9 +10,9 @@ var ctx Context
 var ctxResourceTableInstance = ctxResourceTable{rep: 0, resources: make(map[cm.Rep]Context)}
 
 type Context interface {
-	Push(messages ...witContext.Message) error
-	Messages() ([]witContext.Message, error)
-	Next() (witContext.Message, error)
+	Push(messages ...types.Message) error
+	Messages() ([]types.Message, error)
+	Next() (types.Message, error)
 }
 
 type ctxResourceTable struct {
@@ -20,11 +21,11 @@ type ctxResourceTable struct {
 }
 
 func init() {
-	witContext.Exports.Context.Constructor = ctxResourceTableInstance.constructor
-	witContext.Exports.Context.Push = ctxResourceTableInstance.push
-	witContext.Exports.Context.Messages = ctxResourceTableInstance.messages
-	witContext.Exports.Context.Next = ctxResourceTableInstance.next
-	witContext.Exports.Context.Destructor = ctxResourceTableInstance.destructor
+	context.Exports.Context.Constructor = ctxResourceTableInstance.constructor
+	context.Exports.Context.Push = ctxResourceTableInstance.push
+	context.Exports.Context.Messages = ctxResourceTableInstance.messages
+	context.Exports.Context.Next = ctxResourceTableInstance.next
+	context.Exports.Context.Destructor = ctxResourceTableInstance.destructor
 
 }
 
@@ -33,48 +34,62 @@ func Export(c Context) error {
 	return nil
 }
 
-func (c *ctxResourceTable) constructor() witContext.Context {
+func (c *ctxResourceTable) constructor() context.Context {
 	c.rep++
 	c.resources[c.rep] = ctx
-	return witContext.ContextResourceNew(c.rep)
+	return context.ContextResourceNew(c.rep)
 }
 
 func (c *ctxResourceTable) destructor(self cm.Rep) {
 	delete(c.resources, self)
 }
 
-func (c *ctxResourceTable) push(self cm.Rep, messages cm.List[witContext.Message]) (result cm.Result[witContext.Error, struct{}, witContext.Error]) {
+func (c *ctxResourceTable) push(self cm.Rep, messages cm.List[context.Message]) (result cm.Result[context.Error, struct{}, context.Error]) {
 	if _, ok := c.resources[self]; !ok {
-		return cm.Err[cm.Result[witContext.Error, struct{}, witContext.Error]](witContext.ErrorResourceNew(cm.Rep(witContext.ErrorCodePushError)))
+		return cm.Err[cm.Result[context.Error, struct{}, context.Error]](context.ErrorResourceNew(cm.Rep(context.ErrorCodePushError)))
 	}
 
-	err := c.resources[self].Push(messages.Slice()...)
-	if err != nil {
-		return cm.Err[cm.Result[witContext.Error, struct{}, witContext.Error]](witContext.ErrorResourceNew(cm.Rep(witContext.ErrorCodePushError)))
+	// Convert context.Message to types.Message
+	msgs := make([]types.Message, len(messages.Slice()))
+	for i, msg := range messages.Slice() {
+		msgs[i] = cm.Reinterpret[types.Message](msg)
 	}
-	return cm.OK[cm.Result[witContext.Error, struct{}, witContext.Error]](struct{}{})
+
+	err := c.resources[self].Push(msgs...)
+	if err != nil {
+		return cm.Err[cm.Result[context.Error, struct{}, context.Error]](context.ErrorResourceNew(cm.Rep(context.ErrorCodePushError)))
+	}
+	return cm.OK[cm.Result[context.Error, struct{}, context.Error]](struct{}{})
 }
 
-func (c *ctxResourceTable) messages(self cm.Rep) (result cm.Result[cm.List[witContext.Message], cm.List[witContext.Message], witContext.Error]) {
+func (c *ctxResourceTable) messages(self cm.Rep) (result cm.Result[cm.List[context.Message], cm.List[context.Message], context.Error]) {
 	if _, ok := c.resources[self]; !ok {
-		return cm.Err[cm.Result[cm.List[witContext.Message], cm.List[witContext.Message], witContext.Error]](witContext.ErrorResourceNew(cm.Rep(witContext.ErrorCodeMessageNotFound)))
+		return cm.Err[cm.Result[cm.List[context.Message], cm.List[context.Message], context.Error]](context.ErrorResourceNew(cm.Rep(context.ErrorCodeMessageNotFound)))
 	}
 	msgs, err := c.resources[self].Messages()
 	if err != nil {
-		return cm.Err[cm.Result[cm.List[witContext.Message], cm.List[witContext.Message], witContext.Error]](witContext.ErrorResourceNew(cm.Rep(witContext.ErrorCodeMessageNotFound)))
+		return cm.Err[cm.Result[cm.List[context.Message], cm.List[context.Message], context.Error]](context.ErrorResourceNew(cm.Rep(context.ErrorCodeMessageNotFound)))
 	}
 
-	return cm.OK[cm.Result[cm.List[witContext.Message], cm.List[witContext.Message], witContext.Error]](cm.ToList(msgs))
+	// convert to context.Messages
+	vals := make([]context.Message, len(msgs))
+	for i, msg := range msgs {
+		vals[i] = cm.Reinterpret[context.Message](msg)
+	}
+
+	return cm.OK[cm.Result[cm.List[context.Message], cm.List[context.Message], context.Error]](cm.ToList(vals))
 }
 
-func (c *ctxResourceTable) next(self cm.Rep) (result cm.Result[witContext.MessageShape, witContext.Message, witContext.Error]) {
+func (c *ctxResourceTable) next(self cm.Rep) cm.Result[context.MessageShape, context.Message, context.Error] {
 	if _, ok := c.resources[self]; !ok {
-		return cm.Err[cm.Result[witContext.MessageShape, witContext.Message, witContext.Error]](witContext.ErrorResourceNew(cm.Rep(witContext.ErrorCodeMessageNotFound)))
+		return cm.Err[cm.Result[context.MessageShape, context.Message, context.Error]](context.ErrorResourceNew(cm.Rep(context.ErrorCodeMessageNotFound)))
 	}
 	msg, err := c.resources[self].Next()
 	if err != nil {
-		return cm.Err[cm.Result[witContext.MessageShape, witContext.Message, witContext.Error]](witContext.ErrorResourceNew(cm.Rep(witContext.ErrorCodeMessageNotFound)))
+		return cm.Err[cm.Result[context.MessageShape, context.Message, context.Error]](context.ErrorResourceNew(cm.Rep(context.ErrorCodeMessageNotFound)))
 	}
 
-	return cm.OK[cm.Result[witContext.MessageShape, witContext.Message, witContext.Error]](msg)
+	val := cm.Reinterpret[context.Message](msg)
+
+	return cm.OK[cm.Result[context.MessageShape, context.Message, context.Error]](context.Message(val))
 }

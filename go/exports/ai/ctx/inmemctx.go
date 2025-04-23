@@ -3,8 +3,7 @@ package ctx
 import (
 	"fmt"
 
-	witContext "github.com/hayride-dev/bindings/go/gen/exports/hayride/ai/context"
-	"github.com/hayride-dev/bindings/go/gen/exports/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/gen/domain/hayride/ai/types"
 )
 
 // TODO :: Remove from bindings
@@ -12,16 +11,16 @@ import (
 var _ Context = (*inMemoryContext)(nil)
 
 type inMemoryContext struct {
-	context []witContext.Message
+	context []types.Message
 }
 
 func NewInmemoryCtx() *inMemoryContext {
 	return &inMemoryContext{
-		context: make([]witContext.Message, 0),
+		context: make([]types.Message, 0),
 	}
 }
 
-func (c *inMemoryContext) Push(messages ...witContext.Message) error {
+func (c *inMemoryContext) Push(messages ...types.Message) error {
 	for _, m := range messages {
 		if m.Role == types.RoleSystem {
 			c.context[0] = m
@@ -32,13 +31,13 @@ func (c *inMemoryContext) Push(messages ...witContext.Message) error {
 	return nil
 }
 
-func (c *inMemoryContext) Messages() ([]witContext.Message, error) {
+func (c *inMemoryContext) Messages() ([]types.Message, error) {
 	return c.context, nil
 }
 
-func (c *inMemoryContext) Next() (witContext.Message, error) {
+func (c *inMemoryContext) Next() (types.Message, error) {
 	if len(c.context) == 0 {
-		return witContext.Message{}, fmt.Errorf("missing messages")
+		return types.Message{}, fmt.Errorf("missing messages")
 	}
 	return c.context[len(c.context)-1], nil
 }

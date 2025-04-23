@@ -3,8 +3,8 @@ package socket
 import (
 	"io"
 
-	"github.com/hayride-dev/bindings/go/gen/exports/hayride/socket/websocket"
 	wasiio "github.com/hayride-dev/bindings/go/imports/io"
+	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/socket/websocket"
 )
 
 func init() {

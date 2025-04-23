@@ -7,7 +7,7 @@ for interacting with a imported context resource.
 import (
 	"fmt"
 
-	witContext "github.com/hayride-dev/bindings/go/gen/imports/hayride/ai/context"
+	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/context"
 	"go.bytecodealliance.org/cm"
 )
 
@@ -15,8 +15,8 @@ type Context cm.Resource
 
 // Push take a list of messages, convert them to a list of wit Messages
 // and call imported context push
-func (c Context) Push(messages ...witContext.Message) error {
-	witContext := cm.Reinterpret[witContext.Context](c)
+func (c Context) Push(messages ...context.Message) error {
+	witContext := cm.Reinterpret[context.Context](c)
 
 	result := witContext.Push(cm.ToList(messages))
 	if result.IsErr() {
@@ -27,8 +27,8 @@ func (c Context) Push(messages ...witContext.Message) error {
 }
 
 // Messages returns the list of messages in the context
-func (c Context) Messages() ([]witContext.Message, error) {
-	witContext := cm.Reinterpret[witContext.Context](c)
+func (c Context) Messages() ([]context.Message, error) {
+	witContext := cm.Reinterpret[context.Context](c)
 	result := witContext.Messages()
 	if result.IsErr() {
 		// TODO: handle error result
@@ -39,8 +39,8 @@ func (c Context) Messages() ([]witContext.Message, error) {
 	return witMessages.Slice(), nil
 }
 
-func (c Context) Next() (*witContext.Message, error) {
-	witContext := cm.Reinterpret[witContext.Context](c)
+func (c Context) Next() (*context.Message, error) {
+	witContext := cm.Reinterpret[context.Context](c)
 	result := witContext.Next()
 	if result.IsErr() {
 		// TODO : handle error result
@@ -52,5 +52,5 @@ func (c Context) Next() (*witContext.Message, error) {
 
 // Create the resource
 func NewContext() Context {
-	return Context(witContext.NewContext())
+	return Context(context.NewContext())
 }

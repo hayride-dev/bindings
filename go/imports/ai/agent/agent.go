@@ -3,7 +3,7 @@ package agent
 import (
 	"fmt"
 
-	witAgent "github.com/hayride-dev/bindings/go/gen/imports/hayride/ai/agent"
+	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agent"
 
 	"go.bytecodealliance.org/cm"
 )
@@ -11,11 +11,11 @@ import (
 type Agent cm.Resource
 
 func NewAgent() Agent {
-	return Agent(witAgent.NewAgent())
+	return Agent(agent.NewAgent())
 }
 
-func (a Agent) Invoke(messages []witAgent.Message) ([]witAgent.Message, error) {
-	wa := cm.Reinterpret[witAgent.Agent](a)
+func (a Agent) Invoke(messages []agent.Message) ([]agent.Message, error) {
+	wa := cm.Reinterpret[agent.Agent](a)
 	result := wa.Invoke(cm.ToList(messages))
 	if result.IsErr() {
 		// TODO: handle error

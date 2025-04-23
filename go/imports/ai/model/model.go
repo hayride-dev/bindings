@@ -1,11 +1,11 @@
-package model
+package models
 
 import (
 	"fmt"
 
-	witGraph "github.com/hayride-dev/bindings/go/gen/imports/hayride/ai/graph-stream"
-	witModel "github.com/hayride-dev/bindings/go/gen/imports/hayride/ai/model"
-	witTypes "github.com/hayride-dev/bindings/go/gen/imports/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/gen/domain/hayride/ai/types"
+	graphStream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
+	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
 	"go.bytecodealliance.org/cm"
 )
 
@@ -19,7 +19,7 @@ func New(options ...Option[*ModelOptions]) (Model, error) {
 		}
 	}
 
-	result := witGraph.LoadByName(opts.name)
+	result := graphStream.LoadByName(opts.name)
 	if result.IsErr() {
 		return cm.ResourceNone, fmt.Errorf("failed to load graph")
 	}
@@ -30,23 +30,25 @@ func New(options ...Option[*ModelOptions]) (Model, error) {
 	}
 	stream := *resultCtxStream.OK()
 
-	format := witModel.NewFormat()
+	format := model.NewFormat()
 
-	return Model(witModel.NewModel(format, stream)), nil
+	return Model(model.NewModel(format, stream)), nil
 }
 
-func (m Model) Compute(messages []witModel.Message) (*witModel.Message, error) {
-	wModel := cm.Reinterpret[witModel.Model](m)
-	result := wModel.Compute(cm.ToList(messages))
+func (m Model) Compute(messages []types.Message) (*types.Message, error) {
+	wModel := cm.Reinterpret[model.Model](m)
+	cmMessages := make([]model.Message, len(messages))
+	for i, msg := range messages {
+		cmMessages[i] = cm.Reinterpret[model.Message](msg)
+	}
+
+	result := wModel.Compute(cm.ToList(cmMessages))
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to compute")
 	}
 
-	// message should always be a model response ( aka assistant)
 	witMsg := result.OK()
-	if witMsg.Role != witTypes.RoleAssistant {
-		return nil, fmt.Errorf("expected assistant role, got %v", witMsg.Role)
-	}
+	msg := cm.Reinterpret[*types.Message](witMsg)
 
-	return witMsg, nil
+	return msg, nil
 }
