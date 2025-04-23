@@ -8,8 +8,8 @@ gen-imports:
 gen-exports:
 	wit-bindgen-go generate --world hayride:bindings/exports --out ./go/internal/gen/exports ./wit
 
-gen-domain:
-	wit-bindgen-go generate --world hayride:bindings/domain --out ./go/gen/domain ./wit
+gen-types:
+	wit-bindgen-go generate --world hayride:bindings/types --out ./go/gen/types ./wit
 
-gen: gen-imports gen-exports gen-domain
+gen: gen-imports gen-exports gen-types
 

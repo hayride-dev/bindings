@@ -30,6 +30,6 @@ world exports {
     export hayride:socket/websocket@0.0.42;
 }
 
-world domain {
+world types {
     export hayride:ai/types@0.0.42;
 }

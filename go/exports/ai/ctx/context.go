@@ -1,7 +1,7 @@
 package ctx
 
 import (
-	"github.com/hayride-dev/bindings/go/gen/domain/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/context"
 	"go.bytecodealliance.org/cm"
 )

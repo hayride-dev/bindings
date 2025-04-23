@@ -3,7 +3,7 @@ package ctx
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/gen/domain/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
 )
 
 // TODO :: Remove from bindings

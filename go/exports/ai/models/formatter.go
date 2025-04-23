@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/hayride-dev/bindings/go/gen/domain/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
 
 	"go.bytecodealliance.org/cm"
