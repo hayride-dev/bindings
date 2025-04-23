@@ -29,3 +29,7 @@ world exports {
     // socket
     export hayride:socket/websocket@0.0.42;
 }
+
+world types {
+    export hayride:ai/types@0.0.42;
+}

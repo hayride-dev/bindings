@@ -1,4 +1,4 @@
-package model
+package models
 
 /*
 This file contains a ergonamic wrapper around the wit generated code
@@ -9,55 +9,34 @@ constrcuting the format resources
 import (
 	"fmt"
 
-	witModel "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
-	witTypes "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
-	"github.com/hayride-dev/bindings/go/shared/domain/ai"
+	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
 	"go.bytecodealliance.org/cm"
 )
 
 type Formatter cm.Resource
 
-func (f Formatter) Encode(messages ...*ai.Message) ([]byte, error) {
+func (f Formatter) Encode(messages ...types.Message) ([]byte, error) {
 	return nil, nil
 }
 
-func (f Formatter) Decode(data []byte) (*ai.Message, error) {
+func (f Formatter) Decode(data []byte) (*types.Message, error) {
 	if len(data) == 0 {
 		return nil, nil
 	}
 
-	wformat := cm.Reinterpret[witModel.Format](f)
+	wformat := cm.Reinterpret[model.Format](f)
 	result := wformat.Decode(cm.ToList(data))
 	if result.IsErr() {
 		return nil, fmt.Errorf("decode error: %s", result.Err().Data())
 	}
 	witMsg := result.OK()
 
-	// NOTE: message should always be a model response ( aka assistant).
-	// Should we make this assumption?
-	if witMsg.Role != witTypes.RoleAssistant {
-		return nil, nil
-	}
+	msg := cm.Reinterpret[*types.Message](witMsg)
 
-	content := make([]ai.Content, 0)
-	for _, c := range witMsg.Content.Slice() {
-		switch c.String() {
-		case "text":
-			content = append(content, &ai.TextContent{
-				Text:        c.Text().Text,
-				ContentType: c.Text().ContentType,
-			})
-		default:
-			return nil, nil
-		}
-	}
-
-	return &ai.Message{
-		Role:    ai.RoleAssistant,
-		Content: content,
-	}, nil
+	return msg, nil
 }
 
 func NewFormatter() Formatter {
-	return Formatter(witModel.NewFormat())
+	return Formatter(model.NewFormat())
 }
