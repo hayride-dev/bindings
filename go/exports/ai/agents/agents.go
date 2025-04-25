@@ -12,7 +12,6 @@ import (
 )
 
 type invokeFunc func(messages []types.Message) ([]types.Message, error)
-
 type invokeStreamFunc func(messages []types.Message, writer io.Writer) error
 
 type resource struct {
@@ -30,13 +29,18 @@ func init() {
 	agent.Exports.Agent.InvokeStream = agentResource.invokeStream
 }
 
-func Export(name string, f func(messages []types.Message) ([]types.Message, error)) {
-	agentResource.name = name
-	agentResource.invokeFunc = f
-}
+func Export(options ...Option[*AgentsOptions]) error {
+	opts := defaultAgentOptions()
+	for _, opt := range options {
+		if err := opt.Apply(opts); err != nil {
+			return err
+		}
+	}
+	agentResource.name = opts.name
+	agentResource.invokeFunc = opts.invokeFunc
+	agentResource.invokeStreamFunc = opts.invokeStreamFunc
 
-func ExportStreaming(name string, f func(messages []types.Message, writer io.Writer) error) {
-
+	return nil
 }
 
 func (a *resource) constructor() agent.Agent {
