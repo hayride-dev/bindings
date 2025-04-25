@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
+	wasiio "github.com/hayride-dev/bindings/go/imports/wasi/io"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agent"
 
 	"go.bytecodealliance.org/cm"
@@ -26,7 +27,6 @@ func (a Agent) Invoke(messages []types.Message) ([]types.Message, error) {
 
 	result := wa.Invoke(cm.ToList(msgs))
 	if result.IsErr() {
-		// TODO: handle error
 		return nil, fmt.Errorf("failed to invoke agent")
 	}
 
@@ -46,7 +46,12 @@ func (a Agent) InvokeStream(messages []types.Message, writer io.Writer) error {
 		msgs[i] = cm.Reinterpret[agent.Message](msg)
 	}
 
-	result := wa.InvokeStream(cm.ToList(msgs), cm.Reinterpret[agent.OutputStream](writer))
+	w, ok := writer.(wasiio.Writer)
+	if !ok {
+		return fmt.Errorf("writer does not implement wasiio.Writer resource")
+	}
+
+	result := wa.InvokeStream(cm.ToList(msgs), cm.Reinterpret[agent.OutputStream](w))
 	if result.IsErr() {
 		return fmt.Errorf("failed to invoke agent")
 	}
