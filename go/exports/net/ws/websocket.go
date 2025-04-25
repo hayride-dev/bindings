@@ -3,7 +3,7 @@ package socket
 import (
 	"io"
 
-	wasiio "github.com/hayride-dev/bindings/go/imports/io"
+	wasiio "github.com/hayride-dev/bindings/go/imports/wasi/io"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/socket/websocket"
 )
 
@@ -28,7 +28,7 @@ func Handle(h Handler) {
 }
 
 func websocketHandle(input websocket.InputStream, output websocket.OutputStream) {
-	w := wasiio.Clone(uint32(output))
-	reader := wasiio.CloneReader(uint32(input))
+	w := wasiio.Writer(output)
+	reader := wasiio.ReaderCloser(input)
 	handler.Handle(reader, w)
 }

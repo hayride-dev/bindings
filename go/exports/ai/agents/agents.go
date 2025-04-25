@@ -1,18 +1,23 @@
 package agents
 
 import (
+	"io"
 	"unsafe"
 
 	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
+	wasiio "github.com/hayride-dev/bindings/go/imports/wasi/io"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/agent"
+
 	"go.bytecodealliance.org/cm"
 )
 
 type invokeFunc func(messages []types.Message) ([]types.Message, error)
+type invokeStreamFunc func(messages []types.Message, writer io.Writer) error
 
 type resource struct {
-	name       string
-	invokeFunc invokeFunc
+	name             string
+	invokeFunc       invokeFunc
+	invokeStreamFunc invokeStreamFunc
 }
 
 var agentResource *resource
@@ -21,11 +26,21 @@ func init() {
 	agentResource = &resource{}
 	agent.Exports.Agent.Constructor = agentResource.constructor
 	agent.Exports.Agent.Invoke = agentResource.invoke
+	agent.Exports.Agent.InvokeStream = agentResource.invokeStream
 }
 
-func Export(name string, f func(messages []types.Message) ([]types.Message, error)) {
-	agentResource.name = name
-	agentResource.invokeFunc = f
+func Export(options ...Option[*AgentsOptions]) error {
+	opts := defaultAgentOptions()
+	for _, opt := range options {
+		if err := opt.Apply(opts); err != nil {
+			return err
+		}
+	}
+	agentResource.name = opts.name
+	agentResource.invokeFunc = opts.invokeFunc
+	agentResource.invokeStreamFunc = opts.invokeStreamFunc
+
+	return nil
 }
 
 func (a *resource) constructor() agent.Agent {
@@ -50,4 +65,18 @@ func (a *resource) invoke(self cm.Rep, messages cm.List[agent.Message]) cm.Resul
 	}
 
 	return cm.OK[cm.Result[cm.List[agent.Message], cm.List[agent.Message], agent.Error]](cm.ToList(result))
+}
+
+func (a *resource) invokeStream(self cm.Rep, messages cm.List[agent.Message], writer agent.OutputStream) (result cm.Result[agent.Error, struct{}, agent.Error]) {
+	msgs := make([]types.Message, len(messages.Slice()))
+	for i, msg := range messages.Slice() {
+		msgs[i] = cm.Reinterpret[types.Message](msg)
+	}
+
+	err := a.invokeStreamFunc(msgs, wasiio.Writer(writer))
+	if err != nil {
+		wasiErr := agent.ErrorResourceNew(cm.Rep(agent.ErrorCodeInvokeError))
+		return cm.Err[cm.Result[agent.Error, struct{}, agent.Error]](wasiErr)
+	}
+	return cm.OK[cm.Result[agent.Error, struct{}, agent.Error]](struct{}{})
 }
