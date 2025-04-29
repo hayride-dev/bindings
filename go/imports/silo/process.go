@@ -31,6 +31,14 @@ func (p *Process) Wait(pid uint32) (int32, error) {
 	return 0, nil
 }
 
+func (p *Process) Status(pid uint32) (bool, error) {
+	result := process.Status(pid)
+	if result.IsErr() {
+		return false, fmt.Errorf("failed to get process status: %v", result.Err())
+	}
+	return *result.OK(), nil
+}
+
 func (p *Process) Kill(pid uint32, sig int32) (int32, error) {
 	result := process.Kill(pid, sig)
 	if result.IsErr() {

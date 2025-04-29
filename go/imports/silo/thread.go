@@ -14,7 +14,7 @@ func NewThread() *Thread {
 	return &Thread{}
 }
 
-func (p *Thread) Spawn(path string, function string, args ...string) (string, error) {
+func (t *Thread) Spawn(path string, function string, args ...string) (string, error) {
 	list := cm.ToList(args)
 	result := threads.Spawn(path, function, list)
 	if result.IsErr() {
@@ -23,13 +23,22 @@ func (p *Thread) Spawn(path string, function string, args ...string) (string, er
 	return *result.OK(), nil
 }
 
-func (p *Thread) Wait(threadID string) ([]byte, error) {
+func (t *Thread) Wait(threadID string) ([]byte, error) {
 	result := threads.Wait(threadID)
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to wait for thread: %v", result.Err())
 	}
 
 	return result.OK().Slice(), nil
+}
+
+func (t *Thread) Status(threadID string) (bool, error) {
+	result := threads.Status(threadID)
+	if result.IsErr() {
+		return false, fmt.Errorf("failed to get thread status: %v", result.Err())
+	}
+
+	return *result.OK(), nil
 }
 
 func (p *Thread) Kill(threadID string) error {
