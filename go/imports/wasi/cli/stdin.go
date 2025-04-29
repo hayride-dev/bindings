@@ -8,7 +8,11 @@ import (
 	wasiio "github.com/hayride-dev/bindings/go/imports/wasi/io"
 )
 
-func GetStdin() io.Reader {
-	r := wasiio.ReaderCloser(stdin.GetStdin())
-	return r
+// GetStdin returns a read closer for stdin.
+// If block is true, reader will block until data is available.
+func GetStdin(block bool) io.ReadCloser {
+	if block {
+		return wasiio.ReaderCloser(stdin.GetStdin())
+	}
+	return nonBlockingReader(stdin.GetStdin())
 }
