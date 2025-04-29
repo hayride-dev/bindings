@@ -13,6 +13,7 @@ type Writer cm.Resource
 func (w Writer) Write(p []byte) (n int, err error) {
 	resource := cm.Reinterpret[streams.OutputStream](w)
 	contents := cm.ToList(p)
+	resource.Subscribe().Block()
 	writeResult := resource.Write(contents)
 	if writeResult.IsErr() {
 		if writeResult.Err().Closed() {
