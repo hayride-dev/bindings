@@ -19,12 +19,7 @@ func (m Message) MarshalJSON() ([]byte, error) {
 		content = append(content, raw)
 	}
 
-	// Capitalize the role string to match wit-bindgen's enum serialization format.
 	roleStr := m.Role.String()
-	if len(roleStr) > 0 {
-		roleStr = strings.ToUpper(roleStr[:1]) + roleStr[1:]
-	}
-
 	return json.Marshal(struct {
 		Role    string            `json:"role"`
 		Content []json.RawMessage `json:"content"`
@@ -69,22 +64,22 @@ func (c Content) MarshalJSON() ([]byte, error) {
 	switch c.Tag() {
 	case 1:
 		if v := c.Text(); v != nil {
-			contentType = "Text"
+			contentType = "text"
 			value = v
 		}
 	case 2:
 		if v := c.ToolSchema(); v != nil {
-			contentType = "ToolSchema"
+			contentType = "tool-schema"
 			value = v
 		}
 	case 3:
 		if v := c.ToolInput(); v != nil {
-			contentType = "ToolInput"
+			contentType = "tool-input"
 			value = v
 		}
 	case 4:
 		if v := c.ToolOutput(); v != nil {
-			contentType = "ToolOutput"
+			contentType = "tool-output"
 			value = v
 		}
 	default:
@@ -111,25 +106,25 @@ func (c *Content) UnmarshalJSON(data []byte) error {
 	}
 	for key, raw := range temp {
 		switch key {
-		case "Text":
+		case "text":
 			var text TextContent
 			if err := json.Unmarshal(raw, &text); err != nil {
 				return err
 			}
 			*c = ContentText(text)
-		case "ToolSchema":
+		case "tool-schema":
 			var schema ToolSchema
 			if err := json.Unmarshal(raw, &schema); err != nil {
 				return err
 			}
 			*c = ContentToolSchema(schema)
-		case "ToolInput":
+		case "tool-input":
 			var input ToolInput
 			if err := json.Unmarshal(raw, &input); err != nil {
 				return err
 			}
 			*c = ContentToolInput(input)
-		case "ToolOutput":
+		case "tool-output":
 			var output ToolOutput
 			if err := json.Unmarshal(raw, &output); err != nil {
 				return err
