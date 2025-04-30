@@ -6,44 +6,44 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.45".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.46".
 
-//go:wasmimport hayride:ai/model@0.0.45 [resource-drop]error
+//go:wasmimport hayride:ai/model@0.0.46 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/model@0.0.45 [method]error.code
+//go:wasmimport hayride:ai/model@0.0.46 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/model@0.0.45 [method]error.data
+//go:wasmimport hayride:ai/model@0.0.46 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/model@0.0.45 [resource-drop]format
+//go:wasmimport hayride:ai/model@0.0.46 [resource-drop]format
 //go:noescape
 func wasmimport_FormatResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/model@0.0.45 [constructor]format
+//go:wasmimport hayride:ai/model@0.0.46 [constructor]format
 //go:noescape
 func wasmimport_NewFormat() (result0 uint32)
 
-//go:wasmimport hayride:ai/model@0.0.45 [method]format.decode
+//go:wasmimport hayride:ai/model@0.0.46 [method]format.decode
 //go:noescape
 func wasmimport_FormatDecode(self0 uint32, raw0 *uint8, raw1 uint32, result *cm.Result[MessageShape, Message, Error])
 
-//go:wasmimport hayride:ai/model@0.0.45 [method]format.encode
+//go:wasmimport hayride:ai/model@0.0.46 [method]format.encode
 //go:noescape
 func wasmimport_FormatEncode(self0 uint32, messages0 *Message, messages1 uint32, result *cm.Result[cm.List[uint8], cm.List[uint8], Error])
 
-//go:wasmimport hayride:ai/model@0.0.45 [resource-drop]model
+//go:wasmimport hayride:ai/model@0.0.46 [resource-drop]model
 //go:noescape
 func wasmimport_ModelResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/model@0.0.45 [constructor]model
+//go:wasmimport hayride:ai/model@0.0.46 [constructor]model
 //go:noescape
 func wasmimport_NewModel(format0 uint32, graph0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/model@0.0.45 [method]model.compute
+//go:wasmimport hayride:ai/model@0.0.46 [method]model.compute
 //go:noescape
 func wasmimport_ModelCompute(self0 uint32, messages0 *Message, messages1 uint32, result *cm.Result[MessageShape, Message, Error])
