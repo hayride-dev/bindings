@@ -3,16 +3,16 @@ package hayride:bindings@0.0.1;
 world imports {
     // ai 
     include wasi:nn/ml@0.2.0-rc-2024-10-28;
-    import hayride:ai/tensor-stream@0.0.46;
-    import hayride:ai/inference-stream@0.0.46;
-    import hayride:ai/graph-stream@0.0.46;
-    import hayride:ai/agent@0.0.46;
-    import hayride:ai/model@0.0.46;
-    import hayride:ai/context@0.0.46;
-    import hayride:ai/rag@0.0.46;  
+    import hayride:ai/tensor-stream@0.0.47;
+    import hayride:ai/inference-stream@0.0.47;
+    import hayride:ai/graph-stream@0.0.47;
+    import hayride:ai/agent@0.0.47;
+    import hayride:ai/model@0.0.47;
+    import hayride:ai/context@0.0.47;
+    import hayride:ai/rag@0.0.47;  
     // silo 
-    import hayride:silo/threads@0.0.46;
-    import hayride:silo/process@0.0.46;
+    import hayride:silo/threads@0.0.47;
+    import hayride:silo/process@0.0.47;
     // wasi
     import wasi:io/streams@0.2.0;
     import wasi:cli/stdout@0.2.0;
@@ -23,15 +23,15 @@ world imports {
 
 world exports {
     // ai 
-    export hayride:ai/agent@0.0.46;
-    export hayride:ai/model@0.0.46;
-    export hayride:ai/context@0.0.46;
+    export hayride:ai/agent@0.0.47;
+    export hayride:ai/model@0.0.47;
+    export hayride:ai/context@0.0.47;
     // socket
-    export hayride:socket/websocket@0.0.46;
+    export hayride:socket/websocket@0.0.47;
     // wasi
     export wasi:http/incoming-handler@0.2.0;
 }
 
 world types {
-    export hayride:ai/types@0.0.46;
+    export hayride:ai/types@0.0.47;
 }
