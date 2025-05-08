@@ -30,9 +30,10 @@ func New(options ...Option[*ModelOptions]) (Model, error) {
 	}
 	stream := *resultCtxStream.OK()
 
-	// assumed a model is wac'd or host provides a format
+	// assumed a formatter is wac'd or host provides a format
 	format := model.NewFormat()
 
+	// assumed a model is wac'd or host provides a model
 	return Model(model.NewModel(format, stream)), nil
 }
 
