@@ -18,7 +18,7 @@ func New(options ...Option[*ModelOptions]) (Model, error) {
 			return cm.ResourceNone, err
 		}
 	}
-
+	// host provides a graph stream
 	result := graphStream.LoadByName(opts.name)
 	if result.IsErr() {
 		return cm.ResourceNone, fmt.Errorf("failed to load graph")
@@ -30,6 +30,7 @@ func New(options ...Option[*ModelOptions]) (Model, error) {
 	}
 	stream := *resultCtxStream.OK()
 
+	// assumed a model is wac'd or host provides a format
 	format := model.NewFormat()
 
 	return Model(model.NewModel(format, stream)), nil

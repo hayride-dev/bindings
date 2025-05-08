@@ -18,8 +18,9 @@ type formatResourceTable struct {
 }
 
 func (f *formatResourceTable) constructor() model.Format {
-	f.rep++
-	f.resources[f.rep] = formatter
+	defer func() {
+		f.rep++
+	}()
 	return model.FormatResourceNew(f.rep)
 }
 
