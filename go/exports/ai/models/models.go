@@ -11,14 +11,10 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-var formatter Formatter
 var formatResourceTableInstance = formatResourceTable{rep: 0, resources: make(map[cm.Rep]Formatter)}
 var modelResourceTableInstance = modelResourceTable{rep: 0, resources: make(map[cm.Rep]*modelResource)}
 
 func init() {
-	// TODO:: error exports
-	// do we need a resource table?
-
 	// format exports
 	model.Exports.Format.Constructor = formatResourceTableInstance.constructor
 	model.Exports.Format.Encode = formatResourceTableInstance.encode
@@ -41,7 +37,7 @@ type modelResource struct {
 }
 
 func Export(f Formatter) {
-	formatter = f
+	formatResourceTableInstance.resources[formatResourceTableInstance.rep] = f
 }
 
 func (w *modelResourceTable) exportConstructor(f model.Format, graph model.GraphExecutionContextStream) model.Model {
