@@ -14,9 +14,10 @@ func NewProcess() *Process {
 	return &Process{}
 }
 
-func (p *Process) Spawn(path string, args ...string) (int32, error) {
-	list := cm.ToList(args)
-	result := process.Spawn(path, list)
+func (p *Process) Spawn(path string, args []string, envs ...[2]string) (int32, error) {
+	argList := cm.ToList(args)
+	envList := cm.ToList(envs)
+	result := process.Spawn(path, argList, envList)
 	if result.IsErr() {
 		return -1, fmt.Errorf("failed to spawn process: %v", result.Err())
 	}

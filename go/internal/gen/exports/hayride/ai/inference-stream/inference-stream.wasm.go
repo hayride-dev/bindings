@@ -6,12 +6,12 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.46".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.47".
 
-//go:wasmimport hayride:ai/inference-stream@0.0.46 [resource-drop]graph-execution-context-stream
+//go:wasmimport hayride:ai/inference-stream@0.0.47 [resource-drop]graph-execution-context-stream
 //go:noescape
 func wasmimport_GraphExecutionContextStreamResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/inference-stream@0.0.46 [method]graph-execution-context-stream.compute
+//go:wasmimport hayride:ai/inference-stream@0.0.47 [method]graph-execution-context-stream.compute
 //go:noescape
 func wasmimport_GraphExecutionContextStreamCompute(self0 uint32, inputs0 *NamedTensor, inputs1 uint32, result *cm.Result[NamedTensorStreamShape, NamedTensorStream, Error])
