@@ -11,8 +11,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-var formatResourceTableInstance = formatResourceTable{rep: 0, resources: make(map[cm.Rep]Formatter)}
-var modelResourceTableInstance = modelResourceTable{rep: 0, resources: make(map[cm.Rep]*modelResource)}
+var formatter Formatter
+var formatResourceTableInstance = formatResourceTable{resources: make(map[cm.Rep]Formatter)}
+var modelResourceTableInstance = modelResourceTable{resources: make(map[cm.Rep]*modelResource)}
 
 func init() {
 	// format exports
@@ -37,14 +38,15 @@ type modelResource struct {
 }
 
 func Export(f Formatter) {
-	formatResourceTableInstance.resources[formatResourceTableInstance.rep] = f
+	formatter = f
 }
 
 func (w *modelResourceTable) exportConstructor(f model.Format, graph model.GraphExecutionContextStream) model.Model {
 	resource := &modelResource{f, graph}
-	w.rep++
+	value := model.ModelResourceNew(w.rep)
 	w.resources[w.rep] = resource
-	return model.ModelResourceNew(w.rep)
+	w.rep++
+	return value
 }
 
 func (w *modelResourceTable) destructor(self cm.Rep) {
@@ -56,7 +58,9 @@ func (w *modelResourceTable) compute(self cm.Rep, messages cm.List[model.Message
 		return cm.Err[cm.Result[model.MessageShape, model.Message, model.Error]](model.ErrorResourceNew(cm.Rep(model.ErrorCodeComputeError)))
 	}
 	resource := w.resources[self]
-	result := formatResourceTableInstance.encode(cm.Rep(resource.format), messages)
+
+	formatRep := resource.format.ResourceRep()
+	result := formatResourceTableInstance.encode(formatRep, messages)
 	if result.IsErr() {
 		return cm.Err[cm.Result[model.MessageShape, model.Message, model.Error]](model.ErrorResourceNew(cm.Rep(model.ErrorCodeContextEncode)))
 	}
@@ -100,7 +104,7 @@ func (w *modelResourceTable) compute(self cm.Rep, messages cm.List[model.Message
 		text = append(text, p[:len]...)
 	}
 
-	decodeResult := formatResourceTableInstance.decode(cm.Rep(resource.format), cm.ToList(text))
+	decodeResult := formatResourceTableInstance.decode(formatRep, cm.ToList(text))
 	if decodeResult.IsErr() {
 		return cm.Err[cm.Result[model.MessageShape, model.Message, model.Error]](model.ErrorResourceNew(cm.Rep(model.ErrorCodeContextDecode)))
 	}
