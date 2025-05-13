@@ -8,7 +8,7 @@ import (
 )
 
 // WASItoHTTPRequest takes an [IncomingRequest] and returns a [net/http.Request] representation of it.
-func WASItoHTTPRequest(incoming types.IncomingRequest) (req *http.Request, err error) {
+func wasiToHTTPRequest(incoming types.IncomingRequest) (req *http.Request, err error) {
 	method, err := wasiMethodToString(incoming.Method())
 	if err != nil {
 		return nil, err

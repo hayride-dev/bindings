@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:ai/context@0.0.47".
+// Exports represents the caller-defined exports from "hayride:ai/context@0.0.48".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:ai/context@0.0.47#error".
+	// Error represents the caller-defined exports for resource "hayride:ai/context@0.0.48#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
@@ -30,7 +30,7 @@ var Exports struct {
 		Data func(self cm.Rep) (result string)
 	}
 
-	// Context represents the caller-defined exports for resource "hayride:ai/context@0.0.47#context".
+	// Context represents the caller-defined exports for resource "hayride:ai/context@0.0.48#context".
 	Context struct {
 		// Destructor represents the caller-defined, exported destructor for resource "context".
 		//
