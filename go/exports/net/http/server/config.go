@@ -20,7 +20,7 @@ func init() {
 	config.Exports.Get = get
 }
 
-func New(h http.Handler, c Config) error {
+func Export(h http.Handler, c Config) error {
 	handle.Handler(h)
 	if c.Address == "" {
 		return fmt.Errorf("invalid address: %s", c.Address)
