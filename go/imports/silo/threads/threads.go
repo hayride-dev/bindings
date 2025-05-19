@@ -1,4 +1,4 @@
-package silo
+package threads
 
 import (
 	"fmt"
