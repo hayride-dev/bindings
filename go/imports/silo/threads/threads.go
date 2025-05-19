@@ -58,7 +58,7 @@ func Status(threadID string) (*threads.ThreadMetadata, error) {
 func Kill(threadID string) error {
 	result := threads.Kill(threadID)
 	if result.IsErr() {
-		return fmt.Errorf("failed ot kill thread: %v", result.Err())
+		return fmt.Errorf("failed to kill thread: %v", result.Err())
 	}
 
 	return nil
