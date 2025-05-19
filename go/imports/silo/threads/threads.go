@@ -10,7 +10,7 @@ import (
 type Thread cm.Resource
 
 // ID returns the ID of the thread.
-func (t *Thread) ID() (string, error) {
+func (t Thread) ID() (string, error) {
 	witThread := cm.Reinterpret[threads.Thread](t)
 
 	result := witThread.ID()
@@ -22,7 +22,7 @@ func (t *Thread) ID() (string, error) {
 }
 
 // Wait waits for the thread to finish and returns the result.
-func (t *Thread) Wait(threadID string) ([]byte, error) {
+func (t Thread) Wait(threadID string) ([]byte, error) {
 	witThread := cm.Reinterpret[threads.Thread](t)
 
 	result := witThread.Wait()
@@ -41,8 +41,7 @@ func Spawn(path string, function string, args ...string) (Thread, error) {
 		return 0, fmt.Errorf("failed to spawn thread: %v", result.Err())
 	}
 
-	thread := cm.Reinterpret[Thread](result.OK())
-	return thread, nil
+	return Thread(*result.OK()), nil
 }
 
 // Status returns the status of the thread with the given ID.
