@@ -18,20 +18,25 @@ func New(options ...Option[*ModelOptions]) (Model, error) {
 			return cm.ResourceNone, err
 		}
 	}
+
+	// assumed a formatter is wac'd or host provides a format
+	format := model.NewFormat()
+
+	// retrieve the model name from the formatter
+	name := format.Model()
+
 	// host provides a graph stream
-	result := graphStream.LoadByName(opts.name)
+	result := graphStream.LoadByName(name)
 	if result.IsErr() {
 		return cm.ResourceNone, fmt.Errorf("failed to load graph")
 	}
+
 	graph := result.OK()
 	resultCtxStream := graph.InitExecutionContextStream()
 	if result.IsErr() {
 		return cm.ResourceNone, fmt.Errorf("failed to init execution graph context stream")
 	}
 	stream := *resultCtxStream.OK()
-
-	// assumed a formatter is wac'd or host provides a format
-	format := model.NewFormat()
 
 	// assumed a model is wac'd or host provides a model
 	return Model(model.NewModel(format, stream)), nil

@@ -8,6 +8,7 @@ import (
 )
 
 type Formatter interface {
+	Model() string
 	Encode(...types.Message) ([]byte, error)
 	Decode([]byte) (types.Message, error)
 }
@@ -58,4 +59,11 @@ func (f *formatResourceTable) decode(self cm.Rep, raw cm.List[uint8]) cm.Result[
 	result := cm.Reinterpret[model.Message](message)
 
 	return cm.OK[cm.Result[model.MessageShape, model.Message, model.Error]](result)
+}
+
+func (f *formatResourceTable) model(self cm.Rep) string {
+	if _, ok := f.resources[self]; !ok {
+		return ""
+	}
+	return f.resources[self].Model()
 }

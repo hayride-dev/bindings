@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:ai/model@0.0.49".
+// Exports represents the caller-defined exports from "hayride:ai/model@0.0.50".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:ai/model@0.0.49#error".
+	// Error represents the caller-defined exports for resource "hayride:ai/model@0.0.50#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
@@ -30,7 +30,7 @@ var Exports struct {
 		Data func(self cm.Rep) (result string)
 	}
 
-	// Format represents the caller-defined exports for resource "hayride:ai/model@0.0.49#format".
+	// Format represents the caller-defined exports for resource "hayride:ai/model@0.0.50#format".
 	Format struct {
 		// Destructor represents the caller-defined, exported destructor for resource "format".
 		//
@@ -51,9 +51,14 @@ var Exports struct {
 		//
 		//	encode: func(messages: list<message>) -> result<list<u8>, error>
 		Encode func(self cm.Rep, messages cm.List[Message]) (result cm.Result[cm.List[uint8], cm.List[uint8], Error])
+
+		// Model represents the caller-defined, exported method "model".
+		//
+		//	model: func() -> string
+		Model func(self cm.Rep) (result string)
 	}
 
-	// Model represents the caller-defined exports for resource "hayride:ai/model@0.0.49#model".
+	// Model represents the caller-defined exports for resource "hayride:ai/model@0.0.50#model".
 	Model struct {
 		// Destructor represents the caller-defined, exported destructor for resource "model".
 		//
@@ -66,6 +71,8 @@ var Exports struct {
 		ExportConstructor func(format Format, graph GraphExecutionContextStream) (result Model)
 
 		// Compute represents the caller-defined, exported method "compute".
+		//
+		// todo: add options to compute so we can set model specific options
 		//
 		//	compute: func(messages: list<message>) -> result<message, error>
 		Compute func(self cm.Rep, messages cm.List[Message]) (result cm.Result[MessageShape, Message, Error])
