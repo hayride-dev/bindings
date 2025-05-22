@@ -1,8 +1,6 @@
 package models
 
 type ModelOptions struct {
-	name       string
-	maxContext uint32
 }
 
 type OptionType interface {
@@ -27,23 +25,6 @@ func newFuncOption[T OptionType](f func(T) error) *funcOption[T] {
 	}
 }
 
-func WithName(name string) Option[*ModelOptions] {
-	return newFuncOption(func(m *ModelOptions) error {
-		m.name = name
-		return nil
-	})
-}
-
-func WithMaxContext(maxContext uint32) Option[*ModelOptions] {
-	return newFuncOption(func(m *ModelOptions) error {
-		m.maxContext = maxContext
-		return nil
-	})
-}
-
 func defaultModelOptions() *ModelOptions {
-	return &ModelOptions{
-		name:       "default.gguf",
-		maxContext: 1000,
-	}
+	return &ModelOptions{}
 }

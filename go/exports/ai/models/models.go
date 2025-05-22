@@ -18,6 +18,7 @@ var modelResourceTableInstance = modelResourceTable{resources: make(map[cm.Rep]*
 func init() {
 	// format exports
 	model.Exports.Format.Constructor = formatResourceTableInstance.constructor
+	model.Exports.Format.Model = formatResourceTableInstance.model
 	model.Exports.Format.Encode = formatResourceTableInstance.encode
 	model.Exports.Format.Decode = formatResourceTableInstance.decode
 	model.Exports.Format.Destructor = formatResourceTableInstance.destructor
