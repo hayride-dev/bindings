@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:ai/context@0.0.50".
+// Exports represents the caller-defined exports from "hayride:ai/context@0.0.52".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:ai/context@0.0.50#error".
+	// Error represents the caller-defined exports for resource "hayride:ai/context@0.0.52#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
@@ -30,7 +30,7 @@ var Exports struct {
 		Data func(self cm.Rep) (result string)
 	}
 
-	// Context represents the caller-defined exports for resource "hayride:ai/context@0.0.50#context".
+	// Context represents the caller-defined exports for resource "hayride:ai/context@0.0.52#context".
 	Context struct {
 		// Destructor represents the caller-defined, exported destructor for resource "context".
 		//
@@ -47,14 +47,9 @@ var Exports struct {
 		//	messages: func() -> result<list<message>, error>
 		Messages func(self cm.Rep) (result cm.Result[cm.List[Message], cm.List[Message], Error])
 
-		// Next represents the caller-defined, exported method "next".
-		//
-		//	next: func() -> result<message, error>
-		Next func(self cm.Rep) (result cm.Result[MessageShape, Message, Error])
-
 		// Push represents the caller-defined, exported method "push".
 		//
-		//	push: func(messages: list<message>) -> result<_, error>
-		Push func(self cm.Rep, messages cm.List[Message]) (result cm.Result[Error, struct{}, Error])
+		//	push: func(msg: message) -> result<_, error>
+		Push func(self cm.Rep, msg Message) (result cm.Result[Error, struct{}, Error])
 	}
 }

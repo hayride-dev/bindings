@@ -1,7 +1,6 @@
-package hayride:ai@0.0.50;
+package hayride:ai@0.0.52;
 
 interface model {
-    use inference-stream.{graph-execution-context-stream};
     use types.{message};
 
     enum error-code {
@@ -23,13 +22,5 @@ interface model {
         constructor();
         encode: func(messages: list<message>) -> result<list<u8>,error>;
         decode: func(raw: list<u8>) -> result<message, error>;
-        model: func() -> string;
-    }
-
-    resource model {
-        constructor(format: format, graph: graph-execution-context-stream);
-
-        // todo: add options to compute so we can set model specific options
-        compute: func(messages: list<message>) -> result<message,error>;    
     }
 }

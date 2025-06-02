@@ -6,30 +6,30 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.50".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.52".
 
-//go:wasmimport [export]hayride:ai/model@0.0.50 [resource-new]error
+//go:wasmimport [export]hayride:ai/model@0.0.52 [resource-new]error
 //go:noescape
 func wasmimport_ErrorResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:ai/model@0.0.50 [resource-rep]error
+//go:wasmimport [export]hayride:ai/model@0.0.52 [resource-rep]error
 //go:noescape
 func wasmimport_ErrorResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:ai/model@0.0.50 [resource-drop]error
+//go:wasmimport [export]hayride:ai/model@0.0.52 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:ai/model@0.0.50#[dtor]error
-//export hayride:ai/model@0.0.50#[dtor]error
+//go:wasmexport hayride:ai/model@0.0.52#[dtor]error
+//export hayride:ai/model@0.0.52#[dtor]error
 func wasmexport_ErrorDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Error.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:ai/model@0.0.50#[method]error.code
-//export hayride:ai/model@0.0.50#[method]error.code
+//go:wasmexport hayride:ai/model@0.0.52#[method]error.code
+//export hayride:ai/model@0.0.52#[method]error.code
 func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result := Exports.Error.Code(self)
@@ -37,8 +37,8 @@ func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	return
 }
 
-//go:wasmexport hayride:ai/model@0.0.50#[method]error.data
-//export hayride:ai/model@0.0.50#[method]error.data
+//go:wasmexport hayride:ai/model@0.0.52#[method]error.data
+//export hayride:ai/model@0.0.52#[method]error.data
 func wasmexport_ErrorData(self0 uint32) (result *string) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result_ := Exports.Error.Data(self)
@@ -46,36 +46,36 @@ func wasmexport_ErrorData(self0 uint32) (result *string) {
 	return
 }
 
-//go:wasmimport [export]hayride:ai/model@0.0.50 [resource-new]format
+//go:wasmimport [export]hayride:ai/model@0.0.52 [resource-new]format
 //go:noescape
 func wasmimport_FormatResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:ai/model@0.0.50 [resource-rep]format
+//go:wasmimport [export]hayride:ai/model@0.0.52 [resource-rep]format
 //go:noescape
 func wasmimport_FormatResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:ai/model@0.0.50 [resource-drop]format
+//go:wasmimport [export]hayride:ai/model@0.0.52 [resource-drop]format
 //go:noescape
 func wasmimport_FormatResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:ai/model@0.0.50#[dtor]format
-//export hayride:ai/model@0.0.50#[dtor]format
+//go:wasmexport hayride:ai/model@0.0.52#[dtor]format
+//export hayride:ai/model@0.0.52#[dtor]format
 func wasmexport_FormatDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Format.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:ai/model@0.0.50#[constructor]format
-//export hayride:ai/model@0.0.50#[constructor]format
+//go:wasmexport hayride:ai/model@0.0.52#[constructor]format
+//export hayride:ai/model@0.0.52#[constructor]format
 func wasmexport_Constructor() (result0 uint32) {
 	result := Exports.Format.Constructor()
 	result0 = cm.Reinterpret[uint32](result)
 	return
 }
 
-//go:wasmexport hayride:ai/model@0.0.50#[method]format.decode
-//export hayride:ai/model@0.0.50#[method]format.decode
+//go:wasmexport hayride:ai/model@0.0.52#[method]format.decode
+//export hayride:ai/model@0.0.52#[method]format.decode
 func wasmexport_FormatDecode(self0 uint32, raw0 *uint8, raw1 uint32) (result *cm.Result[MessageShape, Message, Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	raw := cm.LiftList[cm.List[uint8]]((*uint8)(raw0), (uint32)(raw1))
@@ -84,61 +84,12 @@ func wasmexport_FormatDecode(self0 uint32, raw0 *uint8, raw1 uint32) (result *cm
 	return
 }
 
-//go:wasmexport hayride:ai/model@0.0.50#[method]format.encode
-//export hayride:ai/model@0.0.50#[method]format.encode
+//go:wasmexport hayride:ai/model@0.0.52#[method]format.encode
+//export hayride:ai/model@0.0.52#[method]format.encode
 func wasmexport_FormatEncode(self0 uint32, messages0 *Message, messages1 uint32) (result *cm.Result[cm.List[uint8], cm.List[uint8], Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	messages := cm.LiftList[cm.List[Message]]((*Message)(messages0), (uint32)(messages1))
 	result_ := Exports.Format.Encode(self, messages)
-	result = &result_
-	return
-}
-
-//go:wasmexport hayride:ai/model@0.0.50#[method]format.model
-//export hayride:ai/model@0.0.50#[method]format.model
-func wasmexport_FormatModel(self0 uint32) (result *string) {
-	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
-	result_ := Exports.Format.Model(self)
-	result = &result_
-	return
-}
-
-//go:wasmimport [export]hayride:ai/model@0.0.50 [resource-new]model
-//go:noescape
-func wasmimport_ModelResourceNew(rep0 uint32) (result0 uint32)
-
-//go:wasmimport [export]hayride:ai/model@0.0.50 [resource-rep]model
-//go:noescape
-func wasmimport_ModelResourceRep(self0 uint32) (result0 uint32)
-
-//go:wasmimport [export]hayride:ai/model@0.0.50 [resource-drop]model
-//go:noescape
-func wasmimport_ModelResourceDrop(self0 uint32)
-
-//go:wasmexport hayride:ai/model@0.0.50#[dtor]model
-//export hayride:ai/model@0.0.50#[dtor]model
-func wasmexport_ModelDestructor(self0 uint32) {
-	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
-	Exports.Model.Destructor(self)
-	return
-}
-
-//go:wasmexport hayride:ai/model@0.0.50#[constructor]model
-//export hayride:ai/model@0.0.50#[constructor]model
-func wasmexport_Constructor_(format0 uint32, graph0 uint32) (result0 uint32) {
-	format := cm.Reinterpret[Format]((uint32)(format0))
-	graph := cm.Reinterpret[GraphExecutionContextStream]((uint32)(graph0))
-	result := Exports.Model.ExportConstructor(format, graph)
-	result0 = cm.Reinterpret[uint32](result)
-	return
-}
-
-//go:wasmexport hayride:ai/model@0.0.50#[method]model.compute
-//export hayride:ai/model@0.0.50#[method]model.compute
-func wasmexport_ModelCompute(self0 uint32, messages0 *Message, messages1 uint32) (result *cm.Result[MessageShape, Message, Error]) {
-	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
-	messages := cm.LiftList[cm.List[Message]]((*Message)(messages0), (uint32)(messages1))
-	result_ := Exports.Model.Compute(self, messages)
 	result = &result_
 	return
 }

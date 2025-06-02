@@ -14,21 +14,21 @@ import (
 
 type Context cm.Resource
 
+// Create the resource
+func New() Context {
+	return Context(context.NewContext())
+}
+
 // Push take a list of messages, convert them to a list of wit Messages
 // and call imported context push
 func (c Context) Push(messages ...types.Message) error {
 	witContext := cm.Reinterpret[context.Context](c)
-
-	// Convert types.Message to context.Message
-	witMessages := make([]context.Message, len(messages))
-	for i, msg := range messages {
-		witMessages[i] = cm.Reinterpret[context.Message](msg)
-	}
-
-	result := witContext.Push(cm.ToList(witMessages))
-	if result.IsErr() {
-		// TODO: handle error result
-		return fmt.Errorf("failed to push message")
+	// Convert types.Message to context.Message and push
+	for _, msg := range messages {
+		result := witContext.Push(cm.Reinterpret[context.Message](msg))
+		if result.IsErr() {
+			return fmt.Errorf("failed to push message: %s", result.Err().Data())
+		}
 	}
 	return nil
 }
@@ -38,34 +38,8 @@ func (c Context) Messages() ([]types.Message, error) {
 	witContext := cm.Reinterpret[context.Context](c)
 	result := witContext.Messages()
 	if result.IsErr() {
-		// TODO: handle error result
-		return nil, fmt.Errorf("failed to get messages")
+		return nil, fmt.Errorf("failed to get messages: %s", result.Err().Data())
 	}
-	witMessages := result.OK()
-
-	// Convert context.Message to types.Message
-	witMessagesSlice := witMessages.Slice()
-	msgs := make([]types.Message, len(witMessagesSlice))
-	for i, msg := range witMessagesSlice {
-		msgs[i] = cm.Reinterpret[types.Message](msg)
-	}
-
-	return msgs, nil
-}
-
-func (c Context) Next() (*types.Message, error) {
-	witContext := cm.Reinterpret[context.Context](c)
-	result := witContext.Next()
-	if result.IsErr() {
-		// TODO : handle error result
-		return nil, fmt.Errorf("failed to get next message")
-	}
-
-	msg := cm.Reinterpret[*types.Message](result.OK())
-	return msg, nil
-}
-
-// Create the resource
-func NewContext() Context {
-	return Context(context.NewContext())
+	msgs := cm.Reinterpret[cm.List[types.Message]](result.OK())
+	return msgs.Slice(), nil
 }

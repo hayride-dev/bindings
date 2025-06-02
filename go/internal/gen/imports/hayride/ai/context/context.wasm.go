@@ -3,39 +3,36 @@
 package context
 
 import (
+	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.50".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.52".
 
-//go:wasmimport hayride:ai/context@0.0.50 [resource-drop]error
+//go:wasmimport hayride:ai/context@0.0.52 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/context@0.0.50 [method]error.code
+//go:wasmimport hayride:ai/context@0.0.52 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/context@0.0.50 [method]error.data
+//go:wasmimport hayride:ai/context@0.0.52 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/context@0.0.50 [resource-drop]context
+//go:wasmimport hayride:ai/context@0.0.52 [resource-drop]context
 //go:noescape
 func wasmimport_ContextResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/context@0.0.50 [constructor]context
+//go:wasmimport hayride:ai/context@0.0.52 [constructor]context
 //go:noescape
 func wasmimport_NewContext() (result0 uint32)
 
-//go:wasmimport hayride:ai/context@0.0.50 [method]context.messages
+//go:wasmimport hayride:ai/context@0.0.52 [method]context.messages
 //go:noescape
 func wasmimport_ContextMessages(self0 uint32, result *cm.Result[cm.List[Message], cm.List[Message], Error])
 
-//go:wasmimport hayride:ai/context@0.0.50 [method]context.next
+//go:wasmimport hayride:ai/context@0.0.52 [method]context.push
 //go:noescape
-func wasmimport_ContextNext(self0 uint32, result *cm.Result[MessageShape, Message, Error])
-
-//go:wasmimport hayride:ai/context@0.0.50 [method]context.push
-//go:noescape
-func wasmimport_ContextPush(self0 uint32, messages0 *Message, messages1 uint32, result *cm.Result[Error, struct{}, Error])
+func wasmimport_ContextPush(self0 uint32, msg0 uint32, msg1 *types.Content, msg2 uint32, result *cm.Result[Error, struct{}, Error])
