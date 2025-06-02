@@ -5,8 +5,12 @@ import (
 	"io"
 
 	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/imports/ai/ctx"
+	"github.com/hayride-dev/bindings/go/imports/ai/models"
+	"github.com/hayride-dev/bindings/go/imports/ai/tools"
 	wasiio "github.com/hayride-dev/bindings/go/imports/wasi/io"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agents"
+	graphstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
 
 	"go.bytecodealliance.org/cm"
 )
@@ -20,7 +24,39 @@ func New(options ...Option[*AgentOptions]) (Agent, error) {
 			return cm.ResourceNone, err
 		}
 	}
-	return cm.ResourceNone, nil
+
+	tools, err := tools.New(opts.tools...)
+	if err != nil {
+		return cm.ResourceNone, fmt.Errorf("failed to create tools: %w", err)
+	}
+
+	ctx := ctx.New()
+
+	format, err := models.New()
+	if err != nil {
+		return cm.ResourceNone, fmt.Errorf("failed to create format: %w", err)
+	}
+
+	// host provides a graph stream
+	result := graphstream.LoadByName(opts.model)
+	if result.IsErr() {
+		return cm.ResourceNone, fmt.Errorf("failed to load graph")
+	}
+	graph := result.OK()
+	resultCtxStream := graph.InitExecutionContextStream()
+	if result.IsErr() {
+		return cm.ResourceNone, fmt.Errorf("failed to init execution graph context stream")
+	}
+	stream := *resultCtxStream.OK()
+
+	wa := agents.NewAgent(opts.name, opts.instruction,
+		cm.Reinterpret[agents.Tools](tools),
+		cm.Reinterpret[agents.Context](ctx),
+		cm.Reinterpret[agents.Format](format),
+		cm.Reinterpret[agents.GraphExecutionContextStream](stream),
+	)
+
+	return Agent(wa), nil
 }
 
 func (a Agent) Invoke(message types.Message) (*types.Message, error) {
