@@ -7,32 +7,32 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.52".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.53".
 
-//go:wasmimport hayride:ai/agents@0.0.52 [resource-drop]error
+//go:wasmimport hayride:ai/agents@0.0.53 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/agents@0.0.52 [method]error.code
+//go:wasmimport hayride:ai/agents@0.0.53 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/agents@0.0.52 [method]error.data
+//go:wasmimport hayride:ai/agents@0.0.53 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/agents@0.0.52 [resource-drop]agent
+//go:wasmimport hayride:ai/agents@0.0.53 [resource-drop]agent
 //go:noescape
 func wasmimport_AgentResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/agents@0.0.52 [constructor]agent
+//go:wasmimport hayride:ai/agents@0.0.53 [constructor]agent
 //go:noescape
 func wasmimport_NewAgent(name0 *uint8, name1 uint32, instruction0 *uint8, instruction1 uint32, tools0 uint32, context0 uint32, format0 uint32, graph0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/agents@0.0.52 [method]agent.invoke
+//go:wasmimport hayride:ai/agents@0.0.53 [method]agent.invoke
 //go:noescape
 func wasmimport_AgentInvoke(self0 uint32, input0 uint32, input1 *types.Content, input2 uint32, result *cm.Result[MessageShape, Message, Error])
 
-//go:wasmimport hayride:ai/agents@0.0.52 [method]agent.invoke-stream
+//go:wasmimport hayride:ai/agents@0.0.53 [method]agent.invoke-stream
 //go:noescape
 func wasmimport_AgentInvokeStream(self0 uint32, messages0 uint32, messages1 *types.Content, messages2 uint32, writer0 uint32, result *cm.Result[Error, struct{}, Error])
