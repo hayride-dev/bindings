@@ -3,18 +3,23 @@ package models
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/model"
+	"github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/types"
 	"go.bytecodealliance.org/cm"
 )
 
-type Format cm.Resource
-
-func New() (Format, error) {
-	return Format(model.NewFormat()), nil
+type Format interface {
+	Encode(...types.Message) (string, error)
+	Decode([]byte) (*types.Message, error)
 }
 
-func (f Format) Encode(messages ...types.Message) (string, error) {
+type format model.Format
+
+func New() (Format, error) {
+	return format(model.NewFormat()), nil
+}
+
+func (f format) Encode(messages ...types.Message) (string, error) {
 	witFormat := cm.Reinterpret[model.Format](f)
 
 	witList := cm.ToList(messages)
@@ -26,7 +31,7 @@ func (f Format) Encode(messages ...types.Message) (string, error) {
 	return cm.Reinterpret[string](result.OK()), nil
 }
 
-func (f Format) Decode(b []byte) (*types.Message, error) {
+func (f format) Decode(b []byte) (*types.Message, error) {
 	witFormat := cm.Reinterpret[model.Format](f)
 
 	data := cm.ToList(b)

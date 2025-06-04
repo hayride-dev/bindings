@@ -8,20 +8,28 @@ import (
 	"fmt"
 
 	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/context"
+	"github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/context"
 	"go.bytecodealliance.org/cm"
 )
 
-type Context cm.Resource
+type Context interface {
+	// Push takes a list of messages, converts them to a list of wit Messages
+	// and calls imported context push
+	Push(messages ...types.Message) error
+	// Messages returns the list of messages in the context
+	Messages() ([]types.Message, error)
+}
+
+type ctx cm.Resource
 
 // Create the resource
 func New() Context {
-	return Context(context.NewContext())
+	return ctx(context.NewContext())
 }
 
 // Push take a list of messages, convert them to a list of wit Messages
 // and call imported context push
-func (c Context) Push(messages ...types.Message) error {
+func (c ctx) Push(messages ...types.Message) error {
 	witContext := cm.Reinterpret[context.Context](c)
 	// Convert types.Message to context.Message and push
 	for _, msg := range messages {
@@ -34,7 +42,7 @@ func (c Context) Push(messages ...types.Message) error {
 }
 
 // Messages returns the list of messages in the context
-func (c Context) Messages() ([]types.Message, error) {
+func (c ctx) Messages() ([]types.Message, error) {
 	witContext := cm.Reinterpret[context.Context](c)
 	result := witContext.Messages()
 	if result.IsErr() {
