@@ -3,13 +3,7 @@
 default: gen
 
 gen-imports:
-	wit-bindgen-go generate --world hayride:bindings/imports --out ./go/internal/gen/imports ./wit
+	wit-bindgen-go generate --world hayride:bindings/sdk --out ./go/internal/gen ./wit
 
-gen-exports:
-	wit-bindgen-go generate --world hayride:bindings/exports --out ./go/internal/gen/exports ./wit
-
-gen-types:
-	wit-bindgen-go generate --world hayride:bindings/types --out ./go/gen/types ./wit
-
-gen: gen-imports gen-exports gen-types
+gen: gen-imports
 

@@ -5,53 +5,85 @@ import (
 	"io"
 
 	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
-	wasiio "github.com/hayride-dev/bindings/go/imports/wasi/io"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agent"
+	"github.com/hayride-dev/bindings/go/hayride/ai/tools"
+	"github.com/hayride-dev/bindings/go/imports/ai/ctx"
+	"github.com/hayride-dev/bindings/go/imports/ai/models"
+	"github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/agents"
+	graphstream "github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/graph-stream"
+	"github.com/hayride-dev/bindings/go/wasi/streams"
 
 	"go.bytecodealliance.org/cm"
 )
 
-type Agent cm.Resource
-
-func NewAgent() Agent {
-	return Agent(agent.NewAgent())
+type Agent interface {
+	Invoke(message types.Message) (*types.Message, error)
+	InvokeStream(message types.Message, writer io.Writer) error
 }
 
-func (a Agent) Invoke(messages []types.Message) ([]types.Message, error) {
-	wa := cm.Reinterpret[agent.Agent](a)
+type agent cm.Resource
 
-	msgs := make([]agent.Message, len(messages))
-	for i, msg := range messages {
-		msgs[i] = cm.Reinterpret[agent.Message](msg)
+func New(options ...Option[*AgentOptions]) (Agent, error) {
+	opts := defaultAgentOptions()
+	for _, opt := range options {
+		if err := opt.Apply(opts); err != nil {
+			return nil, err
+		}
 	}
 
-	result := wa.Invoke(cm.ToList(msgs))
+	tools, err := tools.New(opts.tools...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create tools: %w", err)
+	}
+
+	ctx := ctx.New()
+
+	format, err := models.New()
+	if err != nil {
+		return nil, fmt.Errorf("failed to create format: %w", err)
+	}
+
+	// host provides a graph stream
+	result := graphstream.LoadByName(opts.model)
+	if result.IsErr() {
+		return nil, fmt.Errorf("failed to load graph")
+	}
+	graph := result.OK()
+	resultCtxStream := graph.InitExecutionContextStream()
+	if result.IsErr() {
+		return nil, fmt.Errorf("failed to init execution graph context stream")
+	}
+	stream := *resultCtxStream.OK()
+
+	wa := agents.NewAgent(opts.name, opts.instruction,
+		cm.Reinterpret[agents.Tools](tools),
+		cm.Reinterpret[agents.Context](ctx),
+		cm.Reinterpret[agents.Format](format),
+		cm.Reinterpret[agents.GraphExecutionContextStream](stream),
+	)
+
+	return agent(wa), nil
+}
+
+func (a agent) Invoke(message types.Message) (*types.Message, error) {
+	wa := cm.Reinterpret[agents.Agent](a)
+
+	result := wa.Invoke(cm.Reinterpret[agents.Message](message))
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to invoke agent")
 	}
 
-	witMessages := make([]types.Message, len(result.OK().Slice()))
-	for i, msg := range result.OK().Slice() {
-		witMessages[i] = cm.Reinterpret[types.Message](msg)
-	}
-
-	return witMessages, nil
+	return cm.Reinterpret[*types.Message](result.OK()), nil
 }
 
-func (a Agent) InvokeStream(messages []types.Message, writer io.Writer) error {
-	wa := cm.Reinterpret[agent.Agent](a)
+func (a agent) InvokeStream(message types.Message, writer io.Writer) error {
+	wa := cm.Reinterpret[agents.Agent](a)
 
-	msgs := make([]agent.Message, len(messages))
-	for i, msg := range messages {
-		msgs[i] = cm.Reinterpret[agent.Message](msg)
-	}
-
-	w, ok := writer.(wasiio.Writer)
+	_, ok := writer.(streams.Writer)
 	if !ok {
-		return fmt.Errorf("writer does not implement wasiio.Writer resource")
+		return fmt.Errorf("writer does not implement wasi io outputstream resource")
 	}
 
-	result := wa.InvokeStream(cm.ToList(msgs), cm.Reinterpret[agent.OutputStream](w))
+	result := wa.InvokeStream(cm.Reinterpret[agents.Message](message), cm.Reinterpret[agents.OutputStream](writer))
 	if result.IsErr() {
 		return fmt.Errorf("failed to invoke agent")
 	}
