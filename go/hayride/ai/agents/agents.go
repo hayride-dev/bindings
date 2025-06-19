@@ -10,6 +10,7 @@ import (
 	"github.com/hayride-dev/bindings/go/hayride/ai/tools"
 	"github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/agents"
 	graphstream "github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/graph-stream"
+	modelrepository "github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/model-repository"
 	"github.com/hayride-dev/bindings/go/wasi/streams"
 
 	"go.bytecodealliance.org/cm"
@@ -42,8 +43,14 @@ func New(options ...Option[*AgentOptions]) (Agent, error) {
 		return nil, fmt.Errorf("failed to create format: %w", err)
 	}
 
+	// Use model repository to download the model by name and get the path to provide to loadByName
+	modelResult := modelrepository.Download(opts.model)
+	if modelResult.IsErr() {
+		return nil, fmt.Errorf("failed to download model")
+	}
+
 	// host provides a graph stream
-	result := graphstream.LoadByName(opts.model)
+	result := graphstream.LoadByName(*modelResult.OK())
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to load graph")
 	}

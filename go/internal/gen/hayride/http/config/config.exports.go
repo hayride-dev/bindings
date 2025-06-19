@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:http/config@0.0.53".
+// Exports represents the caller-defined exports from "hayride:http/config@0.0.54".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:http/config@0.0.53#error".
+	// Error represents the caller-defined exports for resource "hayride:http/config@0.0.54#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
