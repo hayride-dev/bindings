@@ -145,13 +145,28 @@ func (r *outgoingBody) Close() error {
 }
 
 func (r *outgoingBody) Write(p []byte) (n int, err error) {
-	contents := cm.ToList(p)
-	writeResult := r.stream.BlockingWriteAndFlush(contents)
-	if err := writeResult.Err(); err != nil {
-		if err.Closed() {
-			return 0, io.EOF
+	// Send in chunks of max 4096 bytes
+	written := uint(0)
+	total := uint(len(p))
+
+	for written < total {
+		chunkSize := uint(4096)
+		if chunkSize > (total - written) {
+			chunkSize = total - written
 		}
-		return 0, fmt.Errorf("failed to write to response body's stream: %s", err.LastOperationFailed().ToDebugString())
+
+		chunk := p[written : written+chunkSize]
+		_, err, isErr := r.stream.BlockingWriteAndFlush(cm.ToList(chunk)).Result()
+		if isErr {
+			// NOTE: Continue even if the stream is closed
+			// Refer to https://github.com/WebAssembly/wasi-io/issues/109 for more details.
+			if !err.Closed() {
+				return 0, fmt.Errorf("failed to write to response body's stream: %s", err.LastOperationFailed().ToDebugString())
+			}
+		}
+
+		written += chunkSize
 	}
+
 	return len(p), nil
 }
