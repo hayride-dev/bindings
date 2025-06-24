@@ -17,9 +17,9 @@ func Get(key string) (string, error) {
 	if result.IsErr() {
 		switch result.Err().String() {
 		case "upstream":
-			return *result.Err().Upstream(), nil
+			return "", fmt.Errorf("upstream error: %s", *result.Err().Upstream())
 		case "io":
-			return *result.Err().IO(), nil
+			return "", fmt.Errorf("I/O error: %s", *result.Err().IO())
 		default:
 			return "", fmt.Errorf("failed to get key %s: %s", key, result.Err().String())
 		}
