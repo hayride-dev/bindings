@@ -70,9 +70,23 @@ func (r *transport) RoundTrip(incomingRequest *http.Request) (*http.Response, er
 		}
 	}
 
+	handleResp := outgoinghandler.Handle(outRequest, cm.Some(r.requestOptions()))
+	if handleResp.Err() != nil {
+		return nil, fmt.Errorf("%v", handleResp.Err())
+	}
+
+	futureResponse := handleResp.OK()
+
+	// Push the request body to stream after sending the request to prevent blocking.
 	if body != nil {
-		if _, err := io.Copy(adaptedBody, incomingRequest.Body); err != nil {
-			return nil, fmt.Errorf("failed to copy body: %v", err)
+		data, err := io.ReadAll(incomingRequest.Body)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read request body: %v", err)
+		}
+
+		_, err = adaptedBody.Write(data)
+		if err != nil {
+			return nil, fmt.Errorf("failed to write request body: %v", err)
 		}
 
 		if err := adaptedBody.Close(); err != nil {
@@ -91,13 +105,6 @@ func (r *transport) RoundTrip(incomingRequest *http.Request) (*http.Response, er
 			return nil, fmt.Errorf("failed to finish body: %v", outFinish.Err())
 		}
 	}
-
-	handleResp := outgoinghandler.Handle(outRequest, cm.Some(r.requestOptions()))
-	if handleResp.Err() != nil {
-		return nil, fmt.Errorf("%v", handleResp.Err())
-	}
-
-	futureResponse := handleResp.OK()
 
 	// wait until resp is returned
 	futureResponse.Subscribe().Block()
