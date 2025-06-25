@@ -9,17 +9,15 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-var _ ToolBox = toolbox(0)
+type Toolbox cm.Resource
 
-type toolbox cm.Resource
-
-func New(tools ...types.ToolSchema) (ToolBox, error) {
+func New(tools ...types.ToolSchema) (Toolbox, error) {
 	witList := cm.ToList(tools)
 	result := witTools.NewTools(cm.Reinterpret[cm.List[witTools.ToolSchema]](witList))
-	return toolbox(result), nil
+	return Toolbox(result), nil
 }
 
-func (t toolbox) Call(input types.ToolInput) (*types.ToolOutput, error) {
+func (t Toolbox) Call(input types.ToolInput) (*types.ToolOutput, error) {
 	witToolsToolbox := cm.Reinterpret[witTools.Tools](t)
 
 	result := witToolsToolbox.Call(cm.Reinterpret[witTools.ToolInput](input))
@@ -30,7 +28,7 @@ func (t toolbox) Call(input types.ToolInput) (*types.ToolOutput, error) {
 	return cm.Reinterpret[*types.ToolOutput](result.OK()), nil
 }
 
-func (t toolbox) Capabilities() ([]types.ToolSchema, error) {
+func (t Toolbox) Capabilities() ([]types.ToolSchema, error) {
 	witToolsToolbox := cm.Reinterpret[witTools.Tools](t)
 
 	result := witToolsToolbox.Capabilities()
