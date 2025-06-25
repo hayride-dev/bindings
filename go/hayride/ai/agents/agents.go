@@ -55,10 +55,10 @@ func New(options ...Option[*AgentOptions]) (Agent, error) {
 	stream := *resultCtxStream.OK()
 
 	wa := agents.NewAgent(opts.name, opts.instruction,
-		cm.Reinterpret[agents.Tools](tools),
-		cm.Reinterpret[agents.Context](ctx),
-		cm.Reinterpret[agents.Format](format),
-		cm.Reinterpret[agents.GraphExecutionContextStream](stream),
+		agents.Tools(tools),
+		agents.Context(ctx),
+		agents.Format(format),
+		stream,
 	)
 
 	return agent(wa), nil
@@ -78,12 +78,15 @@ func (a agent) Invoke(message types.Message) (*types.Message, error) {
 func (a agent) InvokeStream(message types.Message, writer io.Writer) error {
 	wa := cm.Reinterpret[agents.Agent](a)
 
-	_, ok := writer.(streams.Writer)
+	w, ok := writer.(streams.Writer)
 	if !ok {
 		return fmt.Errorf("writer does not implement wasi io outputstream resource")
 	}
 
-	result := wa.InvokeStream(cm.Reinterpret[agents.Message](message), cm.Reinterpret[agents.OutputStream](writer))
+	agentMessage := cm.Reinterpret[agents.Message](message)
+	agentOutputStream := cm.Reinterpret[agents.OutputStream](w)
+
+	result := wa.InvokeStream(agentMessage, agentOutputStream)
 	if result.IsErr() {
 		return fmt.Errorf("failed to invoke agent")
 	}

@@ -13,7 +13,7 @@ var _ ToolBox = toolbox(0)
 
 type toolbox cm.Resource
 
-func New(tools ...types.ToolSchema) (ToolBox, error) {
+func New(tools ...types.ToolSchema) (toolbox, error) {
 	witList := cm.ToList(tools)
 	result := witTools.NewTools(cm.Reinterpret[cm.List[witTools.ToolSchema]](witList))
 	return toolbox(result), nil

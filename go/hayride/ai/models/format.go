@@ -15,7 +15,7 @@ type Format interface {
 
 type format model.Format
 
-func New() (Format, error) {
+func New() (format, error) {
 	return format(model.NewFormat()), nil
 }
 

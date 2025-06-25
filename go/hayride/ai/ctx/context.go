@@ -23,7 +23,7 @@ type Context interface {
 type ctx cm.Resource
 
 // Create the resource
-func New() Context {
+func New() ctx {
 	return ctx(context.NewContext())
 }
 
