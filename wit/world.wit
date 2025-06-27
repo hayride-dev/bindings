@@ -2,25 +2,25 @@ package hayride:bindings@0.0.1;
 
 world sdk {
     // http
-    export hayride:http/config@0.0.55;
+    export hayride:http/config@0.0.56;
     // ai 
-    import hayride:ai/types@0.0.55;
-    import hayride:ai/tensor-stream@0.0.55;
-    import hayride:ai/inference-stream@0.0.55;
-    import hayride:ai/graph-stream@0.0.55;
-    import hayride:ai/agents@0.0.55;
-    import hayride:ai/model@0.0.55;
-    import hayride:ai/model-repository@0.0.55;
-    import hayride:ai/context@0.0.55;
-    import hayride:ai/tools@0.0.55;
-    import hayride:ai/rag@0.0.55;
+    import hayride:ai/types@0.0.56;
+    import hayride:ai/tensor-stream@0.0.56;
+    import hayride:ai/inference-stream@0.0.56;
+    import hayride:ai/graph-stream@0.0.56;
+    import hayride:ai/agents@0.0.56;
+    import hayride:ai/model@0.0.56;
+    import hayride:ai/model-repository@0.0.56;
+    import hayride:ai/context@0.0.56;
+    import hayride:ai/tools@0.0.56;
+    import hayride:ai/rag@0.0.56;
     
     //silo 
-    import hayride:silo/threads@0.0.55;
-    import hayride:silo/process@0.0.55;
+    import hayride:silo/threads@0.0.56;
+    import hayride:silo/process@0.0.56;
 
     // ws
-    export hayride:socket/websocket@0.0.55;
+    export hayride:socket/websocket@0.0.56;
 
     // wasi
     import wasi:io/streams@0.2.0;

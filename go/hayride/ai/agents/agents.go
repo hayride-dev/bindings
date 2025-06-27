@@ -6,6 +6,7 @@ import (
 
 	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
+	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/ai/tools"
 	"github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/agents"
@@ -16,13 +17,13 @@ import (
 )
 
 type Agent interface {
-	Invoke(message types.Message) (*types.Message, error)
+	Invoke(message types.Message) ([]types.Message, error)
 	InvokeStream(message types.Message, writer io.Writer) error
 }
 
 type agent cm.Resource
 
-func New(options ...Option[*AgentOptions]) (Agent, error) {
+func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream graph.GraphExecutionContextStream, options ...Option[*AgentOptions]) (Agent, error) {
 	opts := defaultAgentOptions()
 	for _, opt := range options {
 		if err := opt.Apply(opts); err != nil {
@@ -30,41 +31,37 @@ func New(options ...Option[*AgentOptions]) (Agent, error) {
 		}
 	}
 
-	tools, err := tools.New(opts.tools...)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create tools: %w", err)
+	tb, ok := toolbox.(tools.Toolbox)
+	if !ok {
+		return nil, fmt.Errorf("toolbox does not implement tools.Toolbox")
 	}
 
-	ctx := ctx.New()
-
-	format, err := models.New()
-	if err != nil {
-		return nil, fmt.Errorf("failed to create format: %w", err)
+	c, ok := context.(ctx.Ctx)
+	if !ok {
+		return nil, fmt.Errorf("context does not implement ctx.Context")
 	}
 
-	// host provides a graph stream
-	result := graphstream.LoadByName(opts.model)
-	if result.IsErr() {
-		return nil, fmt.Errorf("failed to load graph")
+	f, ok := format.(models.Fmt)
+	if !ok {
+		return nil, fmt.Errorf("format does not implement models.Format")
 	}
-	graph := result.OK()
-	resultCtxStream := graph.InitExecutionContextStream()
-	if result.IsErr() {
-		return nil, fmt.Errorf("failed to init execution graph context stream")
+
+	graphExecCtxStream, ok := stream.(graph.GraphExecCtxStream)
+	if !ok {
+		return nil, fmt.Errorf("stream does not implement graph.GraphExecCtxStream")
 	}
-	stream := *resultCtxStream.OK()
 
 	wa := agents.NewAgent(opts.name, opts.instruction,
-		agents.Tools(tools),
-		agents.Context(ctx),
-		agents.Format(format),
-		stream,
+		agents.Tools(tb),
+		agents.Context(c),
+		agents.Format(f),
+		graphstream.GraphExecutionContextStream(graphExecCtxStream),
 	)
 
 	return agent(wa), nil
 }
 
-func (a agent) Invoke(message types.Message) (*types.Message, error) {
+func (a agent) Invoke(message types.Message) ([]types.Message, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
 
 	result := wa.Invoke(cm.Reinterpret[agents.Message](message))
@@ -72,7 +69,8 @@ func (a agent) Invoke(message types.Message) (*types.Message, error) {
 		return nil, fmt.Errorf("failed to invoke agent")
 	}
 
-	return cm.Reinterpret[*types.Message](result.OK()), nil
+	msgs := result.OK().Slice()
+	return cm.Reinterpret[[]types.Message](msgs), nil
 }
 
 func (a agent) InvokeStream(message types.Message, writer io.Writer) error {

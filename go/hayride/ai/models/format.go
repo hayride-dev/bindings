@@ -8,13 +8,18 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-type Format model.Format
-
-func New() (Format, error) {
-	return Format(model.NewFormat()), nil
+type Format interface {
+	Encode(messages ...types.Message) (string, error)
+	Decode(b []byte) (*types.Message, error)
 }
 
-func (f Format) Encode(messages ...types.Message) (string, error) {
+type Fmt model.Format
+
+func New() (Format, error) {
+	return Fmt(model.NewFormat()), nil
+}
+
+func (f Fmt) Encode(messages ...types.Message) (string, error) {
 	witFormat := cm.Reinterpret[model.Format](f)
 
 	witList := cm.ToList(messages)
@@ -26,7 +31,7 @@ func (f Format) Encode(messages ...types.Message) (string, error) {
 	return cm.Reinterpret[string](result.OK()), nil
 }
 
-func (f Format) Decode(b []byte) (*types.Message, error) {
+func (f Fmt) Decode(b []byte) (*types.Message, error) {
 	witFormat := cm.Reinterpret[model.Format](f)
 
 	data := cm.ToList(b)
