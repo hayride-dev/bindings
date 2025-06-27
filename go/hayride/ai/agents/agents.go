@@ -17,7 +17,7 @@ import (
 )
 
 type Agent interface {
-	Invoke(message types.Message) (*types.Message, error)
+	Invoke(message types.Message) ([]types.Message, error)
 	InvokeStream(message types.Message, writer io.Writer) error
 }
 
@@ -61,7 +61,7 @@ func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream 
 	return agent(wa), nil
 }
 
-func (a agent) Invoke(message types.Message) (*types.Message, error) {
+func (a agent) Invoke(message types.Message) ([]types.Message, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
 
 	result := wa.Invoke(cm.Reinterpret[agents.Message](message))
@@ -69,7 +69,8 @@ func (a agent) Invoke(message types.Message) (*types.Message, error) {
 		return nil, fmt.Errorf("failed to invoke agent")
 	}
 
-	return cm.Reinterpret[*types.Message](result.OK()), nil
+	msgs := result.OK().Slice()
+	return cm.Reinterpret[[]types.Message](msgs), nil
 }
 
 func (a agent) InvokeStream(message types.Message, writer io.Writer) error {
