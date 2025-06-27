@@ -31,9 +31,7 @@ func (g GraphStream) InitExecutionContextStream() (GraphExecutionContextStream, 
 		return nil, fmt.Errorf("failed to init execution context stream: %s", result.Err().Data())
 	}
 
-	v := cm.Reinterpret[GraphExecCtxStream](result.OK())
-
-	return v, nil
+	return GraphExecCtxStream(*result.OK()), nil
 }
 
 type GraphExecutionContextStream interface {
