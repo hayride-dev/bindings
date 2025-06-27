@@ -9,6 +9,11 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+type Tools interface {
+	Call(input types.ToolInput) (*types.ToolOutput, error)
+	Capabilities() ([]types.ToolSchema, error)
+}
+
 type Toolbox cm.Resource
 
 func New(tools ...types.ToolSchema) (Toolbox, error) {

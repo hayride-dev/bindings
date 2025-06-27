@@ -6,6 +6,7 @@ import (
 
 	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
+	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/ai/tools"
 	"github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/agents"
@@ -22,7 +23,7 @@ type Agent interface {
 
 type agent cm.Resource
 
-func New(options ...Option[*AgentOptions]) (Agent, error) {
+func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream graph.GraphExecutionContextStream, options ...Option[*AgentOptions]) (Agent, error) {
 	opts := defaultAgentOptions()
 	for _, opt := range options {
 		if err := opt.Apply(opts); err != nil {
@@ -30,38 +31,31 @@ func New(options ...Option[*AgentOptions]) (Agent, error) {
 		}
 	}
 
-	tools, err := tools.New(opts.tools...)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create tools: %w", err)
+	tb, ok := toolbox.(tools.Toolbox)
+	if !ok {
+		return nil, fmt.Errorf("toolbox does not implement tools.Toolbox")
 	}
 
-	context := opts.ctx
-	if context == 0 {
-		context = ctx.New()
+	c, ok := context.(ctx.Ctx)
+	if !ok {
+		return nil, fmt.Errorf("context does not implement ctx.Context")
 	}
 
-	format, err := models.New()
-	if err != nil {
-		return nil, fmt.Errorf("failed to create format: %w", err)
+	f, ok := format.(models.Fmt)
+	if !ok {
+		return nil, fmt.Errorf("format does not implement models.Format")
 	}
 
-	// host provides a graph stream
-	result := graphstream.LoadByName(opts.model)
-	if result.IsErr() {
-		return nil, fmt.Errorf("failed to load graph")
+	graphExecCtxStream, ok := stream.(graph.GraphExecCtxStream)
+	if !ok {
+		return nil, fmt.Errorf("stream does not implement graph.GraphExecCtxStream")
 	}
-	graph := result.OK()
-	resultCtxStream := graph.InitExecutionContextStream()
-	if result.IsErr() {
-		return nil, fmt.Errorf("failed to init execution graph context stream")
-	}
-	stream := *resultCtxStream.OK()
 
 	wa := agents.NewAgent(opts.name, opts.instruction,
-		agents.Tools(tools),
-		agents.Context(context),
-		agents.Format(format),
-		stream,
+		agents.Tools(tb),
+		agents.Context(c),
+		agents.Format(f),
+		graphstream.GraphExecutionContextStream(graphExecCtxStream),
 	)
 
 	return agent(wa), nil
