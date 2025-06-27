@@ -35,7 +35,10 @@ func New(options ...Option[*AgentOptions]) (Agent, error) {
 		return nil, fmt.Errorf("failed to create tools: %w", err)
 	}
 
-	ctx := ctx.New()
+	context := opts.ctx
+	if context == 0 {
+		context = ctx.New()
+	}
 
 	format, err := models.New()
 	if err != nil {
@@ -56,7 +59,7 @@ func New(options ...Option[*AgentOptions]) (Agent, error) {
 
 	wa := agents.NewAgent(opts.name, opts.instruction,
 		agents.Tools(tools),
-		agents.Context(ctx),
+		agents.Context(context),
 		agents.Format(format),
 		stream,
 	)
