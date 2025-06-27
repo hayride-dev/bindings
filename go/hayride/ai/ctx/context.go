@@ -20,8 +20,8 @@ type Context interface {
 type Ctx cm.Resource
 
 // Create the resource
-func New() Context {
-	return Ctx(context.NewContext())
+func New() (Context, error) {
+	return Ctx(context.NewContext()), nil
 }
 
 // Push take a list of messages, convert them to a list of wit Messages

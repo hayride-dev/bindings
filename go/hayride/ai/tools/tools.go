@@ -16,10 +16,8 @@ type Tools interface {
 
 type Toolbox cm.Resource
 
-func New(tools ...types.ToolSchema) (Toolbox, error) {
-	witList := cm.ToList(tools)
-	result := witTools.NewTools(cm.Reinterpret[cm.List[witTools.ToolSchema]](witList))
-	return Toolbox(result), nil
+func New() (Toolbox, error) {
+	return Toolbox(witTools.NewTools()), nil
 }
 
 func (t Toolbox) Call(input types.ToolInput) (*types.ToolOutput, error) {

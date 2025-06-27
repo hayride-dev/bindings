@@ -123,12 +123,11 @@ func (self Tools) ResourceDrop() {
 
 // NewTools represents the imported constructor for resource "tools".
 //
-//	constructor(tools: list<tool-schema>)
+//	constructor()
 //
 //go:nosplit
-func NewTools(tools cm.List[ToolSchema]) (result Tools) {
-	tools0, tools1 := cm.LowerList(tools)
-	result0 := wasmimport_NewTools((*ToolSchema)(tools0), (uint32)(tools1))
+func NewTools() (result Tools) {
+	result0 := wasmimport_NewTools()
 	result = cm.Reinterpret[Tools]((uint32)(result0))
 	return
 }

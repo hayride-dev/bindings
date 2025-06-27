@@ -26,7 +26,7 @@ func wasmimport_ToolsResourceDrop(self0 uint32)
 
 //go:wasmimport hayride:ai/tools@0.0.56 [constructor]tools
 //go:noescape
-func wasmimport_NewTools(tools0 *ToolSchema, tools1 uint32) (result0 uint32)
+func wasmimport_NewTools() (result0 uint32)
 
 //go:wasmimport hayride:ai/tools@0.0.56 [method]tools.call
 //go:noescape
