@@ -6,32 +6,32 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.56".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.57".
 
-//go:wasmimport hayride:ai/tools@0.0.56 [resource-drop]error
+//go:wasmimport hayride:ai/tools@0.0.57 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/tools@0.0.56 [method]error.code
+//go:wasmimport hayride:ai/tools@0.0.57 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/tools@0.0.56 [method]error.data
+//go:wasmimport hayride:ai/tools@0.0.57 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/tools@0.0.56 [resource-drop]tools
+//go:wasmimport hayride:ai/tools@0.0.57 [resource-drop]tools
 //go:noescape
 func wasmimport_ToolsResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/tools@0.0.56 [constructor]tools
+//go:wasmimport hayride:ai/tools@0.0.57 [constructor]tools
 //go:noescape
 func wasmimport_NewTools() (result0 uint32)
 
-//go:wasmimport hayride:ai/tools@0.0.56 [method]tools.call
+//go:wasmimport hayride:ai/tools@0.0.57 [method]tools.call
 //go:noescape
 func wasmimport_ToolsCall(self0 uint32, input0 *uint8, input1 uint32, input2 *uint8, input3 uint32, input4 *uint8, input5 uint32, input6 *[2]string, input7 uint32, result *cm.Result[ToolOutputShape, ToolOutput, ErrorCode])
 
-//go:wasmimport hayride:ai/tools@0.0.56 [method]tools.capabilities
+//go:wasmimport hayride:ai/tools@0.0.57 [method]tools.capabilities
 //go:noescape
 func wasmimport_ToolsCapabilities(self0 uint32, result *cm.Result[cm.List[ToolSchema], cm.List[ToolSchema], Error])
