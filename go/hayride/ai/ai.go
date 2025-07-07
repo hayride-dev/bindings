@@ -1,18 +1,32 @@
-package types
+package ai
 
 import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
 
-	"go.bytecodealliance.org/cm"
+	"github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/types"
 )
+
+type TextContent = types.TextContent
+type ToolSchema = types.ToolSchema
+type ToolInput = types.ToolInput
+type ToolOutput = types.ToolOutput
+type Role = types.Role
+
+type Message struct {
+	types.Message
+}
+
+type Content struct {
+	types.Content
+}
 
 func (m Message) MarshalJSON() ([]byte, error) {
 	var content []json.RawMessage
 	for _, c := range m.Content.Slice() {
-		raw, err := json.Marshal(c)
+		t := Content{c}
+		raw, err := json.Marshal(t)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal content: %w", err)
 		}
@@ -27,34 +41,6 @@ func (m Message) MarshalJSON() ([]byte, error) {
 		Role:    roleStr,
 		Content: content,
 	})
-}
-
-func (m *Message) UnmarshalJSON(data []byte) error {
-	var aux struct {
-		Role    string            `json:"role"`
-		Content []json.RawMessage `json:"content"`
-	}
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return fmt.Errorf("failed to unmarshal message: %w", err)
-	}
-
-	// Decode role
-	if err := m.Role.UnmarshalText([]byte(strings.ToLower(aux.Role))); err != nil {
-		return fmt.Errorf("invalid role: %w", err)
-	}
-
-	// Decode content
-	var content []Content
-	for _, raw := range aux.Content {
-		var cw Content
-		if err := json.Unmarshal(raw, &cw); err != nil {
-			return fmt.Errorf("failed to unmarshal content item: %w", err)
-		}
-		content = append(content, cw)
-	}
-	m.Content = cm.ToList(content)
-
-	return nil
 }
 
 func (c Content) MarshalJSON() ([]byte, error) {
@@ -107,29 +93,29 @@ func (c *Content) UnmarshalJSON(data []byte) error {
 	for key, raw := range temp {
 		switch key {
 		case "text":
-			var text TextContent
+			var text types.TextContent
 			if err := json.Unmarshal(raw, &text); err != nil {
 				return err
 			}
-			*c = ContentText(text)
+			*c = Content{types.ContentText(text)}
 		case "tool-schema":
-			var schema ToolSchema
+			var schema types.ToolSchema
 			if err := json.Unmarshal(raw, &schema); err != nil {
 				return err
 			}
-			*c = ContentToolSchema(schema)
+			*c = Content{types.ContentToolSchema(schema)}
 		case "tool-input":
-			var input ToolInput
+			var input types.ToolInput
 			if err := json.Unmarshal(raw, &input); err != nil {
 				return err
 			}
-			*c = ContentToolInput(input)
+			*c = Content{types.ContentToolInput(input)}
 		case "tool-output":
-			var output ToolOutput
+			var output types.ToolOutput
 			if err := json.Unmarshal(raw, &output); err != nil {
 				return err
 			}
-			*c = ContentToolOutput(output)
+			*c = Content{types.ContentToolOutput(output)}
 		default:
 			return fmt.Errorf("unknown content variant: %s", key)
 		}

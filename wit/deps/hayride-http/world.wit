@@ -1,4 +1,4 @@
-package hayride:http@0.0.57;
+package hayride:http@0.0.58;
 
 interface config {
     record server {

@@ -3,15 +3,15 @@ package tools
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 	witTools "github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/tools"
 
 	"go.bytecodealliance.org/cm"
 )
 
 type Tools interface {
-	Call(input types.ToolInput) (*types.ToolOutput, error)
-	Capabilities() ([]types.ToolSchema, error)
+	Call(input ai.ToolInput) (*ai.ToolOutput, error)
+	Capabilities() ([]ai.ToolSchema, error)
 }
 
 type Toolbox cm.Resource
@@ -20,7 +20,7 @@ func New() (Toolbox, error) {
 	return Toolbox(witTools.NewTools()), nil
 }
 
-func (t Toolbox) Call(input types.ToolInput) (*types.ToolOutput, error) {
+func (t Toolbox) Call(input ai.ToolInput) (*ai.ToolOutput, error) {
 	witToolsToolbox := cm.Reinterpret[witTools.Tools](t)
 
 	result := witToolsToolbox.Call(cm.Reinterpret[witTools.ToolInput](input))
@@ -28,10 +28,10 @@ func (t Toolbox) Call(input types.ToolInput) (*types.ToolOutput, error) {
 		return nil, fmt.Errorf("failed to call tool: %s", result.Err().String())
 	}
 
-	return cm.Reinterpret[*types.ToolOutput](result.OK()), nil
+	return cm.Reinterpret[*ai.ToolOutput](result.OK()), nil
 }
 
-func (t Toolbox) Capabilities() ([]types.ToolSchema, error) {
+func (t Toolbox) Capabilities() ([]ai.ToolSchema, error) {
 	witToolsToolbox := cm.Reinterpret[witTools.Tools](t)
 
 	result := witToolsToolbox.Capabilities()
@@ -39,6 +39,6 @@ func (t Toolbox) Capabilities() ([]types.ToolSchema, error) {
 		return nil, fmt.Errorf("failed to get capabilities: %s", result.Err().Data())
 	}
 
-	schemas := cm.Reinterpret[cm.List[types.ToolSchema]](result.OK())
+	schemas := cm.Reinterpret[cm.List[ai.ToolSchema]](result.OK())
 	return schemas.Slice(), nil
 }
