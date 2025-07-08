@@ -1,14 +1,34 @@
-package core
+package types
 
 import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/internal/gen/hayride/core/types"
 	"go.bytecodealliance.org/cm"
 )
 
-type RequestData struct{ types.RequestData }
+func (r Request) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Data     RequestData `json:"data,omitempty"`
+		Metadata [][2]string `json:"metadata,omitempty"`
+	}{
+		Data:     r.Data,
+		Metadata: r.Metadata.Slice(),
+	})
+}
+
+func (r *Request) UnmarshalJSON(data []byte) error {
+	var aux struct {
+		Data     RequestData `json:"data"`
+		Metadata [][2]string `json:"metadata"`
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	r.Data = aux.Data
+	r.Metadata = cm.ToList(aux.Metadata)
+	return nil
+}
 
 func (d RequestData) MarshalJSON() ([]byte, error) {
 	switch d.Tag() {
@@ -45,6 +65,17 @@ func (d RequestData) MarshalJSON() ([]byte, error) {
 			})
 		}
 		return nil, fmt.Errorf("data variant 'session-id' is empty")
+	case 3: // generate
+		if generate := d.Generate(); generate != nil {
+			raw, err := json.Marshal(generate)
+			if err != nil {
+				return nil, err
+			}
+			return json.Marshal(map[string]json.RawMessage{
+				"generate": raw,
+			})
+		}
+		return nil, fmt.Errorf("data variant 'generate' is empty")
 	default:
 		return nil, fmt.Errorf("unsupported data tag: %d", d.Tag())
 	}
@@ -61,19 +92,25 @@ func (d *RequestData) UnmarshalJSON(data []byte) error {
 	for key, raw := range temp {
 		switch key {
 		case "unknown":
-			*d = RequestData{types.RequestDataUnknown()}
+			*d = RequestDataUnknown()
 		case "cast":
-			var cast types.Cast
+			var cast Cast
 			if err := json.Unmarshal(raw, &cast); err != nil {
 				return fmt.Errorf("failed to unmarshal cast: %w", err)
 			}
-			*d = RequestData{types.RequestDataCast(cast)}
+			*d = RequestDataCast(cast)
 		case "session-id":
 			var sessionID string
 			if err := json.Unmarshal(raw, &sessionID); err != nil {
 				return fmt.Errorf("failed to unmarshal session-id: %w", err)
 			}
-			*d = RequestData{types.RequestDataSessionID(sessionID)}
+			*d = RequestDataSessionID(sessionID)
+		case "generate":
+			var generate Generate
+			if err := json.Unmarshal(raw, &generate); err != nil {
+				return err
+			}
+			*d = RequestDataGenerate(generate)
 		default:
 			return fmt.Errorf("unknown data variant: %s", key)
 		}
@@ -81,7 +118,36 @@ func (d *RequestData) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type ResponseData struct{ types.ResponseData }
+func (r Response) MarshalJSON() ([]byte, error) {
+	return json.Marshal(struct {
+		Data  ResponseData `json:"data,omitempty"`
+		Error string       `json:"error,omitempty"`
+		Next  string       `json:"next,omitempty"`
+		Prev  string       `json:"prev,omitempty"`
+	}{
+		Data:  r.Data,
+		Error: r.Error,
+		Next:  r.Next,
+		Prev:  r.Prev,
+	})
+}
+
+func (r *Response) UnmarshalJSON(data []byte) error {
+	var aux struct {
+		Data  ResponseData `json:"data,omitempty"`
+		Error string       `json:"error,omitempty"`
+		Next  string       `json:"next,omitempty"`
+		Prev  string       `json:"prev,omitempty"`
+	}
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+	r.Data = aux.Data
+	r.Error = aux.Error
+	r.Next = aux.Next
+	r.Prev = aux.Prev
+	return nil
+}
 
 func (r ResponseData) MarshalJSON() ([]byte, error) {
 	switch r.Tag() {
@@ -130,6 +196,41 @@ func (r ResponseData) MarshalJSON() ([]byte, error) {
 			})
 		}
 		return nil, fmt.Errorf("data variant 'session-status' is empty")
+	case 4: // messages
+		if list := r.Messages(); list != nil {
+			messages := *list
+			raw, err := json.Marshal(messages)
+			if err != nil {
+				return nil, err
+			}
+			return json.Marshal(map[string]json.RawMessage{
+				"messages": raw,
+			})
+		}
+		return nil, fmt.Errorf("data variant 'messages' is empty")
+	case 5: // path
+		if path := r.Path(); path != nil {
+			raw, err := json.Marshal(*path)
+			if err != nil {
+				return nil, fmt.Errorf("failed to marshal path data: %w", err)
+			}
+			return json.Marshal(map[string]json.RawMessage{
+				"path": raw,
+			})
+		}
+		return nil, fmt.Errorf("data variant 'path' is empty")
+	case 6: // paths
+		if list := r.Paths(); list != nil {
+			paths := *list
+			raw, err := json.Marshal(paths)
+			if err != nil {
+				return nil, err
+			}
+			return json.Marshal(map[string]json.RawMessage{
+				"paths": raw,
+			})
+		}
+		return nil, fmt.Errorf("data variant 'paths' is empty")
 	default:
 		return nil, fmt.Errorf("unsupported data tag: %d", r.Tag())
 	}
@@ -146,90 +247,46 @@ func (r *ResponseData) UnmarshalJSON(data []byte) error {
 	for key, raw := range temp {
 		switch key {
 		case "unknown":
-			*r = ResponseData{types.ResponseDataUnknown()}
+			*r = ResponseDataUnknown()
 		case "sessions":
-			var sessions []types.ThreadMetadata
+			var sessions []ThreadMetadata
 			if err := json.Unmarshal(raw, &sessions); err != nil {
 				return fmt.Errorf("failed to unmarshal sessions: %w", err)
 			}
-			*r = ResponseData{types.ResponseDataSessions(cm.ToList(sessions))}
+			*r = ResponseDataSessions(cm.ToList(sessions))
 		case "session-id":
 			var sessionID string
 			if err := json.Unmarshal(raw, &sessionID); err != nil {
 				return fmt.Errorf("failed to unmarshal session-id: %w", err)
 			}
-			*r = ResponseData{types.ResponseDataSessionID(sessionID)}
+			*r = ResponseDataSessionID(sessionID)
 		case "session-status":
-			var status types.ThreadStatus
+			var status ThreadStatus
 			if err := json.Unmarshal(raw, &status); err != nil {
 				return fmt.Errorf("failed to unmarshal session-status: %w", err)
 			}
-			*r = ResponseData{types.ResponseDataSessionStatus(status)}
+			*r = ResponseDataSessionStatus(status)
+		case "messages":
+			var messages []Message
+			if err := json.Unmarshal(raw, &messages); err != nil {
+				return err
+			}
+			*r = ResponseDataMessages(cm.ToList(messages))
+		case "path":
+			var path string
+			if err := json.Unmarshal(raw, &path); err != nil {
+				return fmt.Errorf("failed to unmarshal path: %w", err)
+			}
+			*r = ResponseDataPath(path)
+		case "paths":
+			var paths []string
+			if err := json.Unmarshal(raw, &paths); err != nil {
+				return fmt.Errorf("failed to unmarshal paths: %w", err)
+			}
+			*r = ResponseDataPaths(cm.ToList(paths))
 		default:
 			return fmt.Errorf("unknown data variant: %s", key)
 		}
 	}
-	return nil
-}
-
-type Request struct {
-	types.Request
-}
-
-func (r Request) MarshalJSON() ([]byte, error) {
-	return json.Marshal(struct {
-		Data     RequestData `json:"data,omitempty"`
-		Metadata [][2]string `json:"metadata,omitempty"`
-	}{
-		Data:     RequestData{r.Data},
-		Metadata: r.Metadata.Slice(),
-	})
-}
-
-func (r *Request) UnmarshalJSON(data []byte) error {
-	var aux struct {
-		Data     RequestData `json:"data"`
-		Metadata [][2]string `json:"metadata"`
-	}
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-	r.Data = aux.Data.RequestData
-	r.Metadata = cm.ToList(aux.Metadata)
-	return nil
-}
-
-type Response struct {
-	types.Response
-}
-
-func (r Response) MarshalJSON() ([]byte, error) {
-	return json.Marshal(struct {
-		Data  ResponseData `json:"data,omitempty"`
-		Error string       `json:"error,omitempty"`
-		Next  string       `json:"next,omitempty"`
-		Prev  string       `json:"prev,omitempty"`
-	}{
-		Data:  ResponseData{r.Data},
-		Error: r.Error,
-		Next:  r.Next,
-		Prev:  r.Prev,
-	})
-}
-
-func (r *Response) UnmarshalJSON(data []byte) error {
-	var aux struct {
-		Data  ResponseData `json:"data,omitempty"`
-		Error string       `json:"error,omitempty"`
-		Next  string       `json:"next,omitempty"`
-		Prev  string       `json:"prev,omitempty"`
-	}
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-	r.Data = aux.Data.ResponseData
-	r.Error = aux.Error
-	r.Next = aux.Next
-	r.Prev = aux.Prev
 	return nil
 }

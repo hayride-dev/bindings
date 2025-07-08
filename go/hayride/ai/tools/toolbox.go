@@ -1,10 +1,10 @@
 package tools
 
 import (
-	"github.com/hayride-dev/bindings/go/hayride/ai"
+	"github.com/hayride-dev/bindings/go/hayride/domain"
 )
 
 type ToolBox interface {
-	Call(input ai.ToolInput) (*ai.ToolOutput, error)
-	Capabilities() ([]ai.ToolSchema, error)
+	Call(input domain.ToolInput) (*domain.ToolOutput, error)
+	Capabilities() ([]domain.ToolSchema, error)
 }
