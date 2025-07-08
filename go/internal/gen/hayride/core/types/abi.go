@@ -7,8 +7,8 @@ import (
 	"unsafe"
 )
 
-// ToolSchemaShape is used for storage in variant or result types.
-type ToolSchemaShape struct {
+// CastShape is used for storage in variant or result types.
+type CastShape struct {
 	_     cm.HostLayout
-	shape [unsafe.Sizeof(ToolSchema{})]byte
+	shape [unsafe.Sizeof(Cast{})]byte
 }

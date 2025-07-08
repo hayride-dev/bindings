@@ -3,6 +3,7 @@ package threads
 import (
 	"fmt"
 
+	"github.com/hayride-dev/bindings/go/hayride/domain"
 	"github.com/hayride-dev/bindings/go/internal/gen/hayride/silo/threads"
 	"go.bytecodealliance.org/cm"
 )
@@ -19,7 +20,7 @@ func Spawn(path string, function string, args ...string) (Thread, error) {
 }
 
 // Status returns the status of the thread with the given ID.
-func Status(threadID string) (*threads.ThreadMetadata, error) {
+func Status(threadID string) (*domain.ThreadMetadata, error) {
 	result := threads.Status(threadID)
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to get thread status: %v", result.Err())
@@ -39,7 +40,7 @@ func Kill(threadID string) error {
 }
 
 // Group returns a list of all threads with their metadata.
-func Group() ([]threads.ThreadMetadata, error) {
+func Group() ([]domain.ThreadMetadata, error) {
 	result := threads.Group()
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to list threads: %v", result.Err())

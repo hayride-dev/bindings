@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/hayride-dev/bindings/go/gen/types/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/ai/tools"
+	"github.com/hayride-dev/bindings/go/hayride/domain"
 	"github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/agents"
 	graphstream "github.com/hayride-dev/bindings/go/internal/gen/hayride/ai/graph-stream"
 	"github.com/hayride-dev/bindings/go/wasi/streams"
@@ -17,8 +17,8 @@ import (
 )
 
 type Agent interface {
-	Invoke(message types.Message) ([]types.Message, error)
-	InvokeStream(message types.Message, writer io.Writer) error
+	Invoke(message domain.Message) ([]domain.Message, error)
+	InvokeStream(message domain.Message, writer io.Writer) error
 }
 
 type agent cm.Resource
@@ -61,7 +61,7 @@ func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream 
 	return agent(wa), nil
 }
 
-func (a agent) Invoke(message types.Message) ([]types.Message, error) {
+func (a agent) Invoke(message domain.Message) ([]domain.Message, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
 
 	result := wa.Invoke(cm.Reinterpret[agents.Message](message))
@@ -70,10 +70,10 @@ func (a agent) Invoke(message types.Message) ([]types.Message, error) {
 	}
 
 	msgs := result.OK().Slice()
-	return cm.Reinterpret[[]types.Message](msgs), nil
+	return cm.Reinterpret[[]domain.Message](msgs), nil
 }
 
-func (a agent) InvokeStream(message types.Message, writer io.Writer) error {
+func (a agent) InvokeStream(message domain.Message, writer io.Writer) error {
 	wa := cm.Reinterpret[agents.Agent](a)
 
 	w, ok := writer.(streams.Writer)

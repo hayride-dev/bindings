@@ -1,0 +1,25 @@
+/*
+package hayride:core@0.0.58;
+
+TODO: Validate defining and interface for our core servers ( i.e api and ai-api )
+interface api {
+    use hayride:core/types@0.0.58.{cast}
+    use hayride:silo/threads@0.0.58.{thread-metadata, thread-status};
+
+    cast: func(request: cast) -> result<string, error>;
+    sessions: func() -> result<list<thread-metadata>, error>;
+    stop-session: func(session-id: string) -> result<thread-status, error>;
+    session-status: func(session-id: string) -> result<thread-status, error>;
+    publish: func(pkg: string, version: string, name: string) -> result<_, error>;
+}
+
+interface feature-ai {
+    use hayride:core/types@0.0.58.{generate};
+    use hayride:ai/types@0.0.58.{message};
+
+    generate: func(request: generate) -> result<list<messages>, error>; 
+    models: func() -> result<list<string>, error>;
+    delete-model: func(model: string) -> result<_, error>;
+    download-model: func(model: string) -> result<_, error>;   
+}
+*/

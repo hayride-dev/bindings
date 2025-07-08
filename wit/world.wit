@@ -1,27 +1,38 @@
 package hayride:bindings@0.0.1;
 
-world sdk {
-    // http
-    export hayride:http/config@0.0.57;
+// All hayride imports, exports are defined by components or a host
+// runtime
+world hayride {
+    // core 
+    import hayride:core/types@0.0.58;
     // ai 
-    import hayride:ai/types@0.0.57;
-    import hayride:ai/tensor-stream@0.0.57;
-    import hayride:ai/inference-stream@0.0.57;
-    import hayride:ai/graph-stream@0.0.57;
-    import hayride:ai/agents@0.0.57;
-    import hayride:ai/model@0.0.57;
-    import hayride:ai/model-repository@0.0.57;
-    import hayride:ai/context@0.0.57;
-    import hayride:ai/tools@0.0.57;
-    import hayride:ai/rag@0.0.57;
-    
-    //silo 
-    import hayride:silo/threads@0.0.57;
-    import hayride:silo/process@0.0.57;
+    import hayride:ai/types@0.0.58;
+    import hayride:ai/tensor-stream@0.0.58;
+    import hayride:ai/inference-stream@0.0.58;
+    import hayride:ai/graph-stream@0.0.58;
+    import hayride:ai/agents@0.0.58;
+    import hayride:ai/model@0.0.58;
+    import hayride:ai/model-repository@0.0.58;
+    import hayride:ai/context@0.0.58;
+    import hayride:ai/tools@0.0.58;
+    import hayride:ai/rag@0.0.58;
+    //silo
+    import hayride:silo/threads@0.0.58;
+    import hayride:silo/process@0.0.58;
+}
 
-    // ws
-    export hayride:socket/websocket@0.0.57;
+// Experimental exports and imports for hayride
+// ideally these disappear as more features get added to existing 
+// languages and libraries.
+world hayride-x {
+    export hayride:http/config@0.0.58;
+    export hayride:socket/websocket@0.0.58;
+    import hayride:wac/wac@0.0.58;
+}
 
+// various wasi imports and exports that are 
+// required to extend WASI functionality uniquely for hayride.
+world wasi {
     // wasi
     import wasi:io/streams@0.2.0;
     import wasi:cli/stdout@0.2.0;
@@ -33,5 +44,4 @@ world sdk {
     //wasi-http
     import wasi:http/outgoing-handler@0.2.0;
     export wasi:http/incoming-handler@0.2.0;
-
 }
