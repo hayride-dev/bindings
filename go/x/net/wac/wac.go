@@ -10,7 +10,7 @@ import (
 func Compose(path string) ([]byte, error) {
 	result := wac.Compose(path)
 	if result.IsErr() {
-		return nil, fmt.Errorf("failed to compose: %v", result.Err())
+		return nil, fmt.Errorf("failed to compose: %v", result.Err().Data())
 	}
 	return result.OK().Slice(), nil
 }
