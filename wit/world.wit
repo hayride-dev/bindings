@@ -3,6 +3,10 @@ package hayride:bindings@0.0.1;
 world sdk {
     // http
     export hayride:http/config@0.0.58;
+
+    // core 
+    import hayride:core/types@0.0.58;
+
     // ai 
     import hayride:ai/types@0.0.58;
     import hayride:ai/tensor-stream@0.0.58;

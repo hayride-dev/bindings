@@ -19,6 +19,12 @@ url = "https://github.com//WebAssembly/wasi-config/archive/refs/tags/v0.2.0-draf
 sha256 = "31fe247a242af7abe32dfadcb4edbc7720f9c47c2bff34b7e5c75df915ab5eb9"
 sha512 = "ce5367f3a104843852236799a3386a44da12ee5e287eb94075fd5252c1400b6ef84438f3b3e19f75fb3d842d82fe3a1bc999385fe59fc8e1696fed69bad69eac"
 
+[core]
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.58/hayride_core_v0.0.58.tar.gz"
+sha256 = "6d38ac3ab8d67e26af206045f823fcb974b4f89fcc793cf8a6f185579096c9de"
+sha512 = "f136163b391dbdbee30c4bb53e0c32af1afbfa3d1afde077dc8570d727d124e96ed094f3d8ddcd877144c5091f3893aa15cc77b333a7fdf7ba1ff9bd4c6013e7"
+deps = ["wasi-nn"]
+
 [filesystem]
 sha256 = "498c465cfd04587db40f970fff2185daa597d074c20b68a8bcbae558f261499b"
 sha512 = "ead452f9b7bfb88593a502ec00d76d4228003d51c40fd0408aebc32d35c94673551b00230d730873361567cc209ec218c41fb4e95bad194268592c49e7964347"
