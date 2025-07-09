@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/hayride-dev/bindings/go/internal/gen/wasi/io/streams"
+	"github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/io/streams"
 	"go.bytecodealliance.org/cm"
 )
 

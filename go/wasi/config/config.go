@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/internal/gen/wasi/config/store"
+	"github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/config/store"
 )
 
 type Reader interface {

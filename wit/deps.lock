@@ -1,7 +1,7 @@
 [ai]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.58/hayride_ai_v0.0.58.tar.gz"
-sha256 = "76c6cd98e62fbbf2b03e69971ecc50b1a98615cd8b2942b30a3aa3417202f84b"
-sha512 = "0b331c791d190511c58e3d2b112341ee898d9ea5e5d79469a5f14da92c74370e169fe02d78e412250c02782af3d0ac98427bab325bcba3e2d9f5ed3d64489f96"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.59/hayride_ai_v0.0.59.tar.gz"
+sha256 = "b5f0d89fbfe00daacb25a3852e0d14d0566babd4dcd0dba326bda7bab17ce61b"
+sha512 = "341964441bb8741d3fed066f16cd0e35fb6b28b9e99c9607295e4a0be73fe2411d4946caf31524b93f89c0d82744a781603d66c614b98fa16edf86570013274d"
 deps = ["wasi-nn"]
 
 [cli]
@@ -20,9 +20,9 @@ sha256 = "31fe247a242af7abe32dfadcb4edbc7720f9c47c2bff34b7e5c75df915ab5eb9"
 sha512 = "ce5367f3a104843852236799a3386a44da12ee5e287eb94075fd5252c1400b6ef84438f3b3e19f75fb3d842d82fe3a1bc999385fe59fc8e1696fed69bad69eac"
 
 [core]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.58/hayride_core_v0.0.58.tar.gz"
-sha256 = "6d38ac3ab8d67e26af206045f823fcb974b4f89fcc793cf8a6f185579096c9de"
-sha512 = "f136163b391dbdbee30c4bb53e0c32af1afbfa3d1afde077dc8570d727d124e96ed094f3d8ddcd877144c5091f3893aa15cc77b333a7fdf7ba1ff9bd4c6013e7"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.59/hayride_core_v0.0.59.tar.gz"
+sha256 = "101677ac87edcd4344b0b783e666e2024e3f4dab35a018608f06345fd16816e8"
+sha512 = "10b1a216360b685db9735d7e3dddd2c1f1630ec22787e24ee5071540145ec766624c9e067ee841a0159e5a9aff916cc19f25441ffc2f6d0f45c3f5f08e0c0d82"
 deps = ["wasi-nn"]
 
 [filesystem]
@@ -30,10 +30,9 @@ sha256 = "498c465cfd04587db40f970fff2185daa597d074c20b68a8bcbae558f261499b"
 sha512 = "ead452f9b7bfb88593a502ec00d76d4228003d51c40fd0408aebc32d35c94673551b00230d730873361567cc209ec218c41fb4e95bad194268592c49e7964347"
 
 [hayride-http]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.58/hayride_http_v0.0.58.tar.gz"
-sha256 = "45e9c67e7cb320b5ba996963b887ad200eae0f90ddb51b798d38da0bf564e990"
-sha512 = "cd182580a0967f21cdf424a4d78c9d6c929dc040d37e5375db203afa41ef47003fca37668592276e58f2a5ececa2b30f61f0f901e6b5ccc6e1c9c49c7382311c"
-deps = ["clocks", "filesystem", "random", "sockets"]
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.59/hayride_http_v0.0.59.tar.gz"
+sha256 = "ed5955abef5361864003770b9ed40425bb073986c344fdeb8d7037d8d2efee99"
+sha512 = "60576df63f869c2e01e0d72d8705f172ca1b5975229a7169d9936905d69e36bab804bc57407b6e304178c3adda3ed83e7783310c7d2394915e49ba837501f42b"
 
 [http]
 url = "https://github.com/WebAssembly/wasi-http/archive/refs/tags/v0.2.0.tar.gz"
@@ -51,23 +50,23 @@ sha256 = "7371d03c037d924caba2587fb2e7c5773a0d3c5fcecbf7971e0e0ba57973c53d"
 sha512 = "964c4e8925a53078e4d94ba907b54f89a0b7e154f46823a505391471466c17f53c8692682e5c85771712acd88b348686173fc07c53a3cfe3d301b8cd8ddd0de4"
 
 [silo]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.58/hayride_silo_v0.0.58.tar.gz"
-sha256 = "841bb2e2973ec8bda2f8668e332a71e1a940b80a7ff4450c62764d595cd50de9"
-sha512 = "4f8b571fdceee9c35722f46b4e0fb5e0667f3648d84204738d7206dddcc2ef531733137bdeb9f794b5cac4bf8ecf96f50a6eb42c7a5d6d73f07d8d50408ee506"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.59/hayride_silo_v0.0.59.tar.gz"
+sha256 = "23b2901c79cf16e14664e8064bb1c0bd87aae037bb9256884b032cdbd31fd6ea"
+sha512 = "94dd50df2b2b5debae693fd7b942a50271712051c7eccb27801e43eb02cbeccfbcde768a80632a79d7ee5dc79f554f7b23de4cd472c5a9748e7f7b683f263216"
 
 [socket]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.58/hayride_socket_v0.0.58.tar.gz"
-sha256 = "1ce10fa57919d3afa381bc752eff25cbf5ac97ab284ea1c8475a12aac5365024"
-sha512 = "584a37c6c6eaee0a44447c8b3b849058237fb99b142d7a8c4bcece54cad9dda9305786b4d0e0b44275cfcb6d8a107bb4ed7e3a447cc5e39b6f02b4561d230747"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.59/hayride_socket_v0.0.59.tar.gz"
+sha256 = "2c7ae75d3963e6969a5d4bf1baf011091326f729485c438fcf7a489c7ff94d38"
+sha512 = "8d3e6bb5070a4a14ed80c8e42cab9f49218e96741740c2f584a47b8206e0c2c79e831d2d3171bf609ed234d5d6bbe98584e012378546b84fd2e239f01db32656"
 
 [sockets]
 sha256 = "622bd28bbeb43736375dc02bd003fd3a016ff8ee91e14bab488325c6b38bf966"
 sha512 = "5a63c1f36de0c4548e1d2297bdbededb28721cbad94ef7825c469eae29d7451c97e00b4c1d6730ee1ec0c4a5aac922961a2795762d4a0c3bb54e30a391a84bae"
 
 [wac]
-url = "https://github.com/hayride-dev/coven/releases/download/v0.0.58/hayride_wac_v0.0.58.tar.gz"
-sha256 = "8a71f148425cfd61148845d8fa25ae3af162ae89ad121887c4f09d229cf8947e"
-sha512 = "f0578ca34ed3f9bf9c2c2c35920e0d6eee667a745d9033cb70ab953a1265f2802b17873c21383d33b372a2ae5092faedab3355ea0ae488963b90e98ea10c8ccf"
+url = "https://github.com/hayride-dev/coven/releases/download/v0.0.59/hayride_wac_v0.0.59.tar.gz"
+sha256 = "4085482b66c66c44abd7e46397b044f4c2574af5403e2238c7b8714833345038"
+sha512 = "61cb3bd912a408060a3311f77926a6906847665f86ae768592202aa46aaa021743a22d3a076048f88cf1f5f1abbbaaa4c2d6b1de307a5db48baf2705b82804b0"
 
 [wasi-nn]
 sha256 = "84915550361306ea4c219ac3a3ca007f43fe1b96b52e6f85e88d794c8fea5509"

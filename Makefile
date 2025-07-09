@@ -3,13 +3,13 @@
 default: gen
 
 # Note: All generated code lives under ./go/internal/gen/ this could cause conflicts.
-gen-hayride:
-	wit-bindgen-go generate --world hayride:bindings/hayride --out ./go/internal/gen/ ./wit
-gen-hayride-x:
-	wit-bindgen-go generate --world hayride:bindings/hayride-x --out ./go/internal/gen/ ./wit
+gen-imports:
+	wit-bindgen-go generate --world hayride:bindings/imports --out ./go/internal/gen/imports ./wit
+gen-exports:
+	wit-bindgen-go generate --world hayride:bindings/exports --out ./go/internal/gen/exports ./wit
 gen-wasi:
-	wit-bindgen-go generate --world hayride:bindings/wasi --out ./go/internal/gen/ ./wit
+	wit-bindgen-go generate --world hayride:bindings/wasip2 --out ./go/internal/gen/wasip2 ./wit
+gen-types:
+	wit-bindgen-go generate --world hayride:bindings/types --out ./go/hayride/types ./wit
 
-gen: gen-hayride gen-hayride-x gen-wasi
-
-	
+gen: gen-imports gen-exports gen-wasi gen-types

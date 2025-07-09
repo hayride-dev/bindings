@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	monotonicclock "github.com/hayride-dev/bindings/go/internal/gen/wasi/clocks/monotonic-clock"
-	outgoinghandler "github.com/hayride-dev/bindings/go/internal/gen/wasi/http/outgoing-handler"
-	"github.com/hayride-dev/bindings/go/internal/gen/wasi/http/types"
+	monotonicclock "github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/clocks/monotonic-clock"
+	outgoinghandler "github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/http/outgoing-handler"
+	"github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/http/types"
 	"go.bytecodealliance.org/cm"
 )
 
