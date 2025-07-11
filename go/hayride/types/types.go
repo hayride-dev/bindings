@@ -27,7 +27,7 @@ type TextContent = ai.TextContent
 type ToolSchema = ai.ToolSchema
 type ToolInput = ai.ToolInput
 type ToolOutput = ai.ToolOutput
-type Content ai.Content
+type Content = ai.Content
 type None = struct{}
 
 const (
