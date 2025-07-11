@@ -1,7 +1,7 @@
 package export
 
 import (
-	"github.com/hayride-dev/bindings/go/internal/gen/wasi/config/store"
+	"github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/config/store"
 	"github.com/hayride-dev/bindings/go/wasi/config"
 	"go.bytecodealliance.org/cm"
 )

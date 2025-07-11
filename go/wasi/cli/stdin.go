@@ -3,7 +3,7 @@ package cli
 import (
 	"io"
 
-	"github.com/hayride-dev/bindings/go/internal/gen/wasi/cli/stdin"
+	"github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/cli/stdin"
 
 	"github.com/hayride-dev/bindings/go/wasi/streams"
 )
