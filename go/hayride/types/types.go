@@ -7,20 +7,31 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-type ThreadMetadata silo.ThreadMetadata
-type ThreadStatus silo.ThreadStatus
+type Unknown = struct{}
+
+type ThreadMetadata = silo.ThreadMetadata
+type ThreadStatus = silo.ThreadStatus
+
+const (
+	ThreadStatusUnknown    = silo.ThreadStatusUnknown
+	ThreadStatusProcessing = silo.ThreadStatusProcessing
+	ThreadStatusExited     = silo.ThreadStatusExited
+	ThreadStatusKilled     = silo.ThreadStatusKilled
+)
+
 type SessionID string
 
-type Message ai.Message
-type Role ai.Role
-type TextContent ai.TextContent
-type ToolSchema ai.ToolSchema
-type ToolInput ai.ToolInput
-type ToolOutput ai.ToolOutput
+type Message = ai.Message
+type Role = ai.Role
+type TextContent = ai.TextContent
+type ToolSchema = ai.ToolSchema
+type ToolInput = ai.ToolInput
+type ToolOutput = ai.ToolOutput
 type Content ai.Content
+type None = struct{}
 
 type ContentType interface {
-	TextContent | ToolSchema | ToolInput | ToolOutput
+	None | TextContent | ToolSchema | ToolInput | ToolOutput
 }
 
 func NewContent[T ContentType](data T) Content {
@@ -38,17 +49,17 @@ func NewContent[T ContentType](data T) Content {
 	}
 }
 
-type Cast core.Cast
-type Generate core.Generate
-type Path string
-type RequestData core.RequestData
-type ResponseData core.ResponseData
-type Request core.Request
-type Response core.Response
+type Cast = core.Cast
+type Generate = core.Generate
+type Path = string
+type RequestData = core.RequestData
+type ResponseData = core.ResponseData
+type Request = core.Request
+type Response = core.Response
 
 // Variant is a type constraint
 type RequestDataVariant interface {
-	Cast | Generate | SessionID
+	Unknown | Cast | Generate | SessionID
 }
 
 func NewRequestData[T RequestDataVariant](data T) RequestData {
@@ -66,7 +77,7 @@ func NewRequestData[T RequestDataVariant](data T) RequestData {
 
 // Variant is a type constraint
 type ResponseDataVariant interface {
-	cm.List[Message] | SessionID | Path | cm.List[ThreadMetadata] | ThreadStatus | cm.List[string]
+	Unknown | cm.List[Message] | SessionID | Path | cm.List[ThreadMetadata] | ThreadStatus | cm.List[string]
 }
 
 func NewResponseData[T ResponseDataVariant](data T) ResponseData {
