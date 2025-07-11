@@ -3,9 +3,12 @@ package types
 import (
 	ai "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/ai/types"
 	core "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/core/types"
+	http "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/http/types"
 	silo "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/silo/types"
 	"go.bytecodealliance.org/cm"
 )
+
+type ServerConfig = http.ServerConfig
 
 type Unknown = struct{}
 
@@ -27,8 +30,16 @@ type TextContent = ai.TextContent
 type ToolSchema = ai.ToolSchema
 type ToolInput = ai.ToolInput
 type ToolOutput = ai.ToolOutput
-type Content ai.Content
+type Content = ai.Content
 type None = struct{}
+
+const (
+	RoleUser      = ai.RoleUser
+	RoleAssistant = ai.RoleAssistant
+	RoleSystem    = ai.RoleSystem
+	RoleTool      = ai.RoleTool
+	RoleUnknown   = ai.RoleUnknown
+)
 
 type ContentType interface {
 	None | TextContent | ToolSchema | ToolInput | ToolOutput

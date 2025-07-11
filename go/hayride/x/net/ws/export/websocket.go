@@ -23,7 +23,7 @@ func (dh *defaulthandler) Handle(reader io.ReadCloser, writer io.Writer) {
 
 var handler Handler = &defaulthandler{}
 
-func Export(h Handler) {
+func WebSocketHandler(h Handler) {
 	handler = h
 }
 
