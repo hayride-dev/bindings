@@ -4,7 +4,7 @@
 package threads
 
 import (
-	"github.com/hayride-dev/bindings/go/hayride/types/hayride/silo/types"
+	"github.com/hayride-dev/bindings/go/internal/gen/types/hayride/silo/types"
 	"go.bytecodealliance.org/cm"
 )
 

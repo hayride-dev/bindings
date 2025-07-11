@@ -10,6 +10,6 @@ gen-exports:
 gen-wasi:
 	wit-bindgen-go generate --world hayride:bindings/wasip2 --out ./go/internal/gen/wasip2 ./wit
 gen-types:
-	wit-bindgen-go generate --world hayride:bindings/types --out ./go/hayride/types ./wit
+	wit-bindgen-go generate --world hayride:bindings/types --out ./go/internal/gen/types ./wit
 
 gen: gen-imports gen-exports gen-wasi gen-types

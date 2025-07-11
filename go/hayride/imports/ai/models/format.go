@@ -3,8 +3,8 @@ package models
 import (
 	"fmt"
 
+	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
 	"go.bytecodealliance.org/cm"
 )
 

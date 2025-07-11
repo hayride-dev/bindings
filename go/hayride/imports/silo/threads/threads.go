@@ -3,7 +3,7 @@ package threads
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/hayride/types/hayride/core/types"
+	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/silo/threads"
 	"go.bytecodealliance.org/cm"
 )

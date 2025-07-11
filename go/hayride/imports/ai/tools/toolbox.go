@@ -1,7 +1,7 @@
 package tools
 
 import (
-	"github.com/hayride-dev/bindings/go/hayride/types/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/hayride/types"
 )
 
 type ToolBox interface {

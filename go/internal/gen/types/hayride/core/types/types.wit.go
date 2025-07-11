@@ -4,8 +4,8 @@
 package types
 
 import (
-	"github.com/hayride-dev/bindings/go/hayride/types/hayride/ai/types"
-	"github.com/hayride-dev/bindings/go/hayride/types/hayride/silo/threads"
+	"github.com/hayride-dev/bindings/go/internal/gen/types/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/internal/gen/types/hayride/silo/threads"
 	"go.bytecodealliance.org/cm"
 )
 

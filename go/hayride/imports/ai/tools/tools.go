@@ -3,7 +3,7 @@ package tools
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/hayride/types/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/hayride/types"
 	witTools "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/tools"
 
 	"go.bytecodealliance.org/cm"

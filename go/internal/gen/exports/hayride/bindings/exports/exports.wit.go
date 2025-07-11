@@ -3,6 +3,4 @@
 // Package exports represents the world "hayride:bindings/exports@0.0.1".
 //
 // exports for hayride
-// ideally these disappear as more features get added to existing
-// languages and libraries.
 package exports

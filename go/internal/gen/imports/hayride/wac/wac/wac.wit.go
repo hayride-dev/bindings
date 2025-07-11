@@ -8,10 +8,53 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Error represents the imported type alias "hayride:wac/wac@0.0.59#error".
+// ErrorCode represents the type alias "hayride:wac/wac@0.0.59#error-code".
 //
-// See [types.Error] for more information.
-type Error = types.Error
+// See [types.ErrorCode] for more information.
+type ErrorCode = types.ErrorCode
+
+// Error represents the imported resource "hayride:wac/wac@0.0.59#error".
+//
+//	resource error
+type Error cm.Resource
+
+// ResourceDrop represents the imported resource-drop for resource "error".
+//
+// Drops a resource handle.
+//
+//go:nosplit
+func (self Error) ResourceDrop() {
+	self0 := cm.Reinterpret[uint32](self)
+	wasmimport_ErrorResourceDrop((uint32)(self0))
+	return
+}
+
+// Code represents the imported method "code".
+//
+// Return the error code.
+//
+//	code: func() -> error-code
+//
+//go:nosplit
+func (self Error) Code() (result ErrorCode) {
+	self0 := cm.Reinterpret[uint32](self)
+	result0 := wasmimport_ErrorCode((uint32)(self0))
+	result = (types.ErrorCode)((uint32)(result0))
+	return
+}
+
+// Data represents the imported method "data".
+//
+// Errors can propagated with backend specific status through a string value.
+//
+//	data: func() -> string
+//
+//go:nosplit
+func (self Error) Data() (result string) {
+	self0 := cm.Reinterpret[uint32](self)
+	wasmimport_ErrorData((uint32)(self0), &result)
+	return
+}
 
 // Compose represents the imported function "compose".
 //

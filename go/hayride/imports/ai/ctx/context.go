@@ -7,7 +7,7 @@ for interacting with a imported context resource.
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/hayride/types/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/context"
 	"go.bytecodealliance.org/cm"
 )

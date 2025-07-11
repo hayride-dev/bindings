@@ -13,6 +13,7 @@ world imports {
     import hayride:ai/tools@0.0.59;
     import hayride:ai/rag@0.0.59;
     // silo
+    import hayride:silo/types@0.0.59;
     import hayride:silo/threads@0.0.59;
     import hayride:silo/process@0.0.59;
     // webassembly composition 
@@ -20,19 +21,17 @@ world imports {
 }
 
 // exports for hayride
-// ideally these disappear as more features get added to existing 
-// languages and libraries.
 world exports {
     export hayride:http/config@0.0.59;
     export hayride:socket/websocket@0.0.59;
 }
 
 world types {
-    import hayride:core/types@0.0.59;
     import hayride:ai/types@0.0.59;
     import hayride:silo/types@0.0.59;
+    import hayride:core/types@0.0.59;
+    import hayride:http/types@0.0.59;
 }
-
 
 // various wasi imports and exports that are 
 // required to extend WASI functionality uniquely for hayride.
