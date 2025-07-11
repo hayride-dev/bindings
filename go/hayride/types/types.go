@@ -3,9 +3,12 @@ package types
 import (
 	ai "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/ai/types"
 	core "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/core/types"
+	http "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/http/types"
 	silo "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/silo/types"
 	"go.bytecodealliance.org/cm"
 )
+
+type ServerConfig = http.ServerConfig
 
 type Unknown = struct{}
 
