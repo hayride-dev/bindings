@@ -30,6 +30,14 @@ type ToolOutput = ai.ToolOutput
 type Content ai.Content
 type None = struct{}
 
+const (
+	RoleUser      = ai.RoleUser
+	RoleAssistant = ai.RoleAssistant
+	RoleSystem    = ai.RoleSystem
+	RoleTool      = ai.RoleTool
+	RoleUnknown   = ai.RoleUnknown
+)
+
 type ContentType interface {
 	None | TextContent | ToolSchema | ToolInput | ToolOutput
 }
