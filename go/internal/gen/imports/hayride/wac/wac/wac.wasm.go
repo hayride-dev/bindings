@@ -6,24 +6,24 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:wac@0.0.59".
+// This file contains wasmimport and wasmexport declarations for "hayride:wac@0.0.60".
 
-//go:wasmimport hayride:wac/wac@0.0.59 [resource-drop]error
+//go:wasmimport hayride:wac/wac@0.0.60 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:wac/wac@0.0.59 [method]error.code
+//go:wasmimport hayride:wac/wac@0.0.60 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:wac/wac@0.0.59 [method]error.data
+//go:wasmimport hayride:wac/wac@0.0.60 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:wac/wac@0.0.59 compose
+//go:wasmimport hayride:wac/wac@0.0.60 compose
 //go:noescape
 func wasmimport_Compose(contents0 *uint8, contents1 uint32, result *cm.Result[cm.List[uint8], cm.List[uint8], Error])
 
-//go:wasmimport hayride:wac/wac@0.0.59 plug
+//go:wasmimport hayride:wac/wac@0.0.60 plug
 //go:noescape
 func wasmimport_Plug(socketPkg0 *uint8, socketPkg1 uint32, plugPkgs0 *string, plugPkgs1 uint32, result *cm.Result[cm.List[uint8], cm.List[uint8], Error])
