@@ -6,30 +6,30 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:http@0.0.59".
+// This file contains wasmimport and wasmexport declarations for "hayride:http@0.0.60".
 
-//go:wasmimport [export]hayride:http/config@0.0.59 [resource-new]error
+//go:wasmimport [export]hayride:http/config@0.0.60 [resource-new]error
 //go:noescape
 func wasmimport_ErrorResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:http/config@0.0.59 [resource-rep]error
+//go:wasmimport [export]hayride:http/config@0.0.60 [resource-rep]error
 //go:noescape
 func wasmimport_ErrorResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:http/config@0.0.59 [resource-drop]error
+//go:wasmimport [export]hayride:http/config@0.0.60 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:http/config@0.0.59#[dtor]error
-//export hayride:http/config@0.0.59#[dtor]error
+//go:wasmexport hayride:http/config@0.0.60#[dtor]error
+//export hayride:http/config@0.0.60#[dtor]error
 func wasmexport_ErrorDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Error.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:http/config@0.0.59#[method]error.code
-//export hayride:http/config@0.0.59#[method]error.code
+//go:wasmexport hayride:http/config@0.0.60#[method]error.code
+//export hayride:http/config@0.0.60#[method]error.code
 func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result := Exports.Error.Code(self)
@@ -37,8 +37,8 @@ func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	return
 }
 
-//go:wasmexport hayride:http/config@0.0.59#[method]error.data
-//export hayride:http/config@0.0.59#[method]error.data
+//go:wasmexport hayride:http/config@0.0.60#[method]error.data
+//export hayride:http/config@0.0.60#[method]error.data
 func wasmexport_ErrorData(self0 uint32) (result *string) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result_ := Exports.Error.Data(self)
@@ -46,8 +46,8 @@ func wasmexport_ErrorData(self0 uint32) (result *string) {
 	return
 }
 
-//go:wasmexport hayride:http/config@0.0.59#get
-//export hayride:http/config@0.0.59#get
+//go:wasmexport hayride:http/config@0.0.60#get
+//export hayride:http/config@0.0.60#get
 func wasmexport_Get() (result *cm.Result[ServerConfigShape, ServerConfig, Error]) {
 	result_ := Exports.Get()
 	result = &result_

@@ -2,35 +2,37 @@ package hayride:bindings@0.0.1;
 
 // All hayride imports
 world imports {
+    // core
+    import hayride:core/version@0.0.60;
     // ai
-    import hayride:ai/tensor-stream@0.0.59;
-    import hayride:ai/inference-stream@0.0.59;
-    import hayride:ai/graph-stream@0.0.59;
-    import hayride:ai/agents@0.0.59;
-    import hayride:ai/model@0.0.59;
-    import hayride:ai/model-repository@0.0.59;
-    import hayride:ai/context@0.0.59;
-    import hayride:ai/tools@0.0.59;
-    import hayride:ai/rag@0.0.59;
+    import hayride:ai/tensor-stream@0.0.60;
+    import hayride:ai/inference-stream@0.0.60;
+    import hayride:ai/graph-stream@0.0.60;
+    import hayride:ai/agents@0.0.60;
+    import hayride:ai/model@0.0.60;
+    import hayride:ai/model-repository@0.0.60;
+    import hayride:ai/context@0.0.60;
+    import hayride:ai/tools@0.0.60;
+    import hayride:ai/rag@0.0.60;
     // silo
-    import hayride:silo/types@0.0.59;
-    import hayride:silo/threads@0.0.59;
-    import hayride:silo/process@0.0.59;
+    import hayride:silo/types@0.0.60;
+    import hayride:silo/threads@0.0.60;
+    import hayride:silo/process@0.0.60;
     // webassembly composition 
-    import hayride:wac/wac@0.0.59;
+    import hayride:wac/wac@0.0.60;
 }
 
 // exports for hayride
 world exports {
-    export hayride:http/config@0.0.59;
-    export hayride:socket/websocket@0.0.59;
+    export hayride:http/config@0.0.60;
+    export hayride:socket/websocket@0.0.60;
 }
 
 world types {
-    import hayride:ai/types@0.0.59;
-    import hayride:silo/types@0.0.59;
-    import hayride:core/types@0.0.59;
-    import hayride:http/types@0.0.59;
+    import hayride:ai/types@0.0.60;
+    import hayride:silo/types@0.0.60;
+    import hayride:core/types@0.0.60;
+    import hayride:http/types@0.0.60;
 }
 
 // various wasi imports and exports that are 

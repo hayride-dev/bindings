@@ -6,32 +6,32 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.59".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.60".
 
-//go:wasmimport hayride:ai/model-repository@0.0.59 [resource-drop]error
+//go:wasmimport hayride:ai/model-repository@0.0.60 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/model-repository@0.0.59 [method]error.code
+//go:wasmimport hayride:ai/model-repository@0.0.60 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/model-repository@0.0.59 [method]error.data
+//go:wasmimport hayride:ai/model-repository@0.0.60 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/model-repository@0.0.59 download-model
+//go:wasmimport hayride:ai/model-repository@0.0.60 download-model
 //go:noescape
 func wasmimport_DownloadModel(name0 *uint8, name1 uint32, result *cm.Result[string, string, Error])
 
-//go:wasmimport hayride:ai/model-repository@0.0.59 get-model
+//go:wasmimport hayride:ai/model-repository@0.0.60 get-model
 //go:noescape
 func wasmimport_GetModel(name0 *uint8, name1 uint32, result *cm.Result[string, string, Error])
 
-//go:wasmimport hayride:ai/model-repository@0.0.59 delete-model
+//go:wasmimport hayride:ai/model-repository@0.0.60 delete-model
 //go:noescape
 func wasmimport_DeleteModel(name0 *uint8, name1 uint32, result *cm.Result[Error, struct{}, Error])
 
-//go:wasmimport hayride:ai/model-repository@0.0.59 list-models
+//go:wasmimport hayride:ai/model-repository@0.0.60 list-models
 //go:noescape
 func wasmimport_ListModels(result *cm.Result[cm.List[string], cm.List[string], Error])
