@@ -23,6 +23,7 @@ const (
 )
 
 type SessionID string
+type Version string
 
 type Message = ai.Message
 type Role = ai.Role
@@ -88,7 +89,7 @@ func NewRequestData[T RequestDataVariant](data T) RequestData {
 
 // Variant is a type constraint
 type ResponseDataVariant interface {
-	Unknown | cm.List[Message] | SessionID | Path | cm.List[ThreadMetadata] | ThreadStatus | cm.List[string]
+	Unknown | cm.List[Message] | SessionID | Path | cm.List[ThreadMetadata] | ThreadStatus | cm.List[string] | Version
 }
 
 func NewResponseData[T ResponseDataVariant](data T) ResponseData {
@@ -105,6 +106,8 @@ func NewResponseData[T ResponseDataVariant](data T) ResponseData {
 		return cm.New[ResponseData](5, data)
 	case cm.List[string]:
 		return cm.New[ResponseData](6, data)
+	case Version:
+		return cm.New[ResponseData](7, data)
 	default:
 		return cm.New[ResponseData](0, struct{}{})
 	}

@@ -231,6 +231,17 @@ func (r ResponseData) MarshalJSON() ([]byte, error) {
 			})
 		}
 		return nil, fmt.Errorf("data variant 'paths' is empty")
+	case 7: // version
+		if version := r.Version(); version != nil {
+			raw, err := json.Marshal(*version)
+			if err != nil {
+				return nil, fmt.Errorf("failed to marshal version data: %w", err)
+			}
+			return json.Marshal(map[string]json.RawMessage{
+				"version": raw,
+			})
+		}
+		return nil, fmt.Errorf("data variant 'version' is empty")
 	default:
 		return nil, fmt.Errorf("unsupported data tag: %d", r.Tag())
 	}
@@ -284,6 +295,12 @@ func (r *ResponseData) UnmarshalJSON(data []byte) error {
 				return fmt.Errorf("failed to unmarshal paths: %w", err)
 			}
 			*r = ResponseDataPaths(cm.ToList(paths))
+		case "version":
+			var version string
+			if err := json.Unmarshal(raw, &version); err != nil {
+				return fmt.Errorf("failed to unmarshal version: %w", err)
+			}
+			*r = ResponseDataVersion(version)
 		default:
 			return fmt.Errorf("unknown data variant: %s", key)
 		}

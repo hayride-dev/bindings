@@ -125,6 +125,7 @@ func (v RequestData) String() string {
 //		messages(list<message>),
 //		path(string),
 //		paths(list<string>),
+//		version(string),
 //	}
 type ResponseData cm.Variant[uint8, cm.List[ThreadMetadata], cm.List[ThreadMetadata]]
 
@@ -199,7 +200,17 @@ func (self *ResponseData) Paths() *cm.List[string] {
 	return cm.Case[cm.List[string]](self, 6)
 }
 
-var _ResponseDataStrings = [7]string{
+// ResponseDataVersion returns a [ResponseData] of case "version".
+func ResponseDataVersion(data string) ResponseData {
+	return cm.New[ResponseData](7, data)
+}
+
+// Version returns a non-nil *[string] if [ResponseData] represents the variant case "version".
+func (self *ResponseData) Version() *string {
+	return cm.Case[string](self, 7)
+}
+
+var _ResponseDataStrings = [8]string{
 	"unknown",
 	"sessions",
 	"session-id",
@@ -207,6 +218,7 @@ var _ResponseDataStrings = [7]string{
 	"messages",
 	"path",
 	"paths",
+	"version",
 }
 
 // String implements [fmt.Stringer], returning the variant case name of v.
