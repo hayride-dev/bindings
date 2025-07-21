@@ -7,32 +7,32 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.60".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.61".
 
-//go:wasmimport hayride:ai/agents@0.0.60 [resource-drop]error
+//go:wasmimport hayride:ai/agents@0.0.61 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/agents@0.0.60 [method]error.code
+//go:wasmimport hayride:ai/agents@0.0.61 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/agents@0.0.60 [method]error.data
+//go:wasmimport hayride:ai/agents@0.0.61 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/agents@0.0.60 [resource-drop]agent
+//go:wasmimport hayride:ai/agents@0.0.61 [resource-drop]agent
 //go:noescape
 func wasmimport_AgentResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/agents@0.0.60 [constructor]agent
+//go:wasmimport hayride:ai/agents@0.0.61 [constructor]agent
 //go:noescape
 func wasmimport_NewAgent(name0 *uint8, name1 uint32, instruction0 *uint8, instruction1 uint32, tools0 uint32, context0 uint32, format0 uint32, graph0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/agents@0.0.60 [method]agent.invoke
+//go:wasmimport hayride:ai/agents@0.0.61 [method]agent.invoke
 //go:noescape
-func wasmimport_AgentInvoke(self0 uint32, input0 uint32, input1 *types.Content, input2 uint32, result *cm.Result[cm.List[Message], cm.List[Message], Error])
+func wasmimport_AgentInvoke(self0 uint32, input0 uint32, input1 *types.MessageContent, input2 uint32, result *cm.Result[cm.List[Message], cm.List[Message], Error])
 
-//go:wasmimport hayride:ai/agents@0.0.60 [method]agent.invoke-stream
+//go:wasmimport hayride:ai/agents@0.0.61 [method]agent.invoke-stream
 //go:noescape
-func wasmimport_AgentInvokeStream(self0 uint32, message0 uint32, message1 *types.Content, message2 uint32, writer0 uint32, result *cm.Result[Error, struct{}, Error])
+func wasmimport_AgentInvokeStream(self0 uint32, message0 uint32, message1 *types.MessageContent, message2 uint32, writer0 uint32, result *cm.Result[Error, struct{}, Error])

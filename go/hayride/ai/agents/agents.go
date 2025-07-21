@@ -7,7 +7,7 @@ import (
 	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
-	"github.com/hayride-dev/bindings/go/hayride/ai/tools"
+	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
 	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agents"
 	graphstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"

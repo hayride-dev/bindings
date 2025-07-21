@@ -4,6 +4,7 @@ import (
 	ai "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/ai/types"
 	core "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/core/types"
 	http "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/http/types"
+	mcp "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/mcp/types"
 	silo "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/silo/types"
 	"go.bytecodealliance.org/cm"
 )
@@ -22,17 +23,19 @@ const (
 	ThreadStatusKilled     = silo.ThreadStatusKilled
 )
 
+type None = struct{}
 type SessionID string
 type Version string
+type Text string
 
 type Message = ai.Message
 type Role = ai.Role
-type TextContent = ai.TextContent
-type ToolSchema = ai.ToolSchema
-type ToolInput = ai.ToolInput
-type ToolOutput = ai.ToolOutput
-type Content = ai.Content
-type None = struct{}
+type MessageContent = ai.MessageContent
+
+type Tool = mcp.Tool
+type CallToolParams = mcp.CallToolParams
+type CallToolResult = mcp.CallToolResult
+type ListToolsResult = mcp.ListToolsResult
 
 const (
 	RoleUser      = ai.RoleUser
@@ -42,22 +45,24 @@ const (
 	RoleUnknown   = ai.RoleUnknown
 )
 
-type ContentType interface {
-	None | TextContent | ToolSchema | ToolInput | ToolOutput
+type MessageContentType interface {
+	None | Text | cm.List[uint8] | cm.List[Tool] | CallToolParams | CallToolResult
 }
 
-func NewContent[T ContentType](data T) Content {
+func NewMessageContent[T MessageContentType](data T) MessageContent {
 	switch any(data).(type) {
-	case TextContent:
-		return cm.New[Content](1, data)
-	case ToolSchema:
-		return cm.New[Content](2, data)
-	case ToolInput:
-		return cm.New[Content](3, data)
-	case ToolOutput:
-		return cm.New[Content](4, data)
+	case Text:
+		return cm.New[MessageContent](1, data)
+	case cm.List[uint8]:
+		return cm.New[MessageContent](2, data)
+	case cm.List[Tool]:
+		return cm.New[MessageContent](3, data)
+	case CallToolParams:
+		return cm.New[MessageContent](4, data)
+	case CallToolResult:
+		return cm.New[MessageContent](5, data)
 	default:
-		return cm.New[Content](0, struct{}{})
+		return cm.New[MessageContent](0, struct{}{})
 	}
 }
 
@@ -110,5 +115,54 @@ func NewResponseData[T ResponseDataVariant](data T) ResponseData {
 		return cm.New[ResponseData](7, data)
 	default:
 		return cm.New[ResponseData](0, struct{}{})
+	}
+}
+
+type ToolSchema = mcp.ToolSchema
+
+type Content = mcp.Content
+type TextContent = mcp.TextContent
+type ImageContent = mcp.ImageContent
+type AudioContent = mcp.AudioContent
+type ResourceLinkContent = mcp.ResourceLinkContent
+type EmbeddedResourceContent = mcp.EmbeddedResourceContent
+
+type ContentType interface {
+	None | TextContent | ImageContent | AudioContent | ResourceLinkContent | EmbeddedResourceContent
+}
+
+func NewContent[T ContentType](data T) Content {
+	switch any(data).(type) {
+	case TextContent:
+		return cm.New[Content](1, data)
+	case ImageContent:
+		return cm.New[Content](2, data)
+	case AudioContent:
+		return cm.New[Content](3, data)
+	case ResourceLinkContent:
+		return cm.New[Content](4, data)
+	case EmbeddedResourceContent:
+		return cm.New[Content](5, data)
+	default:
+		return cm.New[Content](0, struct{}{})
+	}
+}
+
+type ResourceContents = mcp.ResourceContents
+type TextResourceContents = mcp.TextResourceContents
+type BlobResourceContents = mcp.BlobResourceContents
+
+type ResourceContentsType interface {
+	None | TextResourceContents | BlobResourceContents
+}
+
+func NewResourceContents[T ResourceContentsType](data T) ResourceContents {
+	switch any(data).(type) {
+	case TextResourceContents:
+		return cm.New[ResourceContents](1, data)
+	case BlobResourceContents:
+		return cm.New[ResourceContents](2, data)
+	default:
+		return cm.New[ResourceContents](0, struct{}{})
 	}
 }
