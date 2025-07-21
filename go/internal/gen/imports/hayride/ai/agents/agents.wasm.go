@@ -31,8 +31,8 @@ func wasmimport_NewAgent(name0 *uint8, name1 uint32, instruction0 *uint8, instru
 
 //go:wasmimport hayride:ai/agents@0.0.61 [method]agent.invoke
 //go:noescape
-func wasmimport_AgentInvoke(self0 uint32, input0 uint32, input1 *types.Content, input2 uint32, result *cm.Result[cm.List[Message], cm.List[Message], Error])
+func wasmimport_AgentInvoke(self0 uint32, input0 uint32, input1 *types.MessageContent, input2 uint32, result *cm.Result[cm.List[Message], cm.List[Message], Error])
 
 //go:wasmimport hayride:ai/agents@0.0.61 [method]agent.invoke-stream
 //go:noescape
-func wasmimport_AgentInvokeStream(self0 uint32, message0 uint32, message1 *types.Content, message2 uint32, writer0 uint32, result *cm.Result[Error, struct{}, Error])
+func wasmimport_AgentInvokeStream(self0 uint32, message0 uint32, message1 *types.MessageContent, message2 uint32, writer0 uint32, result *cm.Result[Error, struct{}, Error])

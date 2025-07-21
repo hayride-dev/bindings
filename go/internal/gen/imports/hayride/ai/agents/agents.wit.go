@@ -170,7 +170,7 @@ func NewAgent(name string, instruction string, tools_ Tools, context_ Context, f
 func (self Agent) Invoke(input Message) (result cm.Result[cm.List[Message], cm.List[Message], Error]) {
 	self0 := cm.Reinterpret[uint32](self)
 	input0, input1, input2 := lower_Message(input)
-	wasmimport_AgentInvoke((uint32)(self0), (uint32)(input0), (*types.Content)(input1), (uint32)(input2), &result)
+	wasmimport_AgentInvoke((uint32)(self0), (uint32)(input0), (*types.MessageContent)(input1), (uint32)(input2), &result)
 	return
 }
 
@@ -183,6 +183,6 @@ func (self Agent) InvokeStream(message Message, writer OutputStream) (result cm.
 	self0 := cm.Reinterpret[uint32](self)
 	message0, message1, message2 := lower_Message(message)
 	writer0 := cm.Reinterpret[uint32](writer)
-	wasmimport_AgentInvokeStream((uint32)(self0), (uint32)(message0), (*types.Content)(message1), (uint32)(message2), (uint32)(writer0), &result)
+	wasmimport_AgentInvokeStream((uint32)(self0), (uint32)(message0), (*types.MessageContent)(message1), (uint32)(message2), (uint32)(writer0), &result)
 	return
 }

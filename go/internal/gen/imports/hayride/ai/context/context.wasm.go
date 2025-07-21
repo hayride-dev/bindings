@@ -35,4 +35,4 @@ func wasmimport_ContextMessages(self0 uint32, result *cm.Result[cm.List[Message]
 
 //go:wasmimport hayride:ai/context@0.0.61 [method]context.push
 //go:noescape
-func wasmimport_ContextPush(self0 uint32, msg0 uint32, msg1 *types.Content, msg2 uint32, result *cm.Result[Error, struct{}, Error])
+func wasmimport_ContextPush(self0 uint32, msg0 uint32, msg1 *types.MessageContent, msg2 uint32, result *cm.Result[Error, struct{}, Error])

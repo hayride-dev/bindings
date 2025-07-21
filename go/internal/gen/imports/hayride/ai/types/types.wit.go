@@ -8,10 +8,10 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// ToolSchema represents the type alias "hayride:ai/types@0.0.61#tool-schema".
+// Tool represents the type alias "hayride:ai/types@0.0.61#tool".
 //
-// See [types.ToolSchema] for more information.
-type ToolSchema = types.ToolSchema
+// See [types.Tool] for more information.
+type Tool = types.Tool
 
 // CallToolParams represents the type alias "hayride:ai/types@0.0.61#call-tool-params".
 //
@@ -68,101 +68,101 @@ func (e *Role) UnmarshalText(text []byte) error {
 
 var _RoleUnmarshalCase = cm.CaseUnmarshaler[Role](_RoleStrings[:])
 
-// TextContent represents the record "hayride:ai/types@0.0.61#text-content".
+// MessageContent represents the variant "hayride:ai/types@0.0.61#message-content".
 //
-//	record text-content {
-//		text: string,
-//		content-type: string,
-//	}
-type TextContent struct {
-	_           cm.HostLayout `json:"-"`
-	Text        string        `json:"text"`
-	ContentType string        `json:"content-type"`
-}
-
-// Content represents the variant "hayride:ai/types@0.0.61#content".
-//
-//	variant content {
+//	variant message-content {
 //		none,
-//		text(text-content),
-//		tool-schema(tool-schema),
+//		text(string),
+//		blob(list<u8>),
+//		tools(list<tool>),
 //		tool-input(call-tool-params),
 //		tool-output(call-tool-result),
 //	}
-type Content cm.Variant[uint8, CallToolResultShape, CallToolResult]
+type MessageContent cm.Variant[uint8, CallToolResultShape, CallToolResult]
 
-// ContentNone returns a [Content] of case "none".
-func ContentNone() Content {
+// MessageContentNone returns a [MessageContent] of case "none".
+func MessageContentNone() MessageContent {
 	var data struct{}
-	return cm.New[Content](0, data)
+	return cm.New[MessageContent](0, data)
 }
 
-// None returns true if [Content] represents the variant case "none".
-func (self *Content) None() bool {
+// None returns true if [MessageContent] represents the variant case "none".
+func (self *MessageContent) None() bool {
 	return self.Tag() == 0
 }
 
-// ContentText returns a [Content] of case "text".
-func ContentText(data TextContent) Content {
-	return cm.New[Content](1, data)
+// MessageContentText returns a [MessageContent] of case "text".
+func MessageContentText(data string) MessageContent {
+	return cm.New[MessageContent](1, data)
 }
 
-// Text returns a non-nil *[TextContent] if [Content] represents the variant case "text".
-func (self *Content) Text() *TextContent {
-	return cm.Case[TextContent](self, 1)
+// Text returns a non-nil *[string] if [MessageContent] represents the variant case "text".
+func (self *MessageContent) Text() *string {
+	return cm.Case[string](self, 1)
 }
 
-// ContentToolSchema returns a [Content] of case "tool-schema".
-func ContentToolSchema(data ToolSchema) Content {
-	return cm.New[Content](2, data)
+// MessageContentBlob returns a [MessageContent] of case "blob".
+func MessageContentBlob(data cm.List[uint8]) MessageContent {
+	return cm.New[MessageContent](2, data)
 }
 
-// ToolSchema returns a non-nil *[ToolSchema] if [Content] represents the variant case "tool-schema".
-func (self *Content) ToolSchema() *ToolSchema {
-	return cm.Case[ToolSchema](self, 2)
+// Blob returns a non-nil *[cm.List[uint8]] if [MessageContent] represents the variant case "blob".
+func (self *MessageContent) Blob() *cm.List[uint8] {
+	return cm.Case[cm.List[uint8]](self, 2)
 }
 
-// ContentToolInput returns a [Content] of case "tool-input".
-func ContentToolInput(data CallToolParams) Content {
-	return cm.New[Content](3, data)
+// MessageContentTools returns a [MessageContent] of case "tools".
+func MessageContentTools(data cm.List[Tool]) MessageContent {
+	return cm.New[MessageContent](3, data)
 }
 
-// ToolInput returns a non-nil *[CallToolParams] if [Content] represents the variant case "tool-input".
-func (self *Content) ToolInput() *CallToolParams {
-	return cm.Case[CallToolParams](self, 3)
+// Tools returns a non-nil *[cm.List[Tool]] if [MessageContent] represents the variant case "tools".
+func (self *MessageContent) Tools() *cm.List[Tool] {
+	return cm.Case[cm.List[Tool]](self, 3)
 }
 
-// ContentToolOutput returns a [Content] of case "tool-output".
-func ContentToolOutput(data CallToolResult) Content {
-	return cm.New[Content](4, data)
+// MessageContentToolInput returns a [MessageContent] of case "tool-input".
+func MessageContentToolInput(data CallToolParams) MessageContent {
+	return cm.New[MessageContent](4, data)
 }
 
-// ToolOutput returns a non-nil *[CallToolResult] if [Content] represents the variant case "tool-output".
-func (self *Content) ToolOutput() *CallToolResult {
-	return cm.Case[CallToolResult](self, 4)
+// ToolInput returns a non-nil *[CallToolParams] if [MessageContent] represents the variant case "tool-input".
+func (self *MessageContent) ToolInput() *CallToolParams {
+	return cm.Case[CallToolParams](self, 4)
 }
 
-var _ContentStrings = [5]string{
+// MessageContentToolOutput returns a [MessageContent] of case "tool-output".
+func MessageContentToolOutput(data CallToolResult) MessageContent {
+	return cm.New[MessageContent](5, data)
+}
+
+// ToolOutput returns a non-nil *[CallToolResult] if [MessageContent] represents the variant case "tool-output".
+func (self *MessageContent) ToolOutput() *CallToolResult {
+	return cm.Case[CallToolResult](self, 5)
+}
+
+var _MessageContentStrings = [6]string{
 	"none",
 	"text",
-	"tool-schema",
+	"blob",
+	"tools",
 	"tool-input",
 	"tool-output",
 }
 
 // String implements [fmt.Stringer], returning the variant case name of v.
-func (v Content) String() string {
-	return _ContentStrings[v.Tag()]
+func (v MessageContent) String() string {
+	return _MessageContentStrings[v.Tag()]
 }
 
 // Message represents the record "hayride:ai/types@0.0.61#message".
 //
 //	record message {
 //		role: role,
-//		content: list<content>,
+//		content: list<message-content>,
 //	}
 type Message struct {
-	_       cm.HostLayout    `json:"-"`
-	Role    Role             `json:"role"`
-	Content cm.List[Content] `json:"content"`
+	_       cm.HostLayout           `json:"-"`
+	Role    Role                    `json:"role"`
+	Content cm.List[MessageContent] `json:"content"`
 }

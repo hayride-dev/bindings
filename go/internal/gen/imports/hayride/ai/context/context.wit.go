@@ -144,6 +144,6 @@ func (self Context) Messages() (result cm.Result[cm.List[Message], cm.List[Messa
 func (self Context) Push(msg Message) (result cm.Result[Error, struct{}, Error]) {
 	self0 := cm.Reinterpret[uint32](self)
 	msg0, msg1, msg2 := lower_Message(msg)
-	wasmimport_ContextPush((uint32)(self0), (uint32)(msg0), (*types.Content)(msg1), (uint32)(msg2), &result)
+	wasmimport_ContextPush((uint32)(self0), (uint32)(msg0), (*types.MessageContent)(msg1), (uint32)(msg2), &result)
 	return
 }
