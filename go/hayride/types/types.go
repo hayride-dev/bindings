@@ -4,6 +4,7 @@ import (
 	ai "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/ai/types"
 	core "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/core/types"
 	http "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/http/types"
+	mcp "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/mcp/types"
 	silo "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/silo/types"
 	"go.bytecodealliance.org/cm"
 )
@@ -22,6 +23,7 @@ const (
 	ThreadStatusKilled     = silo.ThreadStatusKilled
 )
 
+type None = struct{}
 type SessionID string
 type Version string
 
@@ -29,10 +31,11 @@ type Message = ai.Message
 type Role = ai.Role
 type TextContent = ai.TextContent
 type ToolSchema = ai.ToolSchema
-type ToolInput = ai.ToolInput
-type ToolOutput = ai.ToolOutput
 type Content = ai.Content
-type None = struct{}
+
+type CallToolParams = mcp.CallToolParams
+type CallToolResult = mcp.CallToolResult
+type ListToolsResult = mcp.ListToolsResult
 
 const (
 	RoleUser      = ai.RoleUser
@@ -43,7 +46,7 @@ const (
 )
 
 type ContentType interface {
-	None | TextContent | ToolSchema | ToolInput | ToolOutput
+	None | TextContent | ToolSchema | CallToolParams | CallToolResult
 }
 
 func NewContent[T ContentType](data T) Content {
@@ -52,9 +55,9 @@ func NewContent[T ContentType](data T) Content {
 		return cm.New[Content](1, data)
 	case ToolSchema:
 		return cm.New[Content](2, data)
-	case ToolInput:
+	case CallToolParams:
 		return cm.New[Content](3, data)
-	case ToolOutput:
+	case CallToolResult:
 		return cm.New[Content](4, data)
 	default:
 		return cm.New[Content](0, struct{}{})

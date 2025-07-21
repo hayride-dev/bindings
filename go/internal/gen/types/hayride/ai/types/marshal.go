@@ -119,13 +119,13 @@ func (c *Content) UnmarshalJSON(data []byte) error {
 			}
 			*c = ContentToolSchema(schema)
 		case "tool-input":
-			var input ToolInput
+			var input CallToolParams
 			if err := json.Unmarshal(raw, &input); err != nil {
 				return err
 			}
 			*c = ContentToolInput(input)
 		case "tool-output":
-			var output ToolOutput
+			var output CallToolResult
 			if err := json.Unmarshal(raw, &output); err != nil {
 				return err
 			}

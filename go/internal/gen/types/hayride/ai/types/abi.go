@@ -7,8 +7,8 @@ import (
 	"unsafe"
 )
 
-// ToolSchemaShape is used for storage in variant or result types.
-type ToolSchemaShape struct {
+// CallToolResultShape is used for storage in variant or result types.
+type CallToolResultShape struct {
 	_     cm.HostLayout
-	shape [unsafe.Sizeof(ToolSchema{})]byte
+	shape [unsafe.Sizeof(CallToolResult{})]byte
 }
