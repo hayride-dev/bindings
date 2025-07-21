@@ -30,9 +30,9 @@ type Version string
 type Message = ai.Message
 type Role = ai.Role
 type TextContent = ai.TextContent
-type ToolSchema = ai.ToolSchema
 type Content = ai.Content
 
+type ToolSchema = mcp.ToolSchema
 type CallToolParams = mcp.CallToolParams
 type CallToolResult = mcp.CallToolResult
 type ListToolsResult = mcp.ListToolsResult
