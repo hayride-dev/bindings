@@ -39,6 +39,6 @@ func (t Toolbox) Capabilities() ([]types.ToolSchema, error) {
 		return nil, fmt.Errorf("failed to get capabilities: %s", result.Err().Data())
 	}
 
-	schemas := cm.Reinterpret[cm.List[types.ToolSchema]](result.OK())
-	return schemas.Slice(), nil
+	schemas := result.OK().Slice()
+	return cm.Reinterpret[[]types.ToolSchema](schemas), nil
 }
