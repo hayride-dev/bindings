@@ -22,7 +22,7 @@ type Agent interface {
 	Graph() graph.GraphExecutionContextStream
 }
 
-type agent cm.Resource
+type AgentResource cm.Resource
 
 func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream graph.GraphExecutionContextStream, options ...Option[*AgentOptions]) (Agent, error) {
 	opts := defaultAgentOptions()
@@ -32,17 +32,17 @@ func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream 
 		}
 	}
 
-	tb, ok := toolbox.(tools.Toolbox)
+	tb, ok := toolbox.(tools.ToolResource)
 	if !ok {
 		return nil, fmt.Errorf("toolbox does not implement tools.Toolbox")
 	}
 
-	c, ok := context.(ctx.Ctx)
+	c, ok := context.(ctx.ContextResource)
 	if !ok {
 		return nil, fmt.Errorf("context does not implement ctx.Context")
 	}
 
-	f, ok := format.(models.Fmt)
+	f, ok := format.(models.FormatResource)
 	if !ok {
 		return nil, fmt.Errorf("format does not implement models.Format")
 	}
@@ -59,45 +59,45 @@ func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream 
 		graphstream.GraphExecutionContextStream(graphExecCtxStream),
 	)
 
-	return agent(wa), nil
+	return AgentResource(wa), nil
 }
 
-func (a agent) Name() string {
+func (a AgentResource) Name() string {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Name()
 
 	return result
 }
 
-func (a agent) Instruction() string {
+func (a AgentResource) Instruction() string {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Instruction()
 
 	return result
 }
 
-func (a agent) Tools() tools.Tools {
+func (a AgentResource) Tools() tools.Tools {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Tools()
 
 	return cm.Reinterpret[tools.Tools](result)
 }
 
-func (a agent) Context() ctx.Context {
+func (a AgentResource) Context() ctx.Context {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Context()
 
 	return cm.Reinterpret[ctx.Context](result)
 }
 
-func (a agent) Format() models.Format {
+func (a AgentResource) Format() models.Format {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Format()
 
 	return cm.Reinterpret[models.Format](result)
 }
 
-func (a agent) Graph() graph.GraphExecutionContextStream {
+func (a AgentResource) Graph() graph.GraphExecutionContextStream {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Graph()
 

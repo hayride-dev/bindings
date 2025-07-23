@@ -14,11 +14,13 @@ type Constructor func() tools.Tools
 var toolsConstructor Constructor
 
 type resources struct {
-	tools map[cm.Rep]tools.Tools
+	tools  map[cm.Rep]tools.Tools
+	errors map[cm.Rep]error
 }
 
 var resourceTable = &resources{
-	tools: make(map[cm.Rep]tools.Tools),
+	tools:  make(map[cm.Rep]tools.Tools),
+	errors: make(map[cm.Rep]error),
 }
 
 func init() {
@@ -31,6 +33,10 @@ func Export(c Constructor) {
 	witTools.Exports.Tools.CallTool = call
 	witTools.Exports.Tools.ListTools = list
 	witTools.Exports.Tools.Destructor = destructor
+
+	witTools.Exports.Error.Code = errorCode
+	witTools.Exports.Error.Data = errorData
+	witTools.Exports.Error.Destructor = errorDestructor
 }
 
 func constructor() witTools.Tools {
@@ -45,13 +51,13 @@ func constructor() witTools.Tools {
 func call(self cm.Rep, params witTools.CallToolParams) cm.Result[witTools.CallToolResultShape, witTools.CallToolResult, witTools.Error] {
 	tool, ok := resourceTable.tools[self]
 	if !ok {
-		wasiErr := witTools.ErrorResourceNew(cm.Rep(witTools.ErrorCodeToolCallFailed))
+		wasiErr := createError(witTools.ErrorCodeToolCallFailed, "failed to find tool resource")
 		return cm.Err[cm.Result[witTools.CallToolResultShape, witTools.CallToolResult, witTools.Error]](wasiErr)
 	}
 
 	result, err := tool.Call(cm.Reinterpret[types.CallToolParams](params))
 	if err != nil {
-		wasiErr := witTools.ErrorResourceNew(cm.Rep(witTools.ErrorCodeToolCallFailed))
+		wasiErr := createError(witTools.ErrorCodeToolCallFailed, err.Error())
 		return cm.Err[cm.Result[witTools.CallToolResultShape, witTools.CallToolResult, witTools.Error]](wasiErr)
 	}
 
@@ -61,13 +67,13 @@ func call(self cm.Rep, params witTools.CallToolParams) cm.Result[witTools.CallTo
 func list(self cm.Rep, cursor string) cm.Result[witTools.ListToolsResultShape, witTools.ListToolsResult, witTools.Error] {
 	tool, ok := resourceTable.tools[self]
 	if !ok {
-		wasiErr := witTools.ErrorResourceNew(cm.Rep(witTools.ErrorCodeToolNotFound))
+		wasiErr := createError(witTools.ErrorCodeToolNotFound, "failed to find tool resource")
 		return cm.Err[cm.Result[witTools.ListToolsResultShape, witTools.ListToolsResult, witTools.Error]](wasiErr)
 	}
 
 	result, err := tool.List(cursor)
 	if err != nil {
-		wasiErr := witTools.ErrorResourceNew(cm.Rep(witTools.ErrorCodeToolNotFound))
+		wasiErr := createError(witTools.ErrorCodeToolNotFound, err.Error())
 		return cm.Err[cm.Result[witTools.ListToolsResultShape, witTools.ListToolsResult, witTools.Error]](wasiErr)
 	}
 

@@ -14,11 +14,13 @@ type Constructor func() ctx.Context
 var ctxConstructor Constructor
 
 type resources struct {
-	ctx map[cm.Rep]ctx.Context
+	ctx    map[cm.Rep]ctx.Context
+	errors map[cm.Rep]error
 }
 
 var resourceTable = &resources{
-	ctx: make(map[cm.Rep]ctx.Context),
+	ctx:    make(map[cm.Rep]ctx.Context),
+	errors: make(map[cm.Rep]error),
 }
 
 func init() {
@@ -31,6 +33,10 @@ func Export(c Constructor) {
 	context.Exports.Context.Push = push
 	context.Exports.Context.Messages = messages
 	context.Exports.Context.Destructor = destructor
+
+	context.Exports.Error.Code = errorCode
+	context.Exports.Error.Data = errorData
+	context.Exports.Error.Destructor = errorDestructor
 }
 
 func constructor() context.Context {
@@ -49,14 +55,14 @@ func destructor(self cm.Rep) {
 func push(self cm.Rep, msg context.Message) cm.Result[context.Error, struct{}, context.Error] {
 	ctx, ok := resourceTable.ctx[self]
 	if !ok {
-		wasiErr := context.ErrorResourceNew(cm.Rep(context.ErrorCodePushError))
+		wasiErr := createError(context.ErrorCodePushError, "failed to find context resource")
 		return cm.Err[cm.Result[context.Error, struct{}, context.Error]](wasiErr)
 	}
 
 	m := cm.Reinterpret[types.Message](msg)
 
 	if err := ctx.Push(m); err != nil {
-		wasiErr := context.ErrorResourceNew(cm.Rep(context.ErrorCodePushError))
+		wasiErr := createError(context.ErrorCodePushError, err.Error())
 		return cm.Err[cm.Result[context.Error, struct{}, context.Error]](wasiErr)
 	}
 	return cm.Result[context.Error, struct{}, context.Error]{}
@@ -71,7 +77,7 @@ func messages(self cm.Rep) (result cm.Result[cm.List[context.Message], cm.List[c
 
 	messages, err := ctx.Messages()
 	if err != nil {
-		wasiErr := context.ErrorResourceNew(cm.Rep(context.ErrorCodeMessageNotFound))
+		wasiErr := createError(context.ErrorCodeMessageNotFound, err.Error())
 		return cm.Err[cm.Result[cm.List[context.Message], cm.List[context.Message], context.Error]](wasiErr)
 	}
 

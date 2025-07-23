@@ -15,10 +15,12 @@ var formatConstructor Constructor
 
 type resources struct {
 	format map[cm.Rep]models.Format
+	errors map[cm.Rep]error
 }
 
 var resourceTable = &resources{
 	format: make(map[cm.Rep]models.Format),
+	errors: make(map[cm.Rep]error),
 }
 
 func init() {
@@ -31,6 +33,10 @@ func Export(c Constructor) {
 	model.Exports.Format.Decode = decode
 	model.Exports.Format.Encode = encode
 	model.Exports.Format.Destructor = destructor
+
+	model.Exports.Error.Code = errorCode
+	model.Exports.Error.Data = errorData
+	model.Exports.Error.Destructor = errorDestructor
 }
 
 func constructor() model.Format {
@@ -49,12 +55,12 @@ func destructor(self cm.Rep) {
 func decode(self cm.Rep, raw cm.List[uint8]) (result cm.Result[model.MessageShape, model.Message, model.Error]) {
 	m, ok := resourceTable.format[self]
 	if !ok {
-		wasiErr := model.ErrorResourceNew(cm.Rep(model.ErrorCodeContextDecode))
+		wasiErr := createError(model.ErrorCodeContextDecode, "failed to find format resource")
 		return cm.Err[cm.Result[model.MessageShape, model.Message, model.Error]](wasiErr)
 	}
 	msg, err := m.Decode(raw.Slice())
 	if err != nil {
-		wasiErr := model.ErrorResourceNew(cm.Rep(model.ErrorCodeContextDecode))
+		wasiErr := createError(model.ErrorCodeContextDecode, err.Error())
 		return cm.Err[cm.Result[model.MessageShape, model.Message, model.Error]](wasiErr)
 	}
 
@@ -66,7 +72,7 @@ func decode(self cm.Rep, raw cm.List[uint8]) (result cm.Result[model.MessageShap
 func encode(self cm.Rep, messages cm.List[model.Message]) (result cm.Result[cm.List[uint8], cm.List[uint8], model.Error]) {
 	m, ok := resourceTable.format[self]
 	if !ok {
-		wasiErr := model.ErrorResourceNew(cm.Rep(model.ErrorCodeContextEncode))
+		wasiErr := createError(model.ErrorCodeContextEncode, "failed to find format resource")
 		return cm.Err[cm.Result[cm.List[uint8], cm.List[uint8], model.Error]](wasiErr)
 	}
 
@@ -74,7 +80,7 @@ func encode(self cm.Rep, messages cm.List[model.Message]) (result cm.Result[cm.L
 
 	msg, err := m.Encode(msgs.Slice()...)
 	if err != nil {
-		wasiErr := model.ErrorResourceNew(cm.Rep(model.ErrorCodeContextEncode))
+		wasiErr := createError(model.ErrorCodeContextEncode, err.Error())
 		return cm.Err[cm.Result[cm.List[uint8], cm.List[uint8], model.Error]](wasiErr)
 	}
 

@@ -14,13 +14,13 @@ type Tools interface {
 	List(cursor string) (*types.ListToolsResult, error)
 }
 
-type Toolbox cm.Resource
+type ToolResource cm.Resource
 
-func New() (Toolbox, error) {
-	return Toolbox(witTools.NewTools()), nil
+func New() (ToolResource, error) {
+	return ToolResource(witTools.NewTools()), nil
 }
 
-func (t Toolbox) Call(params types.CallToolParams) (*types.CallToolResult, error) {
+func (t ToolResource) Call(params types.CallToolParams) (*types.CallToolResult, error) {
 	witToolsToolbox := cm.Reinterpret[witTools.Tools](t)
 
 	result := witToolsToolbox.CallTool(cm.Reinterpret[witTools.CallToolParams](params))
@@ -31,7 +31,7 @@ func (t Toolbox) Call(params types.CallToolParams) (*types.CallToolResult, error
 	return cm.Reinterpret[*types.CallToolResult](result.OK()), nil
 }
 
-func (t Toolbox) List(cursor string) (*types.ListToolsResult, error) {
+func (t ToolResource) List(cursor string) (*types.ListToolsResult, error) {
 	witToolsToolbox := cm.Reinterpret[witTools.Tools](t)
 
 	result := witToolsToolbox.ListTools(cursor)

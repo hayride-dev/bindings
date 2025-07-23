@@ -40,7 +40,7 @@ func Export(c Constructor) {
 }
 
 func constructor(name string, instruction string, t witAgents.Tools, context witAgents.Context, format witAgents.Format, g witAgents.GraphExecutionContextStream) witAgents.Agent {
-	agent := agentConstructor(name, instruction, cm.Reinterpret[tools.Toolbox](t), cm.Reinterpret[ctx.Ctx](context), cm.Reinterpret[models.Fmt](format), cm.Reinterpret[graph.GraphExecCtxStream](g))
+	agent := agentConstructor(name, instruction, cm.Reinterpret[tools.ToolResource](t), cm.Reinterpret[ctx.ContextResource](context), cm.Reinterpret[models.FormatResource](format), cm.Reinterpret[graph.GraphExecCtxStream](g))
 
 	key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&agent))))
 	v := witAgents.AgentResourceNew(key)
