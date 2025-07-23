@@ -24,9 +24,7 @@ var resourceTable = &resources{
 	agents: make(map[cm.Rep]agents.Agent),
 }
 
-func init() {
-}
-func Export(c Constructor) {
+func Agent(c Constructor) {
 	agentConstructor = c
 
 	witAgents.Exports.Agent.Constructor = constructor

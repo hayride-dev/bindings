@@ -8,7 +8,7 @@ import (
 
 var reader config.Reader
 
-func Export(r config.Reader) {
+func Reader(r config.Reader) {
 	reader = r
 
 	store.Exports.Get = get
