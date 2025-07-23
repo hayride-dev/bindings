@@ -13,11 +13,11 @@ var r runner.Runner
 
 // Runner interface only defines error resources
 type resources struct {
-	errors map[cm.Rep]error
+	errors map[cm.Rep]errorResource
 }
 
 var resourceTable = &resources{
-	errors: make(map[cm.Rep]error),
+	errors: make(map[cm.Rep]errorResource),
 }
 
 func Runner(runner runner.Runner) {

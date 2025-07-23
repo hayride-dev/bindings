@@ -12,7 +12,7 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-type Constructor func(name string, instruction string, tools tools.Tools, context ctx.Context, format models.Format, graph graph.GraphExecutionContextStream) agents.Agent
+type Constructor func(name string, instruction string, tools tools.Tools, context ctx.Context, format models.Format, graph graph.GraphExecutionContextStream) (agents.Agent, error)
 
 var agentConstructor Constructor
 
@@ -38,7 +38,10 @@ func Agent(c Constructor) {
 }
 
 func constructor(name string, instruction string, t witAgents.Tools, context witAgents.Context, format witAgents.Format, g witAgents.GraphExecutionContextStream) witAgents.Agent {
-	agent := agentConstructor(name, instruction, cm.Reinterpret[tools.ToolResource](t), cm.Reinterpret[ctx.ContextResource](context), cm.Reinterpret[models.FormatResource](format), cm.Reinterpret[graph.GraphExecCtxStream](g))
+	agent, err := agentConstructor(name, instruction, cm.Reinterpret[tools.ToolResource](t), cm.Reinterpret[ctx.ContextResource](context), cm.Reinterpret[models.FormatResource](format), cm.Reinterpret[graph.GraphExecCtxStream](g))
+	if err != nil {
+		return cm.ResourceNone
+	}
 
 	key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&agent))))
 	v := witAgents.AgentResourceNew(key)

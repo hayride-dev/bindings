@@ -9,18 +9,18 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-type Constructor func() ctx.Context
+type Constructor func() (ctx.Context, error)
 
 var ctxConstructor Constructor
 
 type resources struct {
 	ctx    map[cm.Rep]ctx.Context
-	errors map[cm.Rep]error
+	errors map[cm.Rep]errorResource
 }
 
 var resourceTable = &resources{
 	ctx:    make(map[cm.Rep]ctx.Context),
-	errors: make(map[cm.Rep]error),
+	errors: make(map[cm.Rep]errorResource),
 }
 
 func Context(c Constructor) {
@@ -37,7 +37,10 @@ func Context(c Constructor) {
 }
 
 func constructor() context.Context {
-	ctx := ctxConstructor()
+	ctx, err := ctxConstructor()
+	if err != nil {
+		return cm.ResourceNone
+	}
 
 	key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&ctx))))
 	v := context.ContextResourceNew(key)

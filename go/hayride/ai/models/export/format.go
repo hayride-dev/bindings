@@ -9,18 +9,18 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-type Constructor func() models.Format
+type Constructor func() (models.Format, error)
 
 var formatConstructor Constructor
 
 type resources struct {
 	format map[cm.Rep]models.Format
-	errors map[cm.Rep]error
+	errors map[cm.Rep]errorResource
 }
 
 var resourceTable = &resources{
 	format: make(map[cm.Rep]models.Format),
-	errors: make(map[cm.Rep]error),
+	errors: make(map[cm.Rep]errorResource),
 }
 
 func Format(c Constructor) {
@@ -37,7 +37,10 @@ func Format(c Constructor) {
 }
 
 func constructor() model.Format {
-	formatter := formatConstructor()
+	formatter, err := formatConstructor()
+	if err != nil {
+		return cm.ResourceNone
+	}
 
 	key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&formatter))))
 	v := model.FormatResourceNew(key)
