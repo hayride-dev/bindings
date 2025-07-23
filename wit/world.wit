@@ -9,6 +9,7 @@ world imports {
     import hayride:ai/inference-stream@0.0.61;
     import hayride:ai/graph-stream@0.0.61;
     import hayride:ai/agents@0.0.61;
+    import hayride:ai/runner@0.0.61;
     import hayride:ai/model@0.0.61;
     import hayride:ai/model-repository@0.0.61;
     import hayride:ai/context@0.0.61;
@@ -27,6 +28,15 @@ world imports {
 world exports {
     export hayride:http/config@0.0.61;
     export hayride:socket/websocket@0.0.61;
+
+    // ai
+    export hayride:ai/model@0.0.61;
+    export hayride:ai/context@0.0.61;
+    export hayride:ai/agents@0.0.61;
+    export hayride:ai/runner@0.0.61;
+
+    // mcp
+    export hayride:mcp/tools@0.0.61;
 }
 
 world types {

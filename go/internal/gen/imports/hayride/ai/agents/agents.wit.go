@@ -8,16 +8,10 @@ import (
 	graphstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
 	inferencestream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/inference-stream"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/mcp/tools"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/io/streams"
 	"go.bytecodealliance.org/cm"
 )
-
-// Message represents the type alias "hayride:ai/agents@0.0.61#message".
-//
-// See [types.Message] for more information.
-type Message = types.Message
 
 // Context represents the imported type alias "hayride:ai/agents@0.0.61#context".
 //
@@ -48,85 +42,6 @@ type GraphExecutionContextStream = inferencestream.GraphExecutionContextStream
 //
 // See [streams.OutputStream] for more information.
 type OutputStream = streams.OutputStream
-
-// ErrorCode represents the enum "hayride:ai/agents@0.0.61#error-code".
-//
-//	enum error-code {
-//		invoke-error,
-//		unknown
-//	}
-type ErrorCode uint8
-
-const (
-	ErrorCodeInvokeError ErrorCode = iota
-	ErrorCodeUnknown
-)
-
-var _ErrorCodeStrings = [2]string{
-	"invoke-error",
-	"unknown",
-}
-
-// String implements [fmt.Stringer], returning the enum case name of e.
-func (e ErrorCode) String() string {
-	return _ErrorCodeStrings[e]
-}
-
-// MarshalText implements [encoding.TextMarshaler].
-func (e ErrorCode) MarshalText() ([]byte, error) {
-	return []byte(e.String()), nil
-}
-
-// UnmarshalText implements [encoding.TextUnmarshaler], unmarshaling into an enum
-// case. Returns an error if the supplied text is not one of the enum cases.
-func (e *ErrorCode) UnmarshalText(text []byte) error {
-	return _ErrorCodeUnmarshalCase(e, text)
-}
-
-var _ErrorCodeUnmarshalCase = cm.CaseUnmarshaler[ErrorCode](_ErrorCodeStrings[:])
-
-// Error represents the imported resource "hayride:ai/agents@0.0.61#error".
-//
-//	resource error
-type Error cm.Resource
-
-// ResourceDrop represents the imported resource-drop for resource "error".
-//
-// Drops a resource handle.
-//
-//go:nosplit
-func (self Error) ResourceDrop() {
-	self0 := cm.Reinterpret[uint32](self)
-	wasmimport_ErrorResourceDrop((uint32)(self0))
-	return
-}
-
-// Code represents the imported method "code".
-//
-// return the error code.
-//
-//	code: func() -> error-code
-//
-//go:nosplit
-func (self Error) Code() (result ErrorCode) {
-	self0 := cm.Reinterpret[uint32](self)
-	result0 := wasmimport_ErrorCode((uint32)(self0))
-	result = (ErrorCode)((uint32)(result0))
-	return
-}
-
-// Data represents the imported method "data".
-//
-// errors can propagated with backend specific status through a string value.
-//
-//	data: func() -> string
-//
-//go:nosplit
-func (self Error) Data() (result string) {
-	self0 := cm.Reinterpret[uint32](self)
-	wasmimport_ErrorData((uint32)(self0), &result)
-	return
-}
 
 // Agent represents the imported resource "hayride:ai/agents@0.0.61#agent".
 //
@@ -162,27 +77,72 @@ func NewAgent(name string, instruction string, tools_ Tools, context_ Context, f
 	return
 }
 
-// Invoke represents the imported method "invoke".
+// Context represents the imported method "context".
 //
-//	invoke: func(input: message) -> result<list<message>, error>
+//	context: func() -> context
 //
 //go:nosplit
-func (self Agent) Invoke(input Message) (result cm.Result[cm.List[Message], cm.List[Message], Error]) {
+func (self Agent) Context() (result Context) {
 	self0 := cm.Reinterpret[uint32](self)
-	input0, input1, input2 := lower_Message(input)
-	wasmimport_AgentInvoke((uint32)(self0), (uint32)(input0), (*types.MessageContent)(input1), (uint32)(input2), &result)
+	result0 := wasmimport_AgentContext((uint32)(self0))
+	result = cm.Reinterpret[Context]((uint32)(result0))
 	return
 }
 
-// InvokeStream represents the imported method "invoke-stream".
+// Format represents the imported method "format".
 //
-//	invoke-stream: func(message: message, writer: output-stream) -> result<_, error>
+//	format: func() -> format
 //
 //go:nosplit
-func (self Agent) InvokeStream(message Message, writer OutputStream) (result cm.Result[Error, struct{}, Error]) {
+func (self Agent) Format() (result Format) {
 	self0 := cm.Reinterpret[uint32](self)
-	message0, message1, message2 := lower_Message(message)
-	writer0 := cm.Reinterpret[uint32](writer)
-	wasmimport_AgentInvokeStream((uint32)(self0), (uint32)(message0), (*types.MessageContent)(message1), (uint32)(message2), (uint32)(writer0), &result)
+	result0 := wasmimport_AgentFormat((uint32)(self0))
+	result = cm.Reinterpret[Format]((uint32)(result0))
+	return
+}
+
+// Graph represents the imported method "graph".
+//
+//	graph: func() -> graph-execution-context-stream
+//
+//go:nosplit
+func (self Agent) Graph() (result GraphExecutionContextStream) {
+	self0 := cm.Reinterpret[uint32](self)
+	result0 := wasmimport_AgentGraph((uint32)(self0))
+	result = cm.Reinterpret[GraphExecutionContextStream]((uint32)(result0))
+	return
+}
+
+// Instruction represents the imported method "instruction".
+//
+//	instruction: func() -> string
+//
+//go:nosplit
+func (self Agent) Instruction() (result string) {
+	self0 := cm.Reinterpret[uint32](self)
+	wasmimport_AgentInstruction((uint32)(self0), &result)
+	return
+}
+
+// Name represents the imported method "name".
+//
+//	name: func() -> string
+//
+//go:nosplit
+func (self Agent) Name() (result string) {
+	self0 := cm.Reinterpret[uint32](self)
+	wasmimport_AgentName((uint32)(self0), &result)
+	return
+}
+
+// Tools represents the imported method "tools".
+//
+//	tools: func() -> tools
+//
+//go:nosplit
+func (self Agent) Tools() (result Tools) {
+	self0 := cm.Reinterpret[uint32](self)
+	result0 := wasmimport_AgentTools((uint32)(self0))
+	result = cm.Reinterpret[Tools]((uint32)(result0))
 	return
 }

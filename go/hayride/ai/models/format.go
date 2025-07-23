@@ -9,7 +9,7 @@ import (
 )
 
 type Format interface {
-	Encode(messages ...types.Message) (string, error)
+	Encode(messages ...types.Message) ([]byte, error)
 	Decode(b []byte) (*types.Message, error)
 }
 
@@ -19,16 +19,16 @@ func New() (Format, error) {
 	return Fmt(model.NewFormat()), nil
 }
 
-func (f Fmt) Encode(messages ...types.Message) (string, error) {
+func (f Fmt) Encode(messages ...types.Message) ([]byte, error) {
 	witFormat := cm.Reinterpret[model.Format](f)
 
 	witList := cm.ToList(messages)
 	result := witFormat.Encode(cm.Reinterpret[cm.List[model.Message]](witList))
 	if result.IsErr() {
-		return "", fmt.Errorf("error encoding: %s", result.Err().Code().String())
+		return nil, fmt.Errorf("error encoding: %s", result.Err().Code().String())
 	}
 
-	return cm.Reinterpret[string](result.OK()), nil
+	return cm.Reinterpret[[]byte](result.OK()), nil
 }
 
 func (f Fmt) Decode(b []byte) (*types.Message, error) {
