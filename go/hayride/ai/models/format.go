@@ -30,7 +30,7 @@ func (f FormatResource) Encode(messages ...types.Message) ([]byte, error) {
 		return nil, fmt.Errorf("error encoding: %s", result.Err().Code().String())
 	}
 
-	return cm.Reinterpret[[]byte](result.OK()), nil
+	return result.OK().Slice(), nil
 }
 
 func (f FormatResource) Decode(b []byte) (*types.Message, error) {
@@ -42,6 +42,5 @@ func (f FormatResource) Decode(b []byte) (*types.Message, error) {
 		return nil, fmt.Errorf("error decoding: %s", result.Err().Code().String())
 	}
 
-	message := cm.Reinterpret[types.Message](result.OK())
-	return &message, nil
+	return cm.Reinterpret[*types.Message](*result.OK()), nil
 }

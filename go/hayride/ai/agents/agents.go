@@ -82,26 +82,26 @@ func (a AgentResource) Tools() tools.Tools {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Tools()
 
-	return cm.Reinterpret[tools.Tools](result)
+	return cm.Reinterpret[tools.ToolResource](result)
 }
 
 func (a AgentResource) Context() ctx.Context {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Context()
 
-	return cm.Reinterpret[ctx.Context](result)
+	return cm.Reinterpret[ctx.ContextResource](result)
 }
 
 func (a AgentResource) Format() models.Format {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Format()
 
-	return cm.Reinterpret[models.Format](result)
+	return cm.Reinterpret[models.FormatResource](result)
 }
 
 func (a AgentResource) Graph() graph.GraphExecutionContextStream {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Graph()
 
-	return cm.Reinterpret[graph.GraphExecutionContextStream](result)
+	return cm.Reinterpret[graph.GraphExecCtxStream](result)
 }

@@ -75,7 +75,13 @@ func toolsFunc(self cm.Rep) witAgents.Tools {
 	if !ok {
 		return cm.ResourceNone
 	}
-	return cm.Reinterpret[witAgents.Tools](agent.Tools())
+
+	tools, ok := agent.Tools().(tools.ToolResource)
+	if !ok {
+		return cm.ResourceNone
+	}
+
+	return cm.Reinterpret[witAgents.Tools](tools)
 }
 
 func contextFunc(self cm.Rep) witAgents.Context {
@@ -83,7 +89,13 @@ func contextFunc(self cm.Rep) witAgents.Context {
 	if !ok {
 		return cm.ResourceNone
 	}
-	return cm.Reinterpret[witAgents.Context](agent.Context())
+
+	ctx, ok := agent.Context().(ctx.ContextResource)
+	if !ok {
+		return cm.ResourceNone
+	}
+
+	return cm.Reinterpret[witAgents.Context](ctx)
 }
 
 func formatFunc(self cm.Rep) witAgents.Format {
@@ -91,7 +103,13 @@ func formatFunc(self cm.Rep) witAgents.Format {
 	if !ok {
 		return cm.ResourceNone
 	}
-	return cm.Reinterpret[witAgents.Format](agent.Format())
+
+	format, ok := agent.Format().(models.FormatResource)
+	if !ok {
+		return cm.ResourceNone
+	}
+
+	return cm.Reinterpret[witAgents.Format](format)
 }
 
 func graphFunc(self cm.Rep) witAgents.GraphExecutionContextStream {
@@ -99,5 +117,11 @@ func graphFunc(self cm.Rep) witAgents.GraphExecutionContextStream {
 	if !ok {
 		return cm.ResourceNone
 	}
-	return cm.Reinterpret[witAgents.GraphExecutionContextStream](agent.Graph())
+
+	graphExecCtxStream, ok := agent.Graph().(graph.GraphExecCtxStream)
+	if !ok {
+		return cm.ResourceNone
+	}
+
+	return cm.Reinterpret[witAgents.GraphExecutionContextStream](graphExecCtxStream)
 }

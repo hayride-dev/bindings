@@ -75,7 +75,7 @@ func (g GraphExecCtxStream) Compute(namedTensors []NamedTensor) (NamedTensorStre
 		return NamedTensorStream{}, fmt.Errorf("failed to compute: %s", result.Err().Data())
 	}
 
-	namedTensorStream := cm.Reinterpret[NamedTensorStream](result.OK())
+	namedTensorStream := cm.Reinterpret[NamedTensorStream](*result.OK())
 	return namedTensorStream, nil
 }
 
