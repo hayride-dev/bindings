@@ -23,10 +23,7 @@ var resourceTable = &resources{
 	errors: make(map[cm.Rep]error),
 }
 
-func init() {
-}
-
-func Export(c Constructor) {
+func Format(c Constructor) {
 	formatConstructor = c
 
 	model.Exports.Format.Constructor = constructor

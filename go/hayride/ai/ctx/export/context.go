@@ -23,10 +23,7 @@ var resourceTable = &resources{
 	errors: make(map[cm.Rep]error),
 }
 
-func init() {
-}
-
-func Export(c Constructor) {
+func Context(c Constructor) {
 	ctxConstructor = c
 
 	context.Exports.Context.Constructor = constructor

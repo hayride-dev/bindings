@@ -20,10 +20,7 @@ var resourceTable = &resources{
 	errors: make(map[cm.Rep]error),
 }
 
-func init() {
-}
-
-func Export(runner runner.Runner) {
+func Runner(runner runner.Runner) {
 	r = runner
 
 	witRunner.Exports.Invoke = invoke
