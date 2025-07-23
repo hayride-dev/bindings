@@ -13,6 +13,8 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+var _ Agent = (*AgentResource)(nil)
+
 type Agent interface {
 	Name() string
 	Instruction() string

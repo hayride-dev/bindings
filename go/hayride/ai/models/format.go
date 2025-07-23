@@ -8,6 +8,8 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+var _ Format = (*FormatResource)(nil)
+
 type Format interface {
 	Encode(messages ...types.Message) ([]byte, error)
 	Decode(b []byte) (*types.Message, error)

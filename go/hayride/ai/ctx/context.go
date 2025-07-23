@@ -12,6 +12,8 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+var _ Context = (*ContextResource)(nil)
+
 type Context interface {
 	Push(messages ...types.Message) error
 	Messages() ([]types.Message, error)

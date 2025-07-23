@@ -12,12 +12,20 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+var _ Runner = (*runnerImpl)(nil)
+
 type Runner interface {
 	Invoke(message types.Message, agent agents.Agent) ([]types.Message, error)
 	InvokeStream(message types.Message, writer io.Writer, agent agents.Agent) error
 }
 
-func Invoke(message types.Message, agent agents.Agent) ([]types.Message, error) {
+type runnerImpl struct{}
+
+func New() Runner {
+	return &runnerImpl{}
+}
+
+func (r *runnerImpl) Invoke(message types.Message, agent agents.Agent) ([]types.Message, error) {
 	a, ok := agent.(agents.AgentResource)
 	if !ok {
 		return nil, fmt.Errorf("agent does not implement hayride ai agent resource")
@@ -33,7 +41,7 @@ func Invoke(message types.Message, agent agents.Agent) ([]types.Message, error) 
 	return cm.Reinterpret[[]types.Message](msgs), nil
 }
 
-func InvokeStream(message types.Message, writer io.Writer, agent agents.Agent) error {
+func (r *runnerImpl) InvokeStream(message types.Message, writer io.Writer, agent agents.Agent) error {
 	w, ok := writer.(streams.Writer)
 	if !ok {
 		return fmt.Errorf("writer does not implement wasi io outputstream resource")

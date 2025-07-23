@@ -9,6 +9,8 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+var _ Tools = (*ToolResource)(nil)
+
 type Tools interface {
 	Call(params types.CallToolParams) (*types.CallToolResult, error)
 	List(cursor string) (*types.ListToolsResult, error)
