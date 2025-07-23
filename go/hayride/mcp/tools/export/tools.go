@@ -9,18 +9,18 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-type Constructor func() tools.Tools
+type Constructor func() (tools.Tools, error)
 
 var toolsConstructor Constructor
 
 type resources struct {
 	tools  map[cm.Rep]tools.Tools
-	errors map[cm.Rep]error
+	errors map[cm.Rep]errorResource
 }
 
 var resourceTable = &resources{
 	tools:  make(map[cm.Rep]tools.Tools),
-	errors: make(map[cm.Rep]error),
+	errors: make(map[cm.Rep]errorResource),
 }
 
 func Tools(c Constructor) {
@@ -37,7 +37,10 @@ func Tools(c Constructor) {
 }
 
 func constructor() witTools.Tools {
-	toolbox := toolsConstructor()
+	toolbox, err := toolsConstructor()
+	if err != nil {
+		return cm.ResourceNone
+	}
 
 	key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&toolbox))))
 	v := witTools.ToolsResourceNew(key)

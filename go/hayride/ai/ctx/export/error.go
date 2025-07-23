@@ -7,15 +7,15 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// error represents the error resource
-type error struct {
+// errorResource represents the error resource
+type errorResource struct {
 	Code context.ErrorCode
 	Data string
 }
 
 // createError creates a new error resource and stores it in the resource table.
 func createError(code context.ErrorCode, data string) context.Error {
-	err := error{
+	err := errorResource{
 		Code: code,
 		Data: data,
 	}
