@@ -8,6 +8,8 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+var _ InferenceStream = (*GraphStream)(nil)
+
 type InferenceStream interface {
 	InitExecutionContextStream() (GraphExecutionContextStream, error)
 }
@@ -33,6 +35,8 @@ func (g GraphStream) InitExecutionContextStream() (GraphExecutionContextStream, 
 
 	return GraphExecCtxStream(*result.OK()), nil
 }
+
+var _ GraphExecutionContextStream = (*GraphExecCtxStream)(nil)
 
 type GraphExecutionContextStream interface {
 	Compute(namedTensors []inferencestream.NamedTensor) ([]inferencestream.NamedTensor, error)

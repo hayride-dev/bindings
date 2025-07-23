@@ -6,21 +6,17 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-type readerInstance struct {
-	config.Reader
-}
+var reader config.Reader
 
 func Export(r config.Reader) {
-	instance := &readerInstance{
-		Reader: r,
-	}
+	reader = r
 
-	store.Exports.Get = instance.get
-	store.Exports.GetAll = instance.getAll
+	store.Exports.Get = get
+	store.Exports.GetAll = getAll
 }
 
-func (ri *readerInstance) get(key string) (result cm.Result[store.OptionStringShape_, cm.Option[string], store.Error]) {
-	v, err := ri.Get(key)
+func get(key string) (result cm.Result[store.OptionStringShape_, cm.Option[string], store.Error]) {
+	v, err := reader.Get(key)
 	if err != nil {
 		s := store.ErrorUpstream("error getting config value" + err.Error())
 		return cm.Err[cm.Result[store.OptionStringShape_, cm.Option[string], store.Error]](s)
@@ -28,8 +24,8 @@ func (ri *readerInstance) get(key string) (result cm.Result[store.OptionStringSh
 	return cm.OK[cm.Result[store.OptionStringShape_, cm.Option[string], store.Error]](cm.Some(v))
 }
 
-func (ri *readerInstance) getAll() (result cm.Result[store.ErrorShape_, cm.List[[2]string], store.Error]) {
-	values, err := ri.GetAll()
+func getAll() (result cm.Result[store.ErrorShape_, cm.List[[2]string], store.Error]) {
+	values, err := reader.GetAll()
 	if err != nil {
 		s := store.ErrorUpstream("error getting config value" + err.Error())
 		return cm.Err[cm.Result[store.ErrorShape_, cm.List[[2]string], store.Error]](s)

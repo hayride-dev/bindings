@@ -12,7 +12,13 @@ type Reader interface {
 	GetAll() (map[string]string, error)
 }
 
-func Get(key string) (string, error) {
+type readerImpl struct{}
+
+func NewReader() Reader {
+	return &readerImpl{}
+}
+
+func (r *readerImpl) Get(key string) (string, error) {
 	result := store.Get(key)
 	if result.IsErr() {
 		switch result.Err().String() {
@@ -27,7 +33,7 @@ func Get(key string) (string, error) {
 	return result.OK().Value(), nil
 }
 
-func GetAll() (map[string]string, error) {
+func (r *readerImpl) GetAll() (map[string]string, error) {
 	result := store.GetAll()
 	if result.IsErr() {
 		return nil, errors.New(result.Err().String())

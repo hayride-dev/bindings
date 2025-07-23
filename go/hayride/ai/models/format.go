@@ -8,30 +8,32 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+var _ Format = (*FormatResource)(nil)
+
 type Format interface {
-	Encode(messages ...types.Message) (string, error)
+	Encode(messages ...types.Message) ([]byte, error)
 	Decode(b []byte) (*types.Message, error)
 }
 
-type Fmt cm.Resource
+type FormatResource cm.Resource
 
 func New() (Format, error) {
-	return Fmt(model.NewFormat()), nil
+	return FormatResource(model.NewFormat()), nil
 }
 
-func (f Fmt) Encode(messages ...types.Message) (string, error) {
+func (f FormatResource) Encode(messages ...types.Message) ([]byte, error) {
 	witFormat := cm.Reinterpret[model.Format](f)
 
 	witList := cm.ToList(messages)
 	result := witFormat.Encode(cm.Reinterpret[cm.List[model.Message]](witList))
 	if result.IsErr() {
-		return "", fmt.Errorf("error encoding: %s", result.Err().Code().String())
+		return nil, fmt.Errorf("error encoding: %s", result.Err().Code().String())
 	}
 
-	return cm.Reinterpret[string](result.OK()), nil
+	return cm.Reinterpret[[]byte](result.OK()), nil
 }
 
-func (f Fmt) Decode(b []byte) (*types.Message, error) {
+func (f FormatResource) Decode(b []byte) (*types.Message, error) {
 	witFormat := cm.Reinterpret[model.Format](f)
 
 	data := cm.ToList(b)

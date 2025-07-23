@@ -12,21 +12,23 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+var _ Context = (*ContextResource)(nil)
+
 type Context interface {
 	Push(messages ...types.Message) error
 	Messages() ([]types.Message, error)
 }
 
-type Ctx cm.Resource
+type ContextResource cm.Resource
 
 // Create the resource
 func New() (Context, error) {
-	return Ctx(context.NewContext()), nil
+	return ContextResource(context.NewContext()), nil
 }
 
 // Push take a list of messages, convert them to a list of wit Messages
 // and call imported context push
-func (c Ctx) Push(messages ...types.Message) error {
+func (c ContextResource) Push(messages ...types.Message) error {
 	witContext := cm.Reinterpret[context.Context](c)
 	// Convert types.Message to context.Message and push
 	for _, msg := range messages {
@@ -39,7 +41,7 @@ func (c Ctx) Push(messages ...types.Message) error {
 }
 
 // Messages returns the list of messages in the context
-func (c Ctx) Messages() ([]types.Message, error) {
+func (c ContextResource) Messages() ([]types.Message, error) {
 	witContext := cm.Reinterpret[context.Context](c)
 	result := witContext.Messages()
 	if result.IsErr() {

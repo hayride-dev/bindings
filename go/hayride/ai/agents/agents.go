@@ -2,26 +2,29 @@ package agents
 
 import (
 	"fmt"
-	"io"
 
 	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agents"
 	graphstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
-	"github.com/hayride-dev/bindings/go/wasi/streams"
 
 	"go.bytecodealliance.org/cm"
 )
 
+var _ Agent = (*AgentResource)(nil)
+
 type Agent interface {
-	Invoke(message types.Message) ([]types.Message, error)
-	InvokeStream(message types.Message, writer io.Writer) error
+	Name() string
+	Instruction() string
+	Tools() tools.Tools
+	Context() ctx.Context
+	Format() models.Format
+	Graph() graph.GraphExecutionContextStream
 }
 
-type agent cm.Resource
+type AgentResource cm.Resource
 
 func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream graph.GraphExecutionContextStream, options ...Option[*AgentOptions]) (Agent, error) {
 	opts := defaultAgentOptions()
@@ -31,17 +34,17 @@ func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream 
 		}
 	}
 
-	tb, ok := toolbox.(tools.Toolbox)
+	tb, ok := toolbox.(tools.ToolResource)
 	if !ok {
 		return nil, fmt.Errorf("toolbox does not implement tools.Toolbox")
 	}
 
-	c, ok := context.(ctx.Ctx)
+	c, ok := context.(ctx.ContextResource)
 	if !ok {
 		return nil, fmt.Errorf("context does not implement ctx.Context")
 	}
 
-	f, ok := format.(models.Fmt)
+	f, ok := format.(models.FormatResource)
 	if !ok {
 		return nil, fmt.Errorf("format does not implement models.Format")
 	}
@@ -58,36 +61,47 @@ func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream 
 		graphstream.GraphExecutionContextStream(graphExecCtxStream),
 	)
 
-	return agent(wa), nil
+	return AgentResource(wa), nil
 }
 
-func (a agent) Invoke(message types.Message) ([]types.Message, error) {
+func (a AgentResource) Name() string {
 	wa := cm.Reinterpret[agents.Agent](a)
+	result := wa.Name()
 
-	result := wa.Invoke(cm.Reinterpret[agents.Message](message))
-	if result.IsErr() {
-		return nil, fmt.Errorf("failed to invoke agent")
-	}
-
-	msgs := result.OK().Slice()
-	return cm.Reinterpret[[]types.Message](msgs), nil
+	return result
 }
 
-func (a agent) InvokeStream(message types.Message, writer io.Writer) error {
+func (a AgentResource) Instruction() string {
 	wa := cm.Reinterpret[agents.Agent](a)
+	result := wa.Instruction()
 
-	w, ok := writer.(streams.Writer)
-	if !ok {
-		return fmt.Errorf("writer does not implement wasi io outputstream resource")
-	}
+	return result
+}
 
-	agentMessage := cm.Reinterpret[agents.Message](message)
-	agentOutputStream := cm.Reinterpret[agents.OutputStream](w)
+func (a AgentResource) Tools() tools.Tools {
+	wa := cm.Reinterpret[agents.Agent](a)
+	result := wa.Tools()
 
-	result := wa.InvokeStream(agentMessage, agentOutputStream)
-	if result.IsErr() {
-		return fmt.Errorf("failed to invoke agent")
-	}
+	return cm.Reinterpret[tools.Tools](result)
+}
 
-	return nil
+func (a AgentResource) Context() ctx.Context {
+	wa := cm.Reinterpret[agents.Agent](a)
+	result := wa.Context()
+
+	return cm.Reinterpret[ctx.Context](result)
+}
+
+func (a AgentResource) Format() models.Format {
+	wa := cm.Reinterpret[agents.Agent](a)
+	result := wa.Format()
+
+	return cm.Reinterpret[models.Format](result)
+}
+
+func (a AgentResource) Graph() graph.GraphExecutionContextStream {
+	wa := cm.Reinterpret[agents.Agent](a)
+	result := wa.Graph()
+
+	return cm.Reinterpret[graph.GraphExecutionContextStream](result)
 }
