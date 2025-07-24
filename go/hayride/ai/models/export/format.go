@@ -64,7 +64,7 @@ func decode(self cm.Rep, raw cm.List[uint8]) (result cm.Result[model.MessageShap
 		return cm.Err[cm.Result[model.MessageShape, model.Message, model.Error]](wasiErr)
 	}
 
-	message := cm.Reinterpret[model.Message](msg)
+	message := cm.Reinterpret[model.Message](*msg)
 
 	return cm.OK[cm.Result[model.MessageShape, model.Message, model.Error]](message)
 }

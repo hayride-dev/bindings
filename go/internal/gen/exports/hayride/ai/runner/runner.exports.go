@@ -32,12 +32,12 @@ var Exports struct {
 
 	// Invoke represents the caller-defined, exported function "invoke".
 	//
-	//	invoke: func(message: message, agent: agent) -> result<list<message>, error>
-	Invoke func(message Message, agent Agent) (result cm.Result[cm.List[Message], cm.List[Message], Error])
+	//	invoke: func(message: message, agent: borrow<agent>) -> result<list<message>, error>
+	Invoke func(message Message, agent cm.Rep) (result cm.Result[cm.List[Message], cm.List[Message], Error])
 
 	// InvokeStream represents the caller-defined, exported function "invoke-stream".
 	//
-	//	invoke-stream: func(message: message, writer: output-stream, agent: agent) -> result<_,
-	//	error>
-	InvokeStream func(message Message, writer OutputStream, agent Agent) (result cm.Result[Error, struct{}, Error])
+	//	invoke-stream: func(message: message, writer: borrow<output-stream>, agent: borrow<agent>)
+	//	-> result<_, error>
+	InvokeStream func(message Message, writer cm.Rep, agent cm.Rep) (result cm.Result[Error, struct{}, Error])
 }

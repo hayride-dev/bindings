@@ -4,11 +4,51 @@ package agents
 
 import (
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
+	types_ "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/mcp/types"
 	"go.bytecodealliance.org/cm"
+	"unsafe"
 )
+
+func lower_OptionTools(v cm.Option[Tools]) (f0 uint32, f1 uint32) {
+	some := v.Some()
+	if some != nil {
+		f0 = 1
+		v1 := cm.Reinterpret[uint32](*some)
+		f1 = (uint32)(v1)
+	}
+	return
+}
+
+func lower_OptionContext(v cm.Option[Context]) (f0 uint32, f1 uint32) {
+	some := v.Some()
+	if some != nil {
+		f0 = 1
+		v1 := cm.Reinterpret[uint32](*some)
+		f1 = (uint32)(v1)
+	}
+	return
+}
+
+// MessageShape is used for storage in variant or result types.
+type MessageShape struct {
+	_     cm.HostLayout
+	shape [unsafe.Sizeof(Message{})]byte
+}
 
 func lower_Message(v types.Message) (f0 uint32, f1 *types.MessageContent, f2 uint32) {
 	f0 = (uint32)(v.Role)
 	f1, f2 = cm.LowerList(v.Content)
+	return
+}
+
+// CallToolResultShape is used for storage in variant or result types.
+type CallToolResultShape struct {
+	_     cm.HostLayout
+	shape [unsafe.Sizeof(CallToolResult{})]byte
+}
+
+func lower_CallToolParams(v types_.CallToolParams) (f0 *uint8, f1 uint32, f2 *[2]string, f3 uint32) {
+	f0, f1 = cm.LowerString(v.Name)
+	f2, f3 = cm.LowerList(v.Arguments)
 	return
 }

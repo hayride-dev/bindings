@@ -34,7 +34,7 @@ func (r *runnerImpl) Invoke(message types.Message, agent agents.Agent) ([]types.
 
 	result := runner.Invoke(cm.Reinterpret[runner.Message](message), agentResource)
 	if result.IsErr() {
-		return nil, fmt.Errorf("failed to invoke agent")
+		return nil, fmt.Errorf("failed to invoke agent: %s", result.Err().Data())
 	}
 
 	msgs := result.OK().Slice()
@@ -58,7 +58,7 @@ func (r *runnerImpl) InvokeStream(message types.Message, writer io.Writer, agent
 
 	result := runner.InvokeStream(agentMessage, agentOutputStream, agentResource)
 	if result.IsErr() {
-		return fmt.Errorf("failed to invoke agent")
+		return fmt.Errorf("failed to invoke agent: %s", result.Err().Data())
 	}
 
 	return nil

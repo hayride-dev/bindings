@@ -7,6 +7,7 @@ import (
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
+	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agents"
 	graphstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
 
@@ -18,15 +19,15 @@ var _ Agent = (*AgentResource)(nil)
 type Agent interface {
 	Name() string
 	Instruction() string
-	Tools() tools.Tools
-	Context() ctx.Context
-	Format() models.Format
-	Graph() graph.GraphExecutionContextStream
+	Capabilities() ([]types.Tool, error)
+	Context() ([]types.Message, error)
+	Compute(message types.Message) (*types.Message, error)
+	Execute(params types.CallToolParams) (*types.CallToolResult, error)
 }
 
 type AgentResource cm.Resource
 
-func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream graph.GraphExecutionContextStream, options ...Option[*AgentOptions]) (Agent, error) {
+func New(format models.Format, stream graph.GraphExecutionContextStream, options ...Option[*AgentOptions]) (Agent, error) {
 	opts := defaultAgentOptions()
 	for _, opt := range options {
 		if err := opt.Apply(opts); err != nil {
@@ -34,14 +35,27 @@ func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream 
 		}
 	}
 
-	tb, ok := toolbox.(tools.ToolResource)
-	if !ok {
-		return nil, fmt.Errorf("toolbox does not implement tools.Toolbox")
+	var toolsOption cm.Option[agents.Tools]
+	if opts.toolbox != nil {
+		tb, ok := opts.toolbox.(tools.ToolResource)
+		if !ok {
+			return nil, fmt.Errorf("toolbox does not implement tools.Toolbox")
+		}
+
+		toolsOption = cm.Some(agents.Tools(tb))
+	} else {
+		toolsOption = cm.None[agents.Tools]()
 	}
 
-	c, ok := context.(ctx.ContextResource)
-	if !ok {
-		return nil, fmt.Errorf("context does not implement ctx.Context")
+	var ctxOption cm.Option[agents.Context]
+	if opts.context != nil {
+		c, ok := opts.context.(ctx.ContextResource)
+		if !ok {
+			return nil, fmt.Errorf("context does not implement ctx.Context")
+		}
+		ctxOption = cm.Some(agents.Context(c))
+	} else {
+		ctxOption = cm.None[agents.Context]()
 	}
 
 	f, ok := format.(models.FormatResource)
@@ -55,10 +69,10 @@ func New(toolbox tools.Tools, context ctx.Context, format models.Format, stream 
 	}
 
 	wa := agents.NewAgent(opts.name, opts.instruction,
-		agents.Tools(tb),
-		agents.Context(c),
 		agents.Format(f),
 		graphstream.GraphExecutionContextStream(graphExecCtxStream),
+		toolsOption,
+		ctxOption,
 	)
 
 	return AgentResource(wa), nil
@@ -78,30 +92,42 @@ func (a AgentResource) Instruction() string {
 	return result
 }
 
-func (a AgentResource) Tools() tools.Tools {
+func (a AgentResource) Capabilities() ([]types.Tool, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
-	result := wa.Tools()
+	result := wa.Capabilities()
+	if result.IsErr() {
+		return nil, fmt.Errorf("failed to get capabilities: %s", result.Err().Data())
+	}
 
-	return cm.Reinterpret[tools.Tools](result)
+	return cm.Reinterpret[[]types.Tool](result.OK().Slice()), nil
 }
 
-func (a AgentResource) Context() ctx.Context {
+func (a AgentResource) Context() ([]types.Message, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Context()
+	if result.IsErr() {
+		return nil, fmt.Errorf("failed to get context: %s", result.Err().Data())
+	}
 
-	return cm.Reinterpret[ctx.Context](result)
+	return cm.Reinterpret[[]types.Message](result.OK().Slice()), nil
 }
 
-func (a AgentResource) Format() models.Format {
+func (a AgentResource) Compute(message types.Message) (*types.Message, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
-	result := wa.Format()
+	result := wa.Compute(cm.Reinterpret[agents.Message](message))
+	if result.IsErr() {
+		return nil, fmt.Errorf("failed to compute message: %s", result.Err().Data())
+	}
 
-	return cm.Reinterpret[models.Format](result)
+	return cm.Reinterpret[*types.Message](result.OK()), nil
 }
 
-func (a AgentResource) Graph() graph.GraphExecutionContextStream {
+func (a AgentResource) Execute(params types.CallToolParams) (*types.CallToolResult, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
-	result := wa.Graph()
+	result := wa.Execute(cm.Reinterpret[agents.CallToolParams](params))
+	if result.IsErr() {
+		return nil, fmt.Errorf("failed to execute tool: %s", result.Err().Data())
+	}
 
-	return cm.Reinterpret[graph.GraphExecutionContextStream](result)
+	return cm.Reinterpret[*types.CallToolResult](result.OK()), nil
 }

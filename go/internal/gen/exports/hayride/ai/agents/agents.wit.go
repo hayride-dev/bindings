@@ -8,10 +8,17 @@ import (
 	graphstream "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/graph-stream"
 	inferencestream "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/inference-stream"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
+	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/mcp/tools"
+	types_ "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/mcp/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/io/streams"
 	"go.bytecodealliance.org/cm"
 )
+
+// Message represents the type alias "hayride:ai/agents@0.0.61#message".
+//
+// See [types.Message] for more information.
+type Message = types.Message
 
 // Context represents the exported type alias "hayride:ai/agents@0.0.61#context".
 //
@@ -28,6 +35,21 @@ type Format = model.Format
 // See [tools.Tools] for more information.
 type Tools = tools.Tools
 
+// Tool represents the type alias "hayride:ai/agents@0.0.61#tool".
+//
+// See [types_.Tool] for more information.
+type Tool = types_.Tool
+
+// CallToolParams represents the type alias "hayride:ai/agents@0.0.61#call-tool-params".
+//
+// See [types_.CallToolParams] for more information.
+type CallToolParams = types_.CallToolParams
+
+// CallToolResult represents the type alias "hayride:ai/agents@0.0.61#call-tool-result".
+//
+// See [types_.CallToolResult] for more information.
+type CallToolResult = types_.CallToolResult
+
 // GraphStream represents the exported type alias "hayride:ai/agents@0.0.61#graph-stream".
 //
 // See [graphstream.GraphStream] for more information.
@@ -42,6 +64,95 @@ type GraphExecutionContextStream = inferencestream.GraphExecutionContextStream
 //
 // See [streams.OutputStream] for more information.
 type OutputStream = streams.OutputStream
+
+// ErrorCode represents the enum "hayride:ai/agents@0.0.61#error-code".
+//
+//	enum error-code {
+//		capabilities-error,
+//		context-error,
+//		compute-error,
+//		execute-error,
+//		unknown
+//	}
+type ErrorCode uint8
+
+const (
+	ErrorCodeCapabilitiesError ErrorCode = iota
+	ErrorCodeContextError
+	ErrorCodeComputeError
+	ErrorCodeExecuteError
+	ErrorCodeUnknown
+)
+
+var _ErrorCodeStrings = [5]string{
+	"capabilities-error",
+	"context-error",
+	"compute-error",
+	"execute-error",
+	"unknown",
+}
+
+// String implements [fmt.Stringer], returning the enum case name of e.
+func (e ErrorCode) String() string {
+	return _ErrorCodeStrings[e]
+}
+
+// MarshalText implements [encoding.TextMarshaler].
+func (e ErrorCode) MarshalText() ([]byte, error) {
+	return []byte(e.String()), nil
+}
+
+// UnmarshalText implements [encoding.TextUnmarshaler], unmarshaling into an enum
+// case. Returns an error if the supplied text is not one of the enum cases.
+func (e *ErrorCode) UnmarshalText(text []byte) error {
+	return _ErrorCodeUnmarshalCase(e, text)
+}
+
+var _ErrorCodeUnmarshalCase = cm.CaseUnmarshaler[ErrorCode](_ErrorCodeStrings[:])
+
+// Error represents the exported resource "hayride:ai/agents@0.0.61#error".
+//
+//	resource error
+type Error cm.Resource
+
+// ErrorResourceNew represents the imported resource-new for resource "error".
+//
+// Creates a new resource handle.
+//
+//go:nosplit
+func ErrorResourceNew(rep cm.Rep) (result Error) {
+	rep0 := cm.Reinterpret[uint32](rep)
+	result0 := wasmimport_ErrorResourceNew((uint32)(rep0))
+	result = cm.Reinterpret[Error]((uint32)(result0))
+	return
+}
+
+// ResourceRep represents the imported resource-rep for resource "error".
+//
+// Returns the underlying resource representation.
+//
+//go:nosplit
+func (self Error) ResourceRep() (result cm.Rep) {
+	self0 := cm.Reinterpret[uint32](self)
+	result0 := wasmimport_ErrorResourceRep((uint32)(self0))
+	result = cm.Reinterpret[cm.Rep]((uint32)(result0))
+	return
+}
+
+// ResourceDrop represents the imported resource-drop for resource "error".
+//
+// Drops a resource handle.
+//
+//go:nosplit
+func (self Error) ResourceDrop() {
+	self0 := cm.Reinterpret[uint32](self)
+	wasmimport_ErrorResourceDrop((uint32)(self0))
+	return
+}
+
+func init() {
+	Exports.Error.Destructor = func(self cm.Rep) {}
+}
 
 // Agent represents the exported resource "hayride:ai/agents@0.0.61#agent".
 //

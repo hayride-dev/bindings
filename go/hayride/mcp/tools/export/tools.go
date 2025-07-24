@@ -77,7 +77,7 @@ func list(self cm.Rep, cursor string) cm.Result[witTools.ListToolsResultShape, w
 		return cm.Err[cm.Result[witTools.ListToolsResultShape, witTools.ListToolsResult, witTools.Error]](wasiErr)
 	}
 
-	return cm.OK[cm.Result[witTools.ListToolsResultShape, witTools.ListToolsResult, witTools.Error]](cm.Reinterpret[witTools.ListToolsResult](result))
+	return cm.OK[cm.Result[witTools.ListToolsResultShape, witTools.ListToolsResult, witTools.Error]](cm.Reinterpret[witTools.ListToolsResult](*result))
 }
 
 func destructor(self cm.Rep) {

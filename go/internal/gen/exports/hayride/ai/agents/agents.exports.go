@@ -8,6 +8,28 @@ import (
 
 // Exports represents the caller-defined exports from "hayride:ai/agents@0.0.61".
 var Exports struct {
+	// Error represents the caller-defined exports for resource "hayride:ai/agents@0.0.61#error".
+	Error struct {
+		// Destructor represents the caller-defined, exported destructor for resource "error".
+		//
+		// Resource destructor.
+		Destructor func(self cm.Rep)
+
+		// Code represents the caller-defined, exported method "code".
+		//
+		// return the error code.
+		//
+		//	code: func() -> error-code
+		Code func(self cm.Rep) (result ErrorCode)
+
+		// Data represents the caller-defined, exported method "data".
+		//
+		// errors can propagated with backend specific status through a string value.
+		//
+		//	data: func() -> string
+		Data func(self cm.Rep) (result string)
+	}
+
 	// Agent represents the caller-defined exports for resource "hayride:ai/agents@0.0.61#agent".
 	Agent struct {
 		// Destructor represents the caller-defined, exported destructor for resource "agent".
@@ -17,24 +39,29 @@ var Exports struct {
 
 		// Constructor represents the caller-defined, exported constructor for resource "agent".
 		//
-		//	constructor(name: string, instruction: string, tools: tools, context: context,
-		//	format: format, graph: graph-execution-context-stream)
-		Constructor func(name string, instruction string, tools_ Tools, context_ Context, format Format, graph GraphExecutionContextStream) (result Agent)
+		//	constructor(name: string, instruction: string, format: format, graph: graph-execution-context-stream,
+		//	tools: option<tools>, context: option<context>)
+		Constructor func(name string, instruction string, format Format, graph GraphExecutionContextStream, tools_ cm.Option[Tools], context_ cm.Option[Context]) (result Agent)
+
+		// Capabilities represents the caller-defined, exported method "capabilities".
+		//
+		//	capabilities: func() -> result<list<tool>, error>
+		Capabilities func(self cm.Rep) (result cm.Result[cm.List[Tool], cm.List[Tool], Error])
+
+		// Compute represents the caller-defined, exported method "compute".
+		//
+		//	compute: func(message: message) -> result<message, error>
+		Compute func(self cm.Rep, message Message) (result cm.Result[MessageShape, Message, Error])
 
 		// Context represents the caller-defined, exported method "context".
 		//
-		//	context: func() -> context
-		Context func(self cm.Rep) (result Context)
+		//	context: func() -> result<list<message>, error>
+		Context func(self cm.Rep) (result cm.Result[cm.List[Message], cm.List[Message], Error])
 
-		// Format represents the caller-defined, exported method "format".
+		// Execute represents the caller-defined, exported method "execute".
 		//
-		//	format: func() -> format
-		Format func(self cm.Rep) (result Format)
-
-		// Graph represents the caller-defined, exported method "graph".
-		//
-		//	graph: func() -> graph-execution-context-stream
-		Graph func(self cm.Rep) (result GraphExecutionContextStream)
+		//	execute: func(params: call-tool-params) -> result<call-tool-result, error>
+		Execute func(self cm.Rep, params CallToolParams) (result cm.Result[CallToolResultShape, CallToolResult, Error])
 
 		// Instruction represents the caller-defined, exported method "instruction".
 		//
@@ -45,10 +72,5 @@ var Exports struct {
 		//
 		//	name: func() -> string
 		Name func(self cm.Rep) (result string)
-
-		// Tools represents the caller-defined, exported method "tools".
-		//
-		//	tools: func() -> tools
-		Tools func(self cm.Rep) (result Tools)
 	}
 }
