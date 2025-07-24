@@ -51,7 +51,7 @@ func wasmexport_ErrorData(self0 uint32) (result *string) {
 //export hayride:ai/runner@0.0.61#invoke
 func wasmexport_Invoke(message0 uint32, message1 *types.MessageContent, message2 uint32, agent0 uint32) (result *cm.Result[cm.List[Message], cm.List[Message], Error]) {
 	message := lift_Message((uint32)(message0), (*types.MessageContent)(message1), (uint32)(message2))
-	agent := cm.Reinterpret[Agent]((uint32)(agent0))
+	agent := cm.Reinterpret[cm.Rep]((uint32)(agent0))
 	result_ := Exports.Invoke(message, agent)
 	result = &result_
 	return
@@ -61,8 +61,8 @@ func wasmexport_Invoke(message0 uint32, message1 *types.MessageContent, message2
 //export hayride:ai/runner@0.0.61#invoke-stream
 func wasmexport_InvokeStream(message0 uint32, message1 *types.MessageContent, message2 uint32, writer0 uint32, agent0 uint32) (result *cm.Result[Error, struct{}, Error]) {
 	message := lift_Message((uint32)(message0), (*types.MessageContent)(message1), (uint32)(message2))
-	writer := cm.Reinterpret[OutputStream]((uint32)(writer0))
-	agent := cm.Reinterpret[Agent]((uint32)(agent0))
+	writer := cm.Reinterpret[cm.Rep]((uint32)(writer0))
+	agent := cm.Reinterpret[cm.Rep]((uint32)(agent0))
 	result_ := Exports.InvokeStream(message, writer, agent)
 	result = &result_
 	return

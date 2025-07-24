@@ -7,6 +7,7 @@ import (
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
+	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agents"
 	graphstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
 
@@ -18,10 +19,9 @@ var _ Agent = (*AgentResource)(nil)
 type Agent interface {
 	Name() string
 	Instruction() string
-	Tools() tools.Tools
-	Context() ctx.Context
-	Format() models.Format
-	Graph() graph.GraphExecutionContextStream
+	Capabilities() ([]types.Tool, error)
+	Context() ([]types.Message, error)
+	Compute(message types.Message) (*types.Message, error)
 }
 
 type AgentResource cm.Resource
@@ -78,30 +78,32 @@ func (a AgentResource) Instruction() string {
 	return result
 }
 
-func (a AgentResource) Tools() tools.Tools {
+func (a AgentResource) Capabilities() ([]types.Tool, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
-	result := wa.Tools()
+	result := wa.Capabilities()
+	if result.IsErr() {
+		return nil, fmt.Errorf("failed to get capabilities: %s", result.Err().Data())
+	}
 
-	return cm.Reinterpret[tools.ToolResource](result)
+	return cm.Reinterpret[[]types.Tool](result.OK().Slice()), nil
 }
 
-func (a AgentResource) Context() ctx.Context {
+func (a AgentResource) Context() ([]types.Message, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Context()
+	if result.IsErr() {
+		return nil, fmt.Errorf("failed to get context: %s", result.Err().Data())
+	}
 
-	return cm.Reinterpret[ctx.ContextResource](result)
+	return cm.Reinterpret[[]types.Message](result.OK().Slice()), nil
 }
 
-func (a AgentResource) Format() models.Format {
+func (a AgentResource) Compute(message types.Message) (*types.Message, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
-	result := wa.Format()
+	result := wa.Compute(cm.Reinterpret[agents.Message](message))
+	if result.IsErr() {
+		return nil, fmt.Errorf("failed to compute message: %s", result.Err().Data())
+	}
 
-	return cm.Reinterpret[models.FormatResource](result)
-}
-
-func (a AgentResource) Graph() graph.GraphExecutionContextStream {
-	wa := cm.Reinterpret[agents.Agent](a)
-	result := wa.Graph()
-
-	return cm.Reinterpret[graph.GraphExecCtxStream](result)
+	return cm.Reinterpret[*types.Message](result.OK()), nil
 }

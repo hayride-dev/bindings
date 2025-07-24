@@ -8,6 +8,7 @@ import (
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
+	"github.com/hayride-dev/bindings/go/hayride/types"
 	witAgents "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/agents"
 	"go.bytecodealliance.org/cm"
 )
@@ -18,10 +19,12 @@ var agentConstructor Constructor
 
 type resources struct {
 	agents map[cm.Rep]agents.Agent
+	errors map[cm.Rep]errorResource
 }
 
 var resourceTable = &resources{
 	agents: make(map[cm.Rep]agents.Agent),
+	errors: make(map[cm.Rep]errorResource),
 }
 
 func Agent(c Constructor) {
@@ -31,10 +34,13 @@ func Agent(c Constructor) {
 	witAgents.Exports.Agent.Destructor = destructor
 	witAgents.Exports.Agent.Name = name
 	witAgents.Exports.Agent.Instruction = instruction
+	witAgents.Exports.Agent.Capabilities = capabilitiesFunc
 	witAgents.Exports.Agent.Context = contextFunc
-	witAgents.Exports.Agent.Graph = graphFunc
-	witAgents.Exports.Agent.Tools = toolsFunc
-	witAgents.Exports.Agent.Format = formatFunc
+	witAgents.Exports.Agent.Compute = computeFunc
+
+	witAgents.Exports.Error.Code = errorCode
+	witAgents.Exports.Error.Data = errorData
+	witAgents.Exports.Error.Destructor = errorDestructor
 }
 
 func constructor(name string, instruction string, t witAgents.Tools, context witAgents.Context, format witAgents.Format, g witAgents.GraphExecutionContextStream) witAgents.Agent {
@@ -70,58 +76,52 @@ func instruction(self cm.Rep) string {
 	return agent.Instruction()
 }
 
-func toolsFunc(self cm.Rep) witAgents.Tools {
+func capabilitiesFunc(self cm.Rep) cm.Result[cm.List[witAgents.Tool], cm.List[witAgents.Tool], witAgents.Error] {
 	agent, ok := resourceTable.agents[self]
 	if !ok {
-		return cm.ResourceNone
+		wasiErr := createError(witAgents.ErrorCodeCapabilitiesError, "failed to find agent resource")
+		return cm.Err[cm.Result[cm.List[witAgents.Tool], cm.List[witAgents.Tool], witAgents.Error]](wasiErr)
 	}
 
-	tools, ok := agent.Tools().(tools.ToolResource)
-	if !ok {
-		return cm.ResourceNone
+	capabilities, err := agent.Capabilities()
+	if err != nil {
+		wasiErr := createError(witAgents.ErrorCodeCapabilitiesError, err.Error())
+		return cm.Err[cm.Result[cm.List[witAgents.Tool], cm.List[witAgents.Tool], witAgents.Error]](wasiErr)
 	}
 
-	return cm.Reinterpret[witAgents.Tools](tools)
+	return cm.OK[cm.Result[cm.List[witAgents.Tool], cm.List[witAgents.Tool], witAgents.Error]](cm.Reinterpret[cm.List[witAgents.Tool]](cm.ToList(capabilities)))
 }
 
-func contextFunc(self cm.Rep) witAgents.Context {
+func contextFunc(self cm.Rep) cm.Result[cm.List[witAgents.Message], cm.List[witAgents.Message], witAgents.Error] {
 	agent, ok := resourceTable.agents[self]
 	if !ok {
-		return cm.ResourceNone
+		wasiErr := createError(witAgents.ErrorCodeContextError, "failed to find agent resource")
+		return cm.Err[cm.Result[cm.List[witAgents.Message], cm.List[witAgents.Message], witAgents.Error]](wasiErr)
 	}
 
-	ctx, ok := agent.Context().(ctx.ContextResource)
-	if !ok {
-		return cm.ResourceNone
+	msg, err := agent.Context()
+	if err != nil {
+		wasiErr := createError(witAgents.ErrorCodeContextError, err.Error())
+		return cm.Err[cm.Result[cm.List[witAgents.Message], cm.List[witAgents.Message], witAgents.Error]](wasiErr)
 	}
 
-	return cm.Reinterpret[witAgents.Context](ctx)
+	return cm.OK[cm.Result[cm.List[witAgents.Message], cm.List[witAgents.Message], witAgents.Error]](cm.Reinterpret[cm.List[witAgents.Message]](cm.ToList(msg)))
 }
 
-func formatFunc(self cm.Rep) witAgents.Format {
+func computeFunc(self cm.Rep, message witAgents.Message) cm.Result[witAgents.MessageShape, witAgents.Message, witAgents.Error] {
 	agent, ok := resourceTable.agents[self]
 	if !ok {
-		return cm.ResourceNone
+		wasiErr := createError(witAgents.ErrorCodeComputeError, "failed to find agent resource")
+		return cm.Err[cm.Result[witAgents.MessageShape, witAgents.Message, witAgents.Error]](wasiErr)
 	}
 
-	format, ok := agent.Format().(models.FormatResource)
-	if !ok {
-		return cm.ResourceNone
+	msg := cm.Reinterpret[types.Message](message)
+
+	result, err := agent.Compute(msg)
+	if err != nil {
+		wasiErr := createError(witAgents.ErrorCodeComputeError, err.Error())
+		return cm.Err[cm.Result[witAgents.MessageShape, witAgents.Message, witAgents.Error]](wasiErr)
 	}
 
-	return cm.Reinterpret[witAgents.Format](format)
-}
-
-func graphFunc(self cm.Rep) witAgents.GraphExecutionContextStream {
-	agent, ok := resourceTable.agents[self]
-	if !ok {
-		return cm.ResourceNone
-	}
-
-	graphExecCtxStream, ok := agent.Graph().(graph.GraphExecCtxStream)
-	if !ok {
-		return cm.ResourceNone
-	}
-
-	return cm.Reinterpret[witAgents.GraphExecutionContextStream](graphExecCtxStream)
+	return cm.OK[cm.Result[witAgents.MessageShape, witAgents.Message, witAgents.Error]](cm.Reinterpret[witAgents.Message](*result))
 }

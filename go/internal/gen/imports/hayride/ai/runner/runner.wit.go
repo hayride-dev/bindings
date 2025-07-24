@@ -106,7 +106,7 @@ func (self Error) Data() (result string) {
 
 // Invoke represents the imported function "invoke".
 //
-//	invoke: func(message: message, agent: agent) -> result<list<message>, error>
+//	invoke: func(message: message, agent: borrow<agent>) -> result<list<message>, error>
 //
 //go:nosplit
 func Invoke(message Message, agent Agent) (result cm.Result[cm.List[Message], cm.List[Message], Error]) {
@@ -118,8 +118,8 @@ func Invoke(message Message, agent Agent) (result cm.Result[cm.List[Message], cm
 
 // InvokeStream represents the imported function "invoke-stream".
 //
-//	invoke-stream: func(message: message, writer: output-stream, agent: agent) -> result<_,
-//	error>
+//	invoke-stream: func(message: message, writer: borrow<output-stream>, agent: borrow<agent>)
+//	-> result<_, error>
 //
 //go:nosplit
 func InvokeStream(message Message, writer OutputStream, agent Agent) (result cm.Result[Error, struct{}, Error]) {

@@ -2,7 +2,24 @@
 
 package agents
 
+import (
+	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
+	"go.bytecodealliance.org/cm"
+)
+
 // This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.61".
+
+//go:wasmimport hayride:ai/agents@0.0.61 [resource-drop]error
+//go:noescape
+func wasmimport_ErrorResourceDrop(self0 uint32)
+
+//go:wasmimport hayride:ai/agents@0.0.61 [method]error.code
+//go:noescape
+func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
+
+//go:wasmimport hayride:ai/agents@0.0.61 [method]error.data
+//go:noescape
+func wasmimport_ErrorData(self0 uint32, result *string)
 
 //go:wasmimport hayride:ai/agents@0.0.61 [resource-drop]agent
 //go:noescape
@@ -12,17 +29,17 @@ func wasmimport_AgentResourceDrop(self0 uint32)
 //go:noescape
 func wasmimport_NewAgent(name0 *uint8, name1 uint32, instruction0 *uint8, instruction1 uint32, tools0 uint32, context0 uint32, format0 uint32, graph0 uint32) (result0 uint32)
 
+//go:wasmimport hayride:ai/agents@0.0.61 [method]agent.capabilities
+//go:noescape
+func wasmimport_AgentCapabilities(self0 uint32, result *cm.Result[cm.List[Tool], cm.List[Tool], Error])
+
+//go:wasmimport hayride:ai/agents@0.0.61 [method]agent.compute
+//go:noescape
+func wasmimport_AgentCompute(self0 uint32, message0 uint32, message1 *types.MessageContent, message2 uint32, result *cm.Result[MessageShape, Message, Error])
+
 //go:wasmimport hayride:ai/agents@0.0.61 [method]agent.context
 //go:noescape
-func wasmimport_AgentContext(self0 uint32) (result0 uint32)
-
-//go:wasmimport hayride:ai/agents@0.0.61 [method]agent.format
-//go:noescape
-func wasmimport_AgentFormat(self0 uint32) (result0 uint32)
-
-//go:wasmimport hayride:ai/agents@0.0.61 [method]agent.graph
-//go:noescape
-func wasmimport_AgentGraph(self0 uint32) (result0 uint32)
+func wasmimport_AgentContext(self0 uint32, result *cm.Result[cm.List[Message], cm.List[Message], Error])
 
 //go:wasmimport hayride:ai/agents@0.0.61 [method]agent.instruction
 //go:noescape
@@ -31,7 +48,3 @@ func wasmimport_AgentInstruction(self0 uint32, result *string)
 //go:wasmimport hayride:ai/agents@0.0.61 [method]agent.name
 //go:noescape
 func wasmimport_AgentName(self0 uint32, result *string)
-
-//go:wasmimport hayride:ai/agents@0.0.61 [method]agent.tools
-//go:noescape
-func wasmimport_AgentTools(self0 uint32) (result0 uint32)

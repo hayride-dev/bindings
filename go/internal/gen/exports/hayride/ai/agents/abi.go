@@ -3,7 +3,7 @@
 package agents
 
 import (
-	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
+	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/types"
 	"go.bytecodealliance.org/cm"
 	"unsafe"
 )
@@ -14,8 +14,8 @@ type MessageShape struct {
 	shape [unsafe.Sizeof(Message{})]byte
 }
 
-func lower_Message(v types.Message) (f0 uint32, f1 *types.MessageContent, f2 uint32) {
-	f0 = (uint32)(v.Role)
-	f1, f2 = cm.LowerList(v.Content)
+func lift_Message(f0 uint32, f1 *types.MessageContent, f2 uint32) (v types.Message) {
+	v.Role = (types.Role)(f0)
+	v.Content = cm.LiftList[cm.List[types.MessageContent]](f1, f2)
 	return
 }

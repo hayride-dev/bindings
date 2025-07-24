@@ -5,6 +5,8 @@ import (
 	"github.com/hayride-dev/bindings/go/hayride/ai/runner"
 	"github.com/hayride-dev/bindings/go/hayride/types"
 	witRunner "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/runner"
+	witAgents "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agents"
+	witStreams "github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/io/streams"
 	"github.com/hayride-dev/bindings/go/wasi/streams"
 	"go.bytecodealliance.org/cm"
 )
@@ -31,8 +33,11 @@ func Runner(runner runner.Runner) {
 	witRunner.Exports.Error.Destructor = errorDestructor
 }
 
-func invoke(message witRunner.Message, agent witRunner.Agent) cm.Result[cm.List[witRunner.Message], cm.List[witRunner.Message], witRunner.Error] {
-	msg, err := r.Invoke(cm.Reinterpret[types.Message](message), cm.Reinterpret[agents.AgentResource](agent))
+func invoke(message witRunner.Message, agent cm.Rep) cm.Result[cm.List[witRunner.Message], cm.List[witRunner.Message], witRunner.Error] {
+	agentResource := cm.Reinterpret[agents.AgentResource](agent)
+	defer witAgents.Agent(agent).ResourceDrop()
+
+	msg, err := r.Invoke(cm.Reinterpret[types.Message](message), agentResource)
 	if err != nil {
 		wasiErr := createError(witRunner.ErrorCodeInvokeError, err.Error())
 		return cm.Err[cm.Result[cm.List[witRunner.Message], cm.List[witRunner.Message], witRunner.Error]](wasiErr)
@@ -41,10 +46,14 @@ func invoke(message witRunner.Message, agent witRunner.Agent) cm.Result[cm.List[
 	return cm.OK[cm.Result[cm.List[witRunner.Message], cm.List[witRunner.Message], witRunner.Error]](cm.Reinterpret[cm.List[witRunner.Message]](msg))
 }
 
-func invokeStream(message witRunner.Message, writer witRunner.OutputStream, agent witRunner.Agent) cm.Result[witRunner.Error, struct{}, witRunner.Error] {
+func invokeStream(message witRunner.Message, writer cm.Rep, agent cm.Rep) cm.Result[witRunner.Error, struct{}, witRunner.Error] {
 	w := cm.Reinterpret[streams.Writer](writer)
+	defer witStreams.OutputStream(writer).ResourceDrop()
 
-	err := r.InvokeStream(cm.Reinterpret[types.Message](message), w, cm.Reinterpret[agents.AgentResource](agent))
+	agentResource := cm.Reinterpret[agents.AgentResource](agent)
+	defer witAgents.Agent(agent).ResourceDrop()
+
+	err := r.InvokeStream(cm.Reinterpret[types.Message](message), w, agentResource)
 	if err != nil {
 		wasiErr := createError(witRunner.ErrorCodeInvokeError, err.Error())
 		return cm.Err[cm.Result[witRunner.Error, struct{}, witRunner.Error]](wasiErr)
