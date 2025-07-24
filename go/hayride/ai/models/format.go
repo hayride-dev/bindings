@@ -42,5 +42,5 @@ func (f FormatResource) Decode(b []byte) (*types.Message, error) {
 		return nil, fmt.Errorf("error decoding: %s", result.Err().Code().String())
 	}
 
-	return cm.Reinterpret[*types.Message](*result.OK()), nil
+	return cm.Reinterpret[*types.Message](result.OK()), nil
 }
