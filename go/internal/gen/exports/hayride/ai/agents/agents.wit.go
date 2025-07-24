@@ -10,6 +10,7 @@ import (
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/mcp/tools"
+	types_ "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/mcp/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/wasi/io/streams"
 	"go.bytecodealliance.org/cm"
 )
@@ -36,8 +37,18 @@ type Tools = tools.Tools
 
 // Tool represents the type alias "hayride:ai/agents@0.0.61#tool".
 //
-// See [tools.Tool] for more information.
-type Tool = tools.Tool
+// See [types_.Tool] for more information.
+type Tool = types_.Tool
+
+// CallToolParams represents the type alias "hayride:ai/agents@0.0.61#call-tool-params".
+//
+// See [types_.CallToolParams] for more information.
+type CallToolParams = types_.CallToolParams
+
+// CallToolResult represents the type alias "hayride:ai/agents@0.0.61#call-tool-result".
+//
+// See [types_.CallToolResult] for more information.
+type CallToolResult = types_.CallToolResult
 
 // GraphStream represents the exported type alias "hayride:ai/agents@0.0.61#graph-stream".
 //
@@ -60,6 +71,7 @@ type OutputStream = streams.OutputStream
 //		capabilities-error,
 //		context-error,
 //		compute-error,
+//		execute-error,
 //		unknown
 //	}
 type ErrorCode uint8
@@ -68,13 +80,15 @@ const (
 	ErrorCodeCapabilitiesError ErrorCode = iota
 	ErrorCodeContextError
 	ErrorCodeComputeError
+	ErrorCodeExecuteError
 	ErrorCodeUnknown
 )
 
-var _ErrorCodeStrings = [4]string{
+var _ErrorCodeStrings = [5]string{
 	"capabilities-error",
 	"context-error",
 	"compute-error",
+	"execute-error",
 	"unknown",
 }
 

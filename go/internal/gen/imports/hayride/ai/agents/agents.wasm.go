@@ -27,7 +27,7 @@ func wasmimport_AgentResourceDrop(self0 uint32)
 
 //go:wasmimport hayride:ai/agents@0.0.61 [constructor]agent
 //go:noescape
-func wasmimport_NewAgent(name0 *uint8, name1 uint32, instruction0 *uint8, instruction1 uint32, tools0 uint32, context0 uint32, format0 uint32, graph0 uint32) (result0 uint32)
+func wasmimport_NewAgent(name0 *uint8, name1 uint32, instruction0 *uint8, instruction1 uint32, format0 uint32, graph0 uint32, tools0 uint32, tools1 uint32, context0 uint32, context1 uint32) (result0 uint32)
 
 //go:wasmimport hayride:ai/agents@0.0.61 [method]agent.capabilities
 //go:noescape
@@ -40,6 +40,10 @@ func wasmimport_AgentCompute(self0 uint32, message0 uint32, message1 *types.Mess
 //go:wasmimport hayride:ai/agents@0.0.61 [method]agent.context
 //go:noescape
 func wasmimport_AgentContext(self0 uint32, result *cm.Result[cm.List[Message], cm.List[Message], Error])
+
+//go:wasmimport hayride:ai/agents@0.0.61 [method]agent.execute
+//go:noescape
+func wasmimport_AgentExecute(self0 uint32, params0 *uint8, params1 uint32, params2 *[2]string, params3 uint32, result *cm.Result[CallToolResultShape, CallToolResult, Error])
 
 //go:wasmimport hayride:ai/agents@0.0.61 [method]agent.instruction
 //go:noescape

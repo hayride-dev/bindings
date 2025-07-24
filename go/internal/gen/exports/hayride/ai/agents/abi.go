@@ -4,9 +4,24 @@ package agents
 
 import (
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/types"
+	types_ "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/mcp/types"
 	"go.bytecodealliance.org/cm"
 	"unsafe"
 )
+
+func lift_OptionTools(f0 uint32, f1 uint32) (v cm.Option[Tools]) {
+	if f0 == 0 {
+		return
+	}
+	return (cm.Option[Tools])(cm.Some[Tools](cm.Reinterpret[Tools]((uint32)(f1))))
+}
+
+func lift_OptionContext(f0 uint32, f1 uint32) (v cm.Option[Context]) {
+	if f0 == 0 {
+		return
+	}
+	return (cm.Option[Context])(cm.Some[Context](cm.Reinterpret[Context]((uint32)(f1))))
+}
 
 // MessageShape is used for storage in variant or result types.
 type MessageShape struct {
@@ -17,5 +32,17 @@ type MessageShape struct {
 func lift_Message(f0 uint32, f1 *types.MessageContent, f2 uint32) (v types.Message) {
 	v.Role = (types.Role)(f0)
 	v.Content = cm.LiftList[cm.List[types.MessageContent]](f1, f2)
+	return
+}
+
+// CallToolResultShape is used for storage in variant or result types.
+type CallToolResultShape struct {
+	_     cm.HostLayout
+	shape [unsafe.Sizeof(CallToolResult{})]byte
+}
+
+func lift_CallToolParams(f0 *uint8, f1 uint32, f2 *[2]string, f3 uint32) (v types_.CallToolParams) {
+	v.Name = cm.LiftString[string](f0, f1)
+	v.Arguments = cm.LiftList[cm.List[[2]string]](f2, f3)
 	return
 }

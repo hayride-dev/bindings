@@ -1,8 +1,15 @@
 package agents
 
+import (
+	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
+	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
+)
+
 type AgentOptions struct {
 	name        string
 	instruction string
+	toolbox     tools.Tools
+	context     ctx.Context
 }
 
 type OptionType interface {
@@ -41,9 +48,25 @@ func WithInstruction(instruction string) Option[*AgentOptions] {
 	})
 }
 
+func WithTools(tools tools.Tools) Option[*AgentOptions] {
+	return newFuncOption(func(m *AgentOptions) error {
+		m.toolbox = tools
+		return nil
+	})
+}
+
+func WithContext(context ctx.Context) Option[*AgentOptions] {
+	return newFuncOption(func(m *AgentOptions) error {
+		m.context = context
+		return nil
+	})
+}
+
 func defaultAgentOptions() *AgentOptions {
 	return &AgentOptions{
 		name:        "default-agent",
 		instruction: "default-instruction",
+		toolbox:     nil,
+		context:     nil,
 	}
 }

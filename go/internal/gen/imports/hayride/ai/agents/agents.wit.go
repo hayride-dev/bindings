@@ -10,6 +10,7 @@ import (
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/mcp/tools"
+	types_ "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/mcp/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/wasi/io/streams"
 	"go.bytecodealliance.org/cm"
 )
@@ -36,8 +37,18 @@ type Tools = tools.Tools
 
 // Tool represents the type alias "hayride:ai/agents@0.0.61#tool".
 //
-// See [tools.Tool] for more information.
-type Tool = tools.Tool
+// See [types_.Tool] for more information.
+type Tool = types_.Tool
+
+// CallToolParams represents the type alias "hayride:ai/agents@0.0.61#call-tool-params".
+//
+// See [types_.CallToolParams] for more information.
+type CallToolParams = types_.CallToolParams
+
+// CallToolResult represents the type alias "hayride:ai/agents@0.0.61#call-tool-result".
+//
+// See [types_.CallToolResult] for more information.
+type CallToolResult = types_.CallToolResult
 
 // GraphStream represents the imported type alias "hayride:ai/agents@0.0.61#graph-stream".
 //
@@ -60,6 +71,7 @@ type OutputStream = streams.OutputStream
 //		capabilities-error,
 //		context-error,
 //		compute-error,
+//		execute-error,
 //		unknown
 //	}
 type ErrorCode uint8
@@ -68,13 +80,15 @@ const (
 	ErrorCodeCapabilitiesError ErrorCode = iota
 	ErrorCodeContextError
 	ErrorCodeComputeError
+	ErrorCodeExecuteError
 	ErrorCodeUnknown
 )
 
-var _ErrorCodeStrings = [4]string{
+var _ErrorCodeStrings = [5]string{
 	"capabilities-error",
 	"context-error",
 	"compute-error",
+	"execute-error",
 	"unknown",
 }
 
@@ -157,18 +171,18 @@ func (self Agent) ResourceDrop() {
 
 // NewAgent represents the imported constructor for resource "agent".
 //
-//	constructor(name: string, instruction: string, tools: tools, context: context,
-//	format: format, graph: graph-execution-context-stream)
+//	constructor(name: string, instruction: string, format: format, graph: graph-execution-context-stream,
+//	tools: option<tools>, context: option<context>)
 //
 //go:nosplit
-func NewAgent(name string, instruction string, tools_ Tools, context_ Context, format Format, graph GraphExecutionContextStream) (result Agent) {
+func NewAgent(name string, instruction string, format Format, graph GraphExecutionContextStream, tools_ cm.Option[Tools], context_ cm.Option[Context]) (result Agent) {
 	name0, name1 := cm.LowerString(name)
 	instruction0, instruction1 := cm.LowerString(instruction)
-	tools0 := cm.Reinterpret[uint32](tools_)
-	context0 := cm.Reinterpret[uint32](context_)
 	format0 := cm.Reinterpret[uint32](format)
 	graph0 := cm.Reinterpret[uint32](graph)
-	result0 := wasmimport_NewAgent((*uint8)(name0), (uint32)(name1), (*uint8)(instruction0), (uint32)(instruction1), (uint32)(tools0), (uint32)(context0), (uint32)(format0), (uint32)(graph0))
+	tools0, tools1 := lower_OptionTools(tools_)
+	context0, context1 := lower_OptionContext(context_)
+	result0 := wasmimport_NewAgent((*uint8)(name0), (uint32)(name1), (*uint8)(instruction0), (uint32)(instruction1), (uint32)(format0), (uint32)(graph0), (uint32)(tools0), (uint32)(tools1), (uint32)(context0), (uint32)(context1))
 	result = cm.Reinterpret[Agent]((uint32)(result0))
 	return
 }
@@ -204,6 +218,18 @@ func (self Agent) Compute(message Message) (result cm.Result[MessageShape, Messa
 func (self Agent) Context() (result cm.Result[cm.List[Message], cm.List[Message], Error]) {
 	self0 := cm.Reinterpret[uint32](self)
 	wasmimport_AgentContext((uint32)(self0), &result)
+	return
+}
+
+// Execute represents the imported method "execute".
+//
+//	execute: func(params: call-tool-params) -> result<call-tool-result, error>
+//
+//go:nosplit
+func (self Agent) Execute(params CallToolParams) (result cm.Result[CallToolResultShape, CallToolResult, Error]) {
+	self0 := cm.Reinterpret[uint32](self)
+	params0, params1, params2, params3 := lower_CallToolParams(params)
+	wasmimport_AgentExecute((uint32)(self0), (*uint8)(params0), (uint32)(params1), (*[2]string)(params2), (uint32)(params3), &result)
 	return
 }
 

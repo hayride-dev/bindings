@@ -39,9 +39,9 @@ var Exports struct {
 
 		// Constructor represents the caller-defined, exported constructor for resource "agent".
 		//
-		//	constructor(name: string, instruction: string, tools: tools, context: context,
-		//	format: format, graph: graph-execution-context-stream)
-		Constructor func(name string, instruction string, tools_ Tools, context_ Context, format Format, graph GraphExecutionContextStream) (result Agent)
+		//	constructor(name: string, instruction: string, format: format, graph: graph-execution-context-stream,
+		//	tools: option<tools>, context: option<context>)
+		Constructor func(name string, instruction string, format Format, graph GraphExecutionContextStream, tools_ cm.Option[Tools], context_ cm.Option[Context]) (result Agent)
 
 		// Capabilities represents the caller-defined, exported method "capabilities".
 		//
@@ -57,6 +57,11 @@ var Exports struct {
 		//
 		//	context: func() -> result<list<message>, error>
 		Context func(self cm.Rep) (result cm.Result[cm.List[Message], cm.List[Message], Error])
+
+		// Execute represents the caller-defined, exported method "execute".
+		//
+		//	execute: func(params: call-tool-params) -> result<call-tool-result, error>
+		Execute func(self cm.Rep, params CallToolParams) (result cm.Result[CallToolResultShape, CallToolResult, Error])
 
 		// Instruction represents the caller-defined, exported method "instruction".
 		//

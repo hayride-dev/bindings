@@ -69,14 +69,14 @@ func wasmexport_AgentDestructor(self0 uint32) {
 
 //go:wasmexport hayride:ai/agents@0.0.61#[constructor]agent
 //export hayride:ai/agents@0.0.61#[constructor]agent
-func wasmexport_Constructor(name0 *uint8, name1 uint32, instruction0 *uint8, instruction1 uint32, tools0 uint32, context0 uint32, format0 uint32, graph0 uint32) (result0 uint32) {
+func wasmexport_Constructor(name0 *uint8, name1 uint32, instruction0 *uint8, instruction1 uint32, format0 uint32, graph0 uint32, tools0 uint32, tools1 uint32, context0 uint32, context1 uint32) (result0 uint32) {
 	name := cm.LiftString[string]((*uint8)(name0), (uint32)(name1))
 	instruction := cm.LiftString[string]((*uint8)(instruction0), (uint32)(instruction1))
-	tools_ := cm.Reinterpret[Tools]((uint32)(tools0))
-	context_ := cm.Reinterpret[Context]((uint32)(context0))
 	format := cm.Reinterpret[Format]((uint32)(format0))
 	graph := cm.Reinterpret[GraphExecutionContextStream]((uint32)(graph0))
-	result := Exports.Agent.Constructor(name, instruction, tools_, context_, format, graph)
+	tools_ := lift_OptionTools((uint32)(tools0), (uint32)(tools1))
+	context_ := lift_OptionContext((uint32)(context0), (uint32)(context1))
+	result := Exports.Agent.Constructor(name, instruction, format, graph, tools_, context_)
 	result0 = cm.Reinterpret[uint32](result)
 	return
 }
@@ -105,6 +105,16 @@ func wasmexport_AgentCompute(self0 uint32, message0 uint32, message1 *types.Mess
 func wasmexport_AgentContext(self0 uint32) (result *cm.Result[cm.List[Message], cm.List[Message], Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result_ := Exports.Agent.Context(self)
+	result = &result_
+	return
+}
+
+//go:wasmexport hayride:ai/agents@0.0.61#[method]agent.execute
+//export hayride:ai/agents@0.0.61#[method]agent.execute
+func wasmexport_AgentExecute(self0 uint32, params0 *uint8, params1 uint32, params2 *[2]string, params3 uint32) (result *cm.Result[CallToolResultShape, CallToolResult, Error]) {
+	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
+	params := lift_CallToolParams((*uint8)(params0), (uint32)(params1), (*[2]string)(params2), (uint32)(params3))
+	result_ := Exports.Agent.Execute(self, params)
 	result = &result_
 	return
 }
