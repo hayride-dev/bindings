@@ -61,7 +61,7 @@ func call(self cm.Rep, params witTools.CallToolParams) cm.Result[witTools.CallTo
 		return cm.Err[cm.Result[witTools.CallToolResultShape, witTools.CallToolResult, witTools.Error]](wasiErr)
 	}
 
-	return cm.OK[cm.Result[witTools.CallToolResultShape, witTools.CallToolResult, witTools.Error]](cm.Reinterpret[witTools.CallToolResult](result))
+	return cm.OK[cm.Result[witTools.CallToolResultShape, witTools.CallToolResult, witTools.Error]](cm.Reinterpret[witTools.CallToolResult](*result))
 }
 
 func list(self cm.Rep, cursor string) cm.Result[witTools.ListToolsResultShape, witTools.ListToolsResult, witTools.Error] {
