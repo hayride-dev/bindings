@@ -1,12 +1,12 @@
 
 package hayride:mcp@0.0.61;
 
-interface tools {
-    use types.{call-tool-params, call-tool-result, list-tools-result};
+interface prompts {
+    use types.{get-prompt-params, get-prompt-result, list-prompts-result};
 
     enum error-code {
-        tool-call-failed,
-        tool-not-found,
+        prompt-list-failed,
+        prompt-not-found,
         unknown
     }
 
@@ -19,7 +19,7 @@ interface tools {
 
     resource tools {
         constructor();
-        list-tools: func(cursor: string) -> result<list-tools-result, error>;
-        call-tool: func(params: call-tool-params) -> result<call-tool-result, error>;
+        list-prompts: func(cursor: string) -> result<list-prompts-result, error>;
+        get-prompt: func(params: get-prompt-params) -> result<get-prompt-result, error>;
     }
 }

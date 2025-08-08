@@ -16,6 +16,9 @@ world imports {
     import hayride:ai/rag@0.0.61;
     // mcp
     import hayride:mcp/tools@0.0.61;
+    import hayride:mcp/prompts@0.0.61;
+    import hayride:mcp/resources@0.0.61;
+    import hayride:mcp/auth@0.0.61;
     // silo
     import hayride:silo/types@0.0.61;
     import hayride:silo/threads@0.0.61;
@@ -37,6 +40,9 @@ world exports {
 
     // mcp
     export hayride:mcp/tools@0.0.61;
+    export hayride:mcp/prompts@0.0.61;
+    export hayride:mcp/resources@0.0.61;
+    export hayride:mcp/auth@0.0.61;
 }
 
 world types {

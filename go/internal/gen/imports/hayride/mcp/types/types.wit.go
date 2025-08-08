@@ -88,6 +88,72 @@ type Tool struct {
 	Annotations ToolAnnotations `json:"annotations"`
 }
 
+// McpResource represents the record "hayride:mcp/types@0.0.61#mcp-resource".
+//
+//	record mcp-resource {
+//		name: string,
+//		title: string,
+//		description: string,
+//		uri: string,
+//		mime-type: string,
+//		size: u64,
+//		annotations: tool-annotations,
+//	}
+type McpResource struct {
+	_ cm.HostLayout `json:"-"`
+	// The name of the resource
+	Name string `json:"name"`
+
+	// A human-readable title for the resource, useful for UI display
+	Title string `json:"title"`
+
+	// A human-readable description of the resource
+	Description string `json:"description"`
+
+	// The URI of the resource
+	URI string `json:"uri"`
+
+	// The MIME type of the resource
+	MIMEType string `json:"mime-type"`
+
+	// The size of the raw resource contents in bytes
+	Size uint64 `json:"size"`
+
+	// optional properties describing tool behavior
+	Annotations ToolAnnotations `json:"annotations"`
+}
+
+// McpResourceTemplate represents the record "hayride:mcp/types@0.0.61#mcp-resource-template".
+//
+//	record mcp-resource-template {
+//		name: string,
+//		title: string,
+//		description: string,
+//		uri-template: string,
+//		mime-type: string,
+//		annotations: tool-annotations,
+//	}
+type McpResourceTemplate struct {
+	_ cm.HostLayout `json:"-"`
+	// The name of the resource template
+	Name string `json:"name"`
+
+	// A human-readable title for the resource template, useful for UI display
+	Title string `json:"title"`
+
+	// A human-readable description of the resource template
+	Description string `json:"description"`
+
+	// A URI template (RFC 6570) that can be used to construct resource URIs
+	URITemplate string `json:"uri-template"`
+
+	// The MIME type of the resource template
+	MIMEType string `json:"mime-type"`
+
+	// optional properties describing tool behavior
+	Annotations ToolAnnotations `json:"annotations"`
+}
+
 // TextContent represents the record "hayride:mcp/types@0.0.61#text-content".
 //
 //	record text-content {
@@ -426,4 +492,195 @@ type ListToolsResult struct {
 	Tools      cm.List[Tool]      `json:"tools"`
 	NextCursor string             `json:"next-cursor"`
 	Meta       cm.List[[2]string] `json:"meta"`
+}
+
+// PromptArgument represents the record "hayride:mcp/types@0.0.61#prompt-argument".
+//
+//	record prompt-argument {
+//		name: string,
+//		title: string,
+//		description: string,
+//		required: bool,
+//	}
+type PromptArgument struct {
+	_ cm.HostLayout `json:"-"`
+	// The name of the argument
+	Name string `json:"name"`
+
+	// A human-readable title for the argument, useful for UI display
+	Title string `json:"title"`
+
+	// A human-readable description of the argument
+	Description string `json:"description"`
+
+	// Whether the argument must be provided
+	Required bool `json:"required"`
+}
+
+// Prompt represents the record "hayride:mcp/types@0.0.61#prompt".
+//
+//	record prompt {
+//		name: string,
+//		title: string,
+//		description: string,
+//		arguments: list<prompt-argument>,
+//		meta: list<tuple<string, string>>,
+//	}
+type Prompt struct {
+	_ cm.HostLayout `json:"-"`
+	// Name intended for programmatic use
+	Name string `json:"name"`
+
+	// A human-readable title for the prompt, useful for UI display
+	Title string `json:"title"`
+
+	// An optional description of what this prompt provides
+	Description string `json:"description"`
+
+	// A list of arguments to use for templating the prompt
+	Arguments cm.List[PromptArgument] `json:"arguments"`
+	Meta      cm.List[[2]string]      `json:"meta"`
+}
+
+// PromptRole represents the enum "hayride:mcp/types@0.0.61#prompt-role".
+//
+//	enum prompt-role {
+//		user,
+//		assistant,
+//		unknown
+//	}
+type PromptRole uint8
+
+const (
+	PromptRoleUser PromptRole = iota
+	PromptRoleAssistant
+	PromptRoleUnknown
+)
+
+var _PromptRoleStrings = [3]string{
+	"user",
+	"assistant",
+	"unknown",
+}
+
+// String implements [fmt.Stringer], returning the enum case name of e.
+func (e PromptRole) String() string {
+	return _PromptRoleStrings[e]
+}
+
+// MarshalText implements [encoding.TextMarshaler].
+func (e PromptRole) MarshalText() ([]byte, error) {
+	return []byte(e.String()), nil
+}
+
+// UnmarshalText implements [encoding.TextUnmarshaler], unmarshaling into an enum
+// case. Returns an error if the supplied text is not one of the enum cases.
+func (e *PromptRole) UnmarshalText(text []byte) error {
+	return _PromptRoleUnmarshalCase(e, text)
+}
+
+var _PromptRoleUnmarshalCase = cm.CaseUnmarshaler[PromptRole](_PromptRoleStrings[:])
+
+// PromptMessage represents the record "hayride:mcp/types@0.0.61#prompt-message".
+//
+//	record prompt-message {
+//		role: prompt-role,
+//		content: content,
+//	}
+type PromptMessage struct {
+	_       cm.HostLayout `json:"-"`
+	Role    PromptRole    `json:"role"`
+	Content Content       `json:"content"`
+}
+
+// GetPromptParams represents the record "hayride:mcp/types@0.0.61#get-prompt-params".
+//
+//	record get-prompt-params {
+//		name: string,
+//		arguments: list<tuple<string, string>>,
+//	}
+type GetPromptParams struct {
+	_ cm.HostLayout `json:"-"`
+	// The name of the prompt or prompt template
+	Name string `json:"name"`
+
+	// Arguments to use for templating the prompt
+	Arguments cm.List[[2]string] `json:"arguments"`
+}
+
+// GetPromptResult represents the record "hayride:mcp/types@0.0.61#get-prompt-result".
+//
+//	record get-prompt-result {
+//		description: string,
+//		messages: list<prompt-message>,
+//		meta: list<tuple<string, string>>,
+//	}
+type GetPromptResult struct {
+	_           cm.HostLayout          `json:"-"`
+	Description string                 `json:"description"`
+	Messages    cm.List[PromptMessage] `json:"messages"`
+	Meta        cm.List[[2]string]     `json:"meta"`
+}
+
+// ListPromptsResult represents the record "hayride:mcp/types@0.0.61#list-prompts-result".
+//
+//	record list-prompts-result {
+//		prompts: list<prompt>,
+//		next-cursor: string,
+//		meta: list<tuple<string, string>>,
+//	}
+type ListPromptsResult struct {
+	_          cm.HostLayout      `json:"-"`
+	Prompts    cm.List[Prompt]    `json:"prompts"`
+	NextCursor string             `json:"next-cursor"`
+	Meta       cm.List[[2]string] `json:"meta"`
+}
+
+// ReadResourceParams represents the record "hayride:mcp/types@0.0.61#read-resource-params".
+//
+//	record read-resource-params {
+//		uri: string,
+//	}
+type ReadResourceParams struct {
+	_   cm.HostLayout `json:"-"`
+	URI string        `json:"uri"`
+}
+
+// ReadResourceResult represents the record "hayride:mcp/types@0.0.61#read-resource-result".
+//
+//	record read-resource-result {
+//		contents: list<resource-contents>,
+//	}
+type ReadResourceResult struct {
+	_ cm.HostLayout `json:"-"`
+	// The resource contents
+	Contents cm.List[ResourceContents] `json:"contents"`
+}
+
+// ListResourcesResult represents the record "hayride:mcp/types@0.0.61#list-resources-result".
+//
+//	record list-resources-result {
+//		resources: list<mcp-resource>,
+//		next-cursor: string,
+//		meta: list<tuple<string, string>>,
+//	}
+type ListResourcesResult struct {
+	_          cm.HostLayout        `json:"-"`
+	Resources  cm.List[McpResource] `json:"resources"`
+	NextCursor string               `json:"next-cursor"`
+	Meta       cm.List[[2]string]   `json:"meta"`
+}
+
+// ListResourceTemplatesResult represents the record "hayride:mcp/types@0.0.61#list-resource-templates-result".
+//
+//	record list-resource-templates-result {
+//		templates: list<mcp-resource-template>,
+//		next-cursor: string,
+//		meta: list<tuple<string, string>>,
+//	}
+type ListResourceTemplatesResult struct {
+	_          cm.HostLayout                `json:"-"`
+	Templates  cm.List[McpResourceTemplate] `json:"templates"`
+	NextCursor string                       `json:"next-cursor"`
+	Meta       cm.List[[2]string]           `json:"meta"`
 }
