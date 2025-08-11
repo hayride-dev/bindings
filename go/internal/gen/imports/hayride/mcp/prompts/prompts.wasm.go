@@ -20,18 +20,18 @@ func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:mcp/prompts@0.0.61 [resource-drop]tools
+//go:wasmimport hayride:mcp/prompts@0.0.61 [resource-drop]prompts
 //go:noescape
-func wasmimport_ToolsResourceDrop(self0 uint32)
+func wasmimport_PromptsResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:mcp/prompts@0.0.61 [constructor]tools
+//go:wasmimport hayride:mcp/prompts@0.0.61 [constructor]prompts
 //go:noescape
-func wasmimport_NewTools() (result0 uint32)
+func wasmimport_NewPrompts() (result0 uint32)
 
-//go:wasmimport hayride:mcp/prompts@0.0.61 [method]tools.get-prompt
+//go:wasmimport hayride:mcp/prompts@0.0.61 [method]prompts.get-prompt
 //go:noescape
-func wasmimport_ToolsGetPrompt(self0 uint32, params0 *uint8, params1 uint32, params2 *[2]string, params3 uint32, result *cm.Result[GetPromptResultShape, GetPromptResult, Error])
+func wasmimport_PromptsGetPrompt(self0 uint32, params0 *uint8, params1 uint32, params2 *[2]string, params3 uint32, result *cm.Result[GetPromptResultShape, GetPromptResult, Error])
 
-//go:wasmimport hayride:mcp/prompts@0.0.61 [method]tools.list-prompts
+//go:wasmimport hayride:mcp/prompts@0.0.61 [method]prompts.list-prompts
 //go:noescape
-func wasmimport_ToolsListPrompts(self0 uint32, cursor0 *uint8, cursor1 uint32, result *cm.Result[ListPromptsResultShape, ListPromptsResult, Error])
+func wasmimport_PromptsListPrompts(self0 uint32, cursor0 *uint8, cursor1 uint32, result *cm.Result[ListPromptsResultShape, ListPromptsResult, Error])

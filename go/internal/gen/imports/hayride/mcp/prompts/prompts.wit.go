@@ -105,30 +105,30 @@ func (self Error) Data() (result string) {
 	return
 }
 
-// Tools represents the imported resource "hayride:mcp/prompts@0.0.61#tools".
+// Prompts represents the imported resource "hayride:mcp/prompts@0.0.61#prompts".
 //
-//	resource tools
-type Tools cm.Resource
+//	resource prompts
+type Prompts cm.Resource
 
-// ResourceDrop represents the imported resource-drop for resource "tools".
+// ResourceDrop represents the imported resource-drop for resource "prompts".
 //
 // Drops a resource handle.
 //
 //go:nosplit
-func (self Tools) ResourceDrop() {
+func (self Prompts) ResourceDrop() {
 	self0 := cm.Reinterpret[uint32](self)
-	wasmimport_ToolsResourceDrop((uint32)(self0))
+	wasmimport_PromptsResourceDrop((uint32)(self0))
 	return
 }
 
-// NewTools represents the imported constructor for resource "tools".
+// NewPrompts represents the imported constructor for resource "prompts".
 //
 //	constructor()
 //
 //go:nosplit
-func NewTools() (result Tools) {
-	result0 := wasmimport_NewTools()
-	result = cm.Reinterpret[Tools]((uint32)(result0))
+func NewPrompts() (result Prompts) {
+	result0 := wasmimport_NewPrompts()
+	result = cm.Reinterpret[Prompts]((uint32)(result0))
 	return
 }
 
@@ -137,10 +137,10 @@ func NewTools() (result Tools) {
 //	get-prompt: func(params: get-prompt-params) -> result<get-prompt-result, error>
 //
 //go:nosplit
-func (self Tools) GetPrompt(params GetPromptParams) (result cm.Result[GetPromptResultShape, GetPromptResult, Error]) {
+func (self Prompts) GetPrompt(params GetPromptParams) (result cm.Result[GetPromptResultShape, GetPromptResult, Error]) {
 	self0 := cm.Reinterpret[uint32](self)
 	params0, params1, params2, params3 := lower_GetPromptParams(params)
-	wasmimport_ToolsGetPrompt((uint32)(self0), (*uint8)(params0), (uint32)(params1), (*[2]string)(params2), (uint32)(params3), &result)
+	wasmimport_PromptsGetPrompt((uint32)(self0), (*uint8)(params0), (uint32)(params1), (*[2]string)(params2), (uint32)(params3), &result)
 	return
 }
 
@@ -149,9 +149,9 @@ func (self Tools) GetPrompt(params GetPromptParams) (result cm.Result[GetPromptR
 //	list-prompts: func(cursor: string) -> result<list-prompts-result, error>
 //
 //go:nosplit
-func (self Tools) ListPrompts(cursor string) (result cm.Result[ListPromptsResultShape, ListPromptsResult, Error]) {
+func (self Prompts) ListPrompts(cursor string) (result cm.Result[ListPromptsResultShape, ListPromptsResult, Error]) {
 	self0 := cm.Reinterpret[uint32](self)
 	cursor0, cursor1 := cm.LowerString(cursor)
-	wasmimport_ToolsListPrompts((uint32)(self0), (*uint8)(cursor0), (uint32)(cursor1), &result)
+	wasmimport_PromptsListPrompts((uint32)(self0), (*uint8)(cursor0), (uint32)(cursor1), &result)
 	return
 }

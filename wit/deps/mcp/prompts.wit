@@ -17,7 +17,7 @@ interface prompts {
         data: func() -> string;
     }
 
-    resource tools {
+    resource prompts {
         constructor();
         list-prompts: func(cursor: string) -> result<list-prompts-result, error>;
         get-prompt: func(params: get-prompt-params) -> result<get-prompt-result, error>;

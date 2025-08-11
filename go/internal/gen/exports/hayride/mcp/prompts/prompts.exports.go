@@ -30,17 +30,17 @@ var Exports struct {
 		Data func(self cm.Rep) (result string)
 	}
 
-	// Tools represents the caller-defined exports for resource "hayride:mcp/prompts@0.0.61#tools".
-	Tools struct {
-		// Destructor represents the caller-defined, exported destructor for resource "tools".
+	// Prompts represents the caller-defined exports for resource "hayride:mcp/prompts@0.0.61#prompts".
+	Prompts struct {
+		// Destructor represents the caller-defined, exported destructor for resource "prompts".
 		//
 		// Resource destructor.
 		Destructor func(self cm.Rep)
 
-		// Constructor represents the caller-defined, exported constructor for resource "tools".
+		// Constructor represents the caller-defined, exported constructor for resource "prompts".
 		//
 		//	constructor()
-		Constructor func() (result Tools)
+		Constructor func() (result Prompts)
 
 		// GetPrompt represents the caller-defined, exported method "get-prompt".
 		//

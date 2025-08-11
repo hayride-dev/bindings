@@ -106,46 +106,46 @@ func init() {
 	Exports.Error.Destructor = func(self cm.Rep) {}
 }
 
-// Tools represents the exported resource "hayride:mcp/prompts@0.0.61#tools".
+// Prompts represents the exported resource "hayride:mcp/prompts@0.0.61#prompts".
 //
-//	resource tools
-type Tools cm.Resource
+//	resource prompts
+type Prompts cm.Resource
 
-// ToolsResourceNew represents the imported resource-new for resource "tools".
+// PromptsResourceNew represents the imported resource-new for resource "prompts".
 //
 // Creates a new resource handle.
 //
 //go:nosplit
-func ToolsResourceNew(rep cm.Rep) (result Tools) {
+func PromptsResourceNew(rep cm.Rep) (result Prompts) {
 	rep0 := cm.Reinterpret[uint32](rep)
-	result0 := wasmimport_ToolsResourceNew((uint32)(rep0))
-	result = cm.Reinterpret[Tools]((uint32)(result0))
+	result0 := wasmimport_PromptsResourceNew((uint32)(rep0))
+	result = cm.Reinterpret[Prompts]((uint32)(result0))
 	return
 }
 
-// ResourceRep represents the imported resource-rep for resource "tools".
+// ResourceRep represents the imported resource-rep for resource "prompts".
 //
 // Returns the underlying resource representation.
 //
 //go:nosplit
-func (self Tools) ResourceRep() (result cm.Rep) {
+func (self Prompts) ResourceRep() (result cm.Rep) {
 	self0 := cm.Reinterpret[uint32](self)
-	result0 := wasmimport_ToolsResourceRep((uint32)(self0))
+	result0 := wasmimport_PromptsResourceRep((uint32)(self0))
 	result = cm.Reinterpret[cm.Rep]((uint32)(result0))
 	return
 }
 
-// ResourceDrop represents the imported resource-drop for resource "tools".
+// ResourceDrop represents the imported resource-drop for resource "prompts".
 //
 // Drops a resource handle.
 //
 //go:nosplit
-func (self Tools) ResourceDrop() {
+func (self Prompts) ResourceDrop() {
 	self0 := cm.Reinterpret[uint32](self)
-	wasmimport_ToolsResourceDrop((uint32)(self0))
+	wasmimport_PromptsResourceDrop((uint32)(self0))
 	return
 }
 
 func init() {
-	Exports.Tools.Destructor = func(self cm.Rep) {}
+	Exports.Prompts.Destructor = func(self cm.Rep) {}
 }
