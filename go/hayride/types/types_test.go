@@ -159,6 +159,19 @@ func TestMarshalRequest(t *testing.T) {
 			expectErr: false,
 		},
 		{
+			name: "Cast Request",
+			request: Request{
+				Data: NewRequestData(Cast{
+					Name:     "example-cast",
+					Args:     cm.ToList([]string{"arg1", "arg2"}),
+					Function: "exampleFunction",
+					Envs:     cm.ToList([][2]string{{"ENV_VAR", "value"}}),
+				}),
+				Metadata: cm.ToList([][2]string{{"key1", "value1"}, {"key2", "value2"}}),
+			},
+			expectErr: false,
+		},
+		{
 			name:      "Empty Request",
 			request:   Request{},
 			expectErr: false,
@@ -200,8 +213,32 @@ func TestMarshalRequest(t *testing.T) {
 					}
 					dataCast := beforeMarshal.Data.Cast()
 					unmarshalledCast := unmarshalledRequest.Data.Cast()
-					if dataCast.Name != unmarshalledCast.Name || dataCast.Args != unmarshalledCast.Args || dataCast.Function != unmarshalledCast.Function {
-						t.Fatal("expected matching Cast data")
+					if dataCast.Name != unmarshalledCast.Name {
+						t.Fatalf("expected cast name %s, got %s", dataCast.Name, unmarshalledCast.Name)
+					}
+
+					if dataCast.Function != unmarshalledCast.Function {
+						t.Fatalf("expected cast function %s, got %s", dataCast.Function, unmarshalledCast.Function)
+					}
+
+					if dataCast.Args.Len() != unmarshalledCast.Args.Len() {
+						t.Fatalf("expected %d args, got %d", dataCast.Args.Len(), unmarshalledCast.Args.Len())
+					}
+
+					for i, arg := range dataCast.Args.Slice() {
+						if arg != unmarshalledCast.Args.Slice()[i] {
+							t.Fatalf("expected cast arg %d to be %s, got %s", i, arg, unmarshalledCast.Args.Slice()[i])
+						}
+					}
+
+					if dataCast.Envs.Len() != unmarshalledCast.Envs.Len() {
+						t.Fatalf("expected %d envs, got %d", dataCast.Envs.Len(), unmarshalledCast.Envs.Len())
+					}
+
+					for i, env := range dataCast.Envs.Slice() {
+						if env != unmarshalledCast.Envs.Slice()[i] {
+							t.Fatalf("expected cast env %d to be %s, got %s", i, env, unmarshalledCast.Envs.Slice()[i])
+						}
 					}
 				case 2: // SessionID
 					if beforeMarshal.Data.SessionID() == nil || unmarshalledRequest.Data.SessionID() == nil {

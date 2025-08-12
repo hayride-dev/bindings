@@ -1,0 +1,386 @@
+package server
+
+import (
+	"context"
+	"fmt"
+	"io"
+	"net/http"
+	"strings"
+
+	"github.com/hayride-dev/bindings/go/hayride/mcp/auth"
+	"github.com/hayride-dev/bindings/go/hayride/types"
+	"github.com/mark3labs/mcp-go/mcp"
+	"github.com/mark3labs/mcp-go/server"
+	"go.bytecodealliance.org/cm"
+)
+
+type httpServer struct {
+	server *server.StreamableHTTPServer
+
+	authProvider auth.Provider
+}
+
+// NewMCPRouter creates a new Streamable HTTP MCP server with the given options.
+// Notifications are not supported
+func NewMCPRouter(options ...Option[*MCPServerOptions]) (*http.ServeMux, error) {
+	opts := defaultMCPServerOptions()
+	for _, o := range options {
+		if err := o.Apply(opts); err != nil {
+			return nil, fmt.Errorf("failed to apply option: %v", err)
+		}
+	}
+
+	s, err := createServer(options...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create server: %v", err)
+	}
+
+	server := &httpServer{
+		server:       server.NewStreamableHTTPServer(s),
+		authProvider: opts.authProvider,
+	}
+
+	mux := http.NewServeMux()
+
+	// Add optional CORS middleware wrapper
+	corsHandler := func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			if !opts.corsEnabled {
+				// If CORS is not enabled, just call the next handler
+				next(w, r)
+				return
+			}
+
+			// Set CORS headers
+			w.Header().Set("Access-Control-Allow-Origin", strings.Join(opts.allowedOrigins, ", "))
+			if opts.allowCredentials {
+				w.Header().Set("Access-Control-Allow-Credentials", "true")
+			}
+
+			origin := r.Header.Get("Origin")
+			if origin == "" {
+				// Not a CORS request
+				next(w, r)
+				return
+			}
+
+			// Check allowlist
+			allowed := false
+			for _, o := range opts.allowedOrigins {
+				if o == "*" || o == origin {
+					allowed = true
+					break
+				}
+			}
+			if !allowed {
+				next(w, r)
+				return
+			}
+
+			if opts.allowCredentials {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+				w.Header().Set("Access-Control-Allow-Credentials", "true")
+				w.Header().Add("Vary", "Origin")
+			} else {
+				// Check if "*" is in the allowed origins
+				if len(opts.allowedOrigins) == 1 && opts.allowedOrigins[0] == "*" {
+					w.Header().Set("Access-Control-Allow-Origin", "*")
+				} else {
+					w.Header().Set("Access-Control-Allow-Origin", origin)
+					w.Header().Add("Vary", "Origin")
+				}
+			}
+
+			if len(opts.exposedHeaders) > 0 {
+				w.Header().Set("Access-Control-Expose-Headers", strings.Join(opts.exposedHeaders, ", "))
+			}
+
+			// Handle preflight
+			if r.Method == http.MethodOptions {
+				reqMethod := r.Header.Get("Access-Control-Request-Method")
+				reqHeaders := r.Header.Get("Access-Control-Request-Headers")
+
+				// Methods: either echo requested or list your allowed set
+				if reqMethod != "" {
+					w.Header().Set("Access-Control-Allow-Methods", reqMethod)
+					w.Header().Add("Vary", "Access-Control-Request-Method")
+				} else if len(opts.allowedMethods) > 0 {
+					w.Header().Set("Access-Control-Allow-Methods", strings.Join(opts.allowedMethods, ", "))
+				}
+
+				// Headers: echo requested headers (case-insensitive list)
+				if reqHeaders != "" {
+					w.Header().Set("Access-Control-Allow-Headers", reqHeaders)
+					w.Header().Add("Vary", "Access-Control-Request-Headers")
+				} else if len(opts.allowedHeaders) > 0 {
+					w.Header().Set("Access-Control-Allow-Headers", strings.Join(opts.allowedHeaders, ", "))
+				}
+
+				if opts.maxAge > 0 {
+					w.Header().Set("Access-Control-Max-Age", fmt.Sprintf("%d", int(opts.maxAge.Seconds())))
+				}
+
+				w.WriteHeader(http.StatusNoContent)
+				return
+			}
+
+			next(w, r)
+		}
+	}
+
+	mux.HandleFunc("/mcp", corsHandler(server.ServeHTTP))
+
+	// If auth provider is set, handle the default auth routes
+	if opts.authProvider != nil {
+		mux.HandleFunc("/authorize", corsHandler(func(w http.ResponseWriter, r *http.Request) {
+			baseURL, err := opts.authProvider.AuthURL()
+			if err != nil {
+				http.Error(w, fmt.Sprintf("failed to get auth URL: %v", err), http.StatusInternalServerError)
+				return
+			}
+
+			// Passthrough existing query parameters
+			queryParams := r.URL.Query()
+			queryString := queryParams.Encode()
+
+			// Append query parameters to the base URL
+			separator := "?"
+			if strings.Contains(baseURL, "?") {
+				separator = "&"
+			}
+			baseURL = baseURL + separator + queryString
+
+			http.Redirect(w, r, baseURL, http.StatusFound)
+		}))
+
+		mux.HandleFunc("/token", corsHandler(func(w http.ResponseWriter, r *http.Request) {
+			// Send body to auth provider for code exchange to get a token
+			data, err := io.ReadAll(r.Body)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("failed to read body: %v", err), http.StatusInternalServerError)
+				return
+			}
+
+			response, err := opts.authProvider.ExchangeCode(data)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("failed to exchange code: %v", err), http.StatusInternalServerError)
+				return
+			}
+
+			w.Write(response)
+		}))
+
+		mux.HandleFunc("/register", corsHandler(func(w http.ResponseWriter, r *http.Request) {
+			// Read body to pass to auth provider for registration
+			data, err := io.ReadAll(r.Body)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("failed to read body: %v", err), http.StatusInternalServerError)
+				return
+			}
+
+			response, err := opts.authProvider.Registration(data)
+			if err != nil {
+				http.Error(w, fmt.Sprintf("failed Registration: %v", err), http.StatusInternalServerError)
+				return
+			}
+
+			// Respond with 201 Created and the response body
+			w.WriteHeader(http.StatusCreated)
+			w.Header().Set("Content-Type", "application/json")
+			if _, err := w.Write(response); err != nil {
+				http.Error(w, fmt.Sprintf("failed to write response: %v", err), http.StatusInternalServerError)
+				return
+			}
+		}))
+	}
+
+	return mux, nil
+}
+
+func (s *httpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// If authProvider is set, require bearer authentication
+	if s.authProvider != nil {
+		// Check for Authorization header
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
+			http.Error(w, "missing Authorization header", http.StatusUnauthorized)
+			return
+		}
+
+		// Expect Bearer token
+		var bearer string
+		n, err := fmt.Sscanf(authHeader, "Bearer %s", &bearer)
+		if err != nil || n != 1 {
+			http.Error(w, "invalid Authorization header", http.StatusUnauthorized)
+			return
+		}
+
+		// Validate the token
+		valid, err := s.authProvider.Validate(bearer)
+		if err != nil || !valid {
+			http.Error(w, "invalid token", http.StatusUnauthorized)
+			return
+		}
+	}
+
+	s.server.ServeHTTP(w, r)
+}
+
+func createServer(options ...Option[*MCPServerOptions]) (*server.MCPServer, error) {
+	opts := defaultMCPServerOptions()
+	for _, o := range options {
+		if err := o.Apply(opts); err != nil {
+			return nil, fmt.Errorf("failed to apply option: %v", err)
+		}
+	}
+
+	mcpOptions := []server.ServerOption{}
+
+	if opts.toolbox != nil {
+		// Add tool capabilities with list changed notifications disabled
+		mcpOptions = append(mcpOptions, server.WithToolCapabilities(false))
+	}
+
+	s := server.NewMCPServer(
+		opts.name,
+		opts.version,
+		mcpOptions...,
+	)
+
+	if opts.toolbox != nil {
+		cursor := ""
+		toolResult, err := opts.toolbox.List(cursor)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get tool capabilities: %v", err)
+		}
+
+		for _, t := range toolResult.Tools.Slice() {
+			var tool mcp.Tool
+			if len(t.InputSchema.Properties.Slice()) > 0 {
+				// Use the Input Schema as the Raw Schema for the MCP tool if set
+				data, err := t.InputSchema.MarshalJSON()
+				if err != nil {
+					return nil, fmt.Errorf("failed to marshal input schema for %s: %v", t.Name, err)
+				}
+
+				tool = mcp.NewToolWithRawSchema(t.Name, t.Description, data)
+			} else {
+				// Use the basic tool definition without input schema
+				tool = mcp.NewTool(t.Name, mcp.WithDescription(t.Description))
+			}
+
+			// Create a handler for the tool
+			handler := func(ctx context.Context, request mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+				args := request.GetArguments()
+
+				// Convert map to [][2]string
+				input := make([][2]string, 0, len(args))
+				for k, v := range args {
+					value := ""
+					switch v := v.(type) {
+					case string:
+						// String argument
+						value = v
+					case int, int8, int16, int32, int64:
+						// Number argument
+						value = fmt.Sprintf("%d", v)
+					case float32, float64:
+						// Float argument
+						value = fmt.Sprintf("%f", v)
+					case bool:
+						// Boolean argument
+						value = fmt.Sprintf("%t", v)
+					default:
+						// Unsupported type, skip
+						return nil, fmt.Errorf("unsupported argument type for key %s: %T", k, v)
+					}
+
+					input = append(input, [2]string{k, value})
+				}
+
+				toolInput := types.CallToolParams{
+					Name:      tool.Name,
+					Arguments: cm.ToList(input),
+				}
+
+				// Call the tool
+				result, err := opts.toolbox.Call(toolInput)
+				if err != nil {
+					return mcp.NewToolResultError(err.Error()), nil
+				}
+
+				// Convert the result to MCP content
+				callToolResult := &mcp.CallToolResult{}
+				for _, out := range result.Content.Slice() {
+					switch out.String() {
+					case "text":
+						content := out.Text()
+						callToolResult.Content = append(callToolResult.Content, mcp.TextContent{
+							Type: content.ContentType,
+							Text: content.Text,
+						})
+					case "image":
+						content := out.Image()
+						callToolResult.Content = append(callToolResult.Content, mcp.ImageContent{
+							Type:     content.ContentType,
+							Data:     string(content.Data.Slice()),
+							MIMEType: content.MIMEType,
+						})
+					case "audio":
+						content := out.Audio()
+						callToolResult.Content = append(callToolResult.Content, mcp.AudioContent{
+							Type:     content.ContentType,
+							Data:     string(content.Data.Slice()),
+							MIMEType: content.MIMEType,
+						})
+					case "resource-link":
+						content := out.ResourceLink()
+						callToolResult.Content = append(callToolResult.Content, mcp.ResourceLink{
+							Type:        content.ContentType,
+							URI:         content.URI,
+							Name:        content.Name,
+							Description: content.Description,
+							MIMEType:    content.MIMEType,
+						})
+					case "resource-content":
+						// Either blob or text resource
+						content := out.ResourceContent()
+						switch content.ResourceContents.String() {
+						case "text":
+							text := content.ResourceContents.Text()
+							callToolResult.Content = append(callToolResult.Content, mcp.EmbeddedResource{
+								Type: content.ContentType,
+								Resource: mcp.TextResourceContents{
+									URI:      text.URI,
+									MIMEType: text.MIMEType,
+									Text:     text.Text,
+								},
+							})
+						case "blob":
+							blob := content.ResourceContents.Blob()
+							callToolResult.Content = append(callToolResult.Content, mcp.EmbeddedResource{
+								Type: content.ContentType,
+								Resource: mcp.BlobResourceContents{
+									URI:      blob.URI,
+									MIMEType: blob.MIMEType,
+									Blob:     string(blob.Blob.Slice()),
+								},
+							})
+						default:
+							return nil, fmt.Errorf("unsupported resource content type: %s", content.ResourceContents.String())
+						}
+					default:
+						return nil, fmt.Errorf("unsupported output type: %s", out.String())
+					}
+				}
+
+				return callToolResult, nil
+			}
+
+			// Add tool handler
+			s.AddTool(tool, handler)
+		}
+	}
+
+	return s, nil
+}

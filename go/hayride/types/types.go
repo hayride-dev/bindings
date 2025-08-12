@@ -37,6 +37,17 @@ type CallToolParams = mcp.CallToolParams
 type CallToolResult = mcp.CallToolResult
 type ListToolsResult = mcp.ListToolsResult
 
+type Prompt = mcp.Prompt
+type GetPromptParams = mcp.GetPromptParams
+type GetPromptResult = mcp.GetPromptResult
+type ListPromptsResult = mcp.ListPromptsResult
+
+type Resource = mcp.McpResource
+type ReadResourceParams = mcp.ReadResourceParams
+type ReadResourceResult = mcp.ReadResourceResult
+type ListResourcesResult = mcp.ListResourcesResult
+type ListResourceTemplatesResult = mcp.ListResourceTemplatesResult
+
 const (
 	RoleUser      = ai.RoleUser
 	RoleAssistant = ai.RoleAssistant

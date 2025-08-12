@@ -9,9 +9,10 @@ import (
 )
 
 // Spawn spawns a new thread with the given path, function, and arguments.
-func Spawn(path string, function string, args ...string) (Thread, error) {
-	list := cm.ToList(args)
-	result := threads.Spawn(path, function, list)
+func Spawn(path string, function string, args []string, envs [][2]string) (Thread, error) {
+	argList := cm.ToList(args)
+	envList := cm.ToList(envs)
+	result := threads.Spawn(path, function, argList, envList)
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to spawn thread: %v", result.Err())
 	}
