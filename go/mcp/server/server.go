@@ -57,22 +57,70 @@ func NewMCPRouter(options ...Option[*MCPServerOptions]) (*http.ServeMux, error) 
 				w.Header().Set("Access-Control-Allow-Credentials", "true")
 			}
 
-			if len(opts.allowedMethods) > 0 {
-				w.Header().Set("Access-Control-Allow-Methods", strings.Join(opts.allowedMethods, ", "))
+			origin := r.Header.Get("Origin")
+			if origin == "" {
+				// Not a CORS request
+				next(w, r)
+				return
 			}
-			if len(opts.allowedHeaders) > 0 {
-				w.Header().Set("Access-Control-Allow-Headers", strings.Join(opts.allowedHeaders, ", "))
+
+			// Check allowlist
+			allowed := false
+			for _, o := range opts.allowedOrigins {
+				if o == "*" || o == origin {
+					allowed = true
+					break
+				}
 			}
+			if !allowed {
+				next(w, r)
+				return
+			}
+
+			if opts.allowCredentials {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+				w.Header().Set("Access-Control-Allow-Credentials", "true")
+				w.Header().Add("Vary", "Origin")
+			} else {
+				// Check if "*" is in the allowed origins
+				if len(opts.allowedOrigins) == 1 && opts.allowedOrigins[0] == "*" {
+					w.Header().Set("Access-Control-Allow-Origin", "*")
+				} else {
+					w.Header().Set("Access-Control-Allow-Origin", origin)
+					w.Header().Add("Vary", "Origin")
+				}
+			}
+
 			if len(opts.exposedHeaders) > 0 {
 				w.Header().Set("Access-Control-Expose-Headers", strings.Join(opts.exposedHeaders, ", "))
 			}
-			if opts.maxAge > 0 {
-				w.Header().Set("Access-Control-Max-Age", fmt.Sprintf("%d", int(opts.maxAge.Seconds())))
-			}
 
-			// Handle preflight requests
-			if r.Method == "OPTIONS" {
-				w.WriteHeader(http.StatusOK)
+			// Handle preflight
+			if r.Method == http.MethodOptions {
+				reqMethod := r.Header.Get("Access-Control-Request-Method")
+				reqHeaders := r.Header.Get("Access-Control-Request-Headers")
+
+				// Methods: either echo requested or list your allowed set
+				if reqMethod != "" {
+					w.Header().Set("Access-Control-Allow-Methods", reqMethod)
+					w.Header().Add("Vary", "Access-Control-Request-Method")
+				} else if len(opts.allowedMethods) > 0 {
+					w.Header().Set("Access-Control-Allow-Methods", strings.Join(opts.allowedMethods, ", "))
+				}
+
+				// Headers: echo requested headers (case-insensitive list)
+				if reqHeaders != "" {
+					w.Header().Set("Access-Control-Allow-Headers", reqHeaders)
+					w.Header().Add("Vary", "Access-Control-Request-Headers")
+				} else if len(opts.allowedHeaders) > 0 {
+					w.Header().Set("Access-Control-Allow-Headers", strings.Join(opts.allowedHeaders, ", "))
+				}
+
+				if opts.maxAge > 0 {
+					w.Header().Set("Access-Control-Max-Age", fmt.Sprintf("%d", int(opts.maxAge.Seconds())))
+				}
+
+				w.WriteHeader(http.StatusNoContent)
 				return
 			}
 
