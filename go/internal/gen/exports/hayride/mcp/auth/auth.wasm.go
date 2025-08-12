@@ -6,30 +6,30 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.61".
+// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.62".
 
-//go:wasmimport [export]hayride:mcp/auth@0.0.61 [resource-new]error
+//go:wasmimport [export]hayride:mcp/auth@0.0.62 [resource-new]error
 //go:noescape
 func wasmimport_ErrorResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/auth@0.0.61 [resource-rep]error
+//go:wasmimport [export]hayride:mcp/auth@0.0.62 [resource-rep]error
 //go:noescape
 func wasmimport_ErrorResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/auth@0.0.61 [resource-drop]error
+//go:wasmimport [export]hayride:mcp/auth@0.0.62 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:mcp/auth@0.0.61#[dtor]error
-//export hayride:mcp/auth@0.0.61#[dtor]error
+//go:wasmexport hayride:mcp/auth@0.0.62#[dtor]error
+//export hayride:mcp/auth@0.0.62#[dtor]error
 func wasmexport_ErrorDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Error.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:mcp/auth@0.0.61#[method]error.code
-//export hayride:mcp/auth@0.0.61#[method]error.code
+//go:wasmexport hayride:mcp/auth@0.0.62#[method]error.code
+//export hayride:mcp/auth@0.0.62#[method]error.code
 func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result := Exports.Error.Code(self)
@@ -37,8 +37,8 @@ func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	return
 }
 
-//go:wasmexport hayride:mcp/auth@0.0.61#[method]error.data
-//export hayride:mcp/auth@0.0.61#[method]error.data
+//go:wasmexport hayride:mcp/auth@0.0.62#[method]error.data
+//export hayride:mcp/auth@0.0.62#[method]error.data
 func wasmexport_ErrorData(self0 uint32) (result *string) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result_ := Exports.Error.Data(self)
@@ -46,36 +46,36 @@ func wasmexport_ErrorData(self0 uint32) (result *string) {
 	return
 }
 
-//go:wasmimport [export]hayride:mcp/auth@0.0.61 [resource-new]provider
+//go:wasmimport [export]hayride:mcp/auth@0.0.62 [resource-new]provider
 //go:noescape
 func wasmimport_ProviderResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/auth@0.0.61 [resource-rep]provider
+//go:wasmimport [export]hayride:mcp/auth@0.0.62 [resource-rep]provider
 //go:noescape
 func wasmimport_ProviderResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/auth@0.0.61 [resource-drop]provider
+//go:wasmimport [export]hayride:mcp/auth@0.0.62 [resource-drop]provider
 //go:noescape
 func wasmimport_ProviderResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:mcp/auth@0.0.61#[dtor]provider
-//export hayride:mcp/auth@0.0.61#[dtor]provider
+//go:wasmexport hayride:mcp/auth@0.0.62#[dtor]provider
+//export hayride:mcp/auth@0.0.62#[dtor]provider
 func wasmexport_ProviderDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Provider.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:mcp/auth@0.0.61#[constructor]provider
-//export hayride:mcp/auth@0.0.61#[constructor]provider
+//go:wasmexport hayride:mcp/auth@0.0.62#[constructor]provider
+//export hayride:mcp/auth@0.0.62#[constructor]provider
 func wasmexport_Constructor() (result0 uint32) {
 	result := Exports.Provider.Constructor()
 	result0 = cm.Reinterpret[uint32](result)
 	return
 }
 
-//go:wasmexport hayride:mcp/auth@0.0.61#[method]provider.auth-url
-//export hayride:mcp/auth@0.0.61#[method]provider.auth-url
+//go:wasmexport hayride:mcp/auth@0.0.62#[method]provider.auth-url
+//export hayride:mcp/auth@0.0.62#[method]provider.auth-url
 func wasmexport_ProviderAuthURL(self0 uint32) (result *cm.Result[string, string, Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result_ := Exports.Provider.AuthURL(self)
@@ -83,8 +83,8 @@ func wasmexport_ProviderAuthURL(self0 uint32) (result *cm.Result[string, string,
 	return
 }
 
-//go:wasmexport hayride:mcp/auth@0.0.61#[method]provider.exchange-code
-//export hayride:mcp/auth@0.0.61#[method]provider.exchange-code
+//go:wasmexport hayride:mcp/auth@0.0.62#[method]provider.exchange-code
+//export hayride:mcp/auth@0.0.62#[method]provider.exchange-code
 func wasmexport_ProviderExchangeCode(self0 uint32, data0 *uint8, data1 uint32) (result *cm.Result[cm.List[uint8], cm.List[uint8], Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	data := cm.LiftList[cm.List[uint8]]((*uint8)(data0), (uint32)(data1))
@@ -93,8 +93,8 @@ func wasmexport_ProviderExchangeCode(self0 uint32, data0 *uint8, data1 uint32) (
 	return
 }
 
-//go:wasmexport hayride:mcp/auth@0.0.61#[method]provider.registration
-//export hayride:mcp/auth@0.0.61#[method]provider.registration
+//go:wasmexport hayride:mcp/auth@0.0.62#[method]provider.registration
+//export hayride:mcp/auth@0.0.62#[method]provider.registration
 func wasmexport_ProviderRegistration(self0 uint32, data0 *uint8, data1 uint32) (result *cm.Result[cm.List[uint8], cm.List[uint8], Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	data := cm.LiftList[cm.List[uint8]]((*uint8)(data0), (uint32)(data1))
@@ -103,8 +103,8 @@ func wasmexport_ProviderRegistration(self0 uint32, data0 *uint8, data1 uint32) (
 	return
 }
 
-//go:wasmexport hayride:mcp/auth@0.0.61#[method]provider.validate
-//export hayride:mcp/auth@0.0.61#[method]provider.validate
+//go:wasmexport hayride:mcp/auth@0.0.62#[method]provider.validate
+//export hayride:mcp/auth@0.0.62#[method]provider.validate
 func wasmexport_ProviderValidate(self0 uint32, token0 *uint8, token1 uint32) (result *cm.Result[Error, bool, Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	token := cm.LiftString[string]((*uint8)(token0), (uint32)(token1))

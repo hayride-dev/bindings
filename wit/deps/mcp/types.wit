@@ -1,4 +1,4 @@
-package hayride:mcp@0.0.61;
+package hayride:mcp@0.0.62;
 
 interface types {
     // Tool annotations provide additional metadata about a tool's behavior

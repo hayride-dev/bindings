@@ -1,5 +1,5 @@
 
-package hayride:mcp@0.0.61;
+package hayride:mcp@0.0.62;
 
 interface auth {
     enum error-code {
@@ -19,6 +19,7 @@ interface auth {
 
     // provider allows for proxy authentication
     resource provider {
+        // Construct a provider with the given config key/value pairs
         constructor();
         // Return the url to use for authorization
         auth-url: func() -> result<string, error>;

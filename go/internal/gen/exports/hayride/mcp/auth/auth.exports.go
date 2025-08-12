@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:mcp/auth@0.0.61".
+// Exports represents the caller-defined exports from "hayride:mcp/auth@0.0.62".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:mcp/auth@0.0.61#error".
+	// Error represents the caller-defined exports for resource "hayride:mcp/auth@0.0.62#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
@@ -30,7 +30,7 @@ var Exports struct {
 		Data func(self cm.Rep) (result string)
 	}
 
-	// Provider represents the caller-defined exports for resource "hayride:mcp/auth@0.0.61#provider".
+	// Provider represents the caller-defined exports for resource "hayride:mcp/auth@0.0.62#provider".
 	Provider struct {
 		// Destructor represents the caller-defined, exported destructor for resource "provider".
 		//
@@ -38,6 +38,8 @@ var Exports struct {
 		Destructor func(self cm.Rep)
 
 		// Constructor represents the caller-defined, exported constructor for resource "provider".
+		//
+		// Construct a provider with the given config key/value pairs
 		//
 		//	constructor()
 		Constructor func() (result Provider)
