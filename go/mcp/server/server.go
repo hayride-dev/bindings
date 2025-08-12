@@ -44,14 +44,33 @@ func NewMCPRouter(options ...Option[*MCPServerOptions]) (*http.ServeMux, error) 
 
 	mux := http.NewServeMux()
 
-	// Add CORS middleware wrapper
+	// Add optional CORS middleware wrapper
 	corsHandler := func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
+			if !opts.corsEnabled {
+				// If CORS is not enabled, just call the next handler
+				next(w, r)
+				return
+			}
+
 			// Set CORS headers
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-			w.Header().Set("Access-Control-Max-Age", "86400")
+			w.Header().Set("Access-Control-Allow-Origin", strings.Join(opts.allowedOrigins, ", "))
+			if opts.allowCredentials {
+				w.Header().Set("Access-Control-Allow-Credentials", "true")
+			}
+
+			if len(opts.allowedMethods) > 0 {
+				w.Header().Set("Access-Control-Allow-Methods", strings.Join(opts.allowedMethods, ", "))
+			}
+			if len(opts.allowedHeaders) > 0 {
+				w.Header().Set("Access-Control-Allow-Headers", strings.Join(opts.allowedHeaders, ", "))
+			}
+			if len(opts.exposedHeaders) > 0 {
+				w.Header().Set("Access-Control-Expose-Headers", strings.Join(opts.exposedHeaders, ", "))
+			}
+			if opts.maxAge > 0 {
+				w.Header().Set("Access-Control-Max-Age", fmt.Sprintf("%d", int(opts.maxAge.Seconds())))
+			}
 
 			// Handle preflight requests
 			if r.Method == "OPTIONS" {
@@ -170,49 +189,6 @@ func (s *httpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	s.server.ServeHTTP(w, r)
 }
-
-/*
-func StartStdioServer(stdin io.Reader, stdout io.Writer, options ...Option[*MCPServerOptions]) error {
-	s, err := createServer(options...)
-	if err != nil {
-		return fmt.Errorf("failed to create server: %v", err)
-	}
-
-	// Continuously process messages from stdio
-	reader := bufio.NewReader(stdin)
-	for {
-		line, err := reader.ReadString('\n')
-		if err != nil {
-			if err == io.EOF {
-				return nil
-			}
-			return err
-		}
-
-		// Parse the message as raw JSON
-		var rawMessage json.RawMessage
-		if err := json.Unmarshal([]byte(line), &rawMessage); err != nil {
-			// TODO: Handle parse error
-			// response := createErrorResponse(nil, mcp.PARSE_ERROR, "Parse error")
-			// return s.writeResponse(response, writer)
-			return fmt.Errorf("failed to parse message: %v", err)
-		}
-
-		response := s.HandleMessage(context.TODO(), rawMessage)
-
-		// Write the response as JSON
-		responseBytes, err := json.Marshal(response)
-		if err != nil {
-			return err
-		}
-
-		// Write response followed by newline
-		if _, err := fmt.Fprintf(stdout, "%s\n", responseBytes); err != nil {
-			return err
-		}
-	}
-}
-*/
 
 func createServer(options ...Option[*MCPServerOptions]) (*server.MCPServer, error) {
 	opts := defaultMCPServerOptions()

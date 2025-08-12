@@ -1,6 +1,8 @@
 package server
 
 import (
+	"time"
+
 	"github.com/hayride-dev/bindings/go/hayride/mcp/auth"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
 )
@@ -10,6 +12,15 @@ type MCPServerOptions struct {
 	version      string
 	toolbox      tools.Tools
 	authProvider auth.Provider
+
+	// Cors Options
+	corsEnabled      bool
+	allowedOrigins   []string
+	allowedMethods   []string
+	allowedHeaders   []string
+	exposedHeaders   []string
+	allowCredentials bool
+	maxAge           time.Duration
 }
 
 type OptionType interface {
@@ -62,11 +73,68 @@ func WithAuthProvider(provider auth.Provider) Option[*MCPServerOptions] {
 	})
 }
 
+func WithCorsEnabled(enabled bool) Option[*MCPServerOptions] {
+	return newFuncOption(func(m *MCPServerOptions) error {
+		m.corsEnabled = enabled
+		return nil
+	})
+}
+
+func WithAllowedOrigins(origins []string) Option[*MCPServerOptions] {
+	return newFuncOption(func(m *MCPServerOptions) error {
+		m.allowedOrigins = origins
+		return nil
+	})
+}
+
+func WithAllowedMethods(methods []string) Option[*MCPServerOptions] {
+	return newFuncOption(func(m *MCPServerOptions) error {
+		m.allowedMethods = methods
+		return nil
+	})
+}
+
+func WithAllowedHeaders(headers []string) Option[*MCPServerOptions] {
+	return newFuncOption(func(m *MCPServerOptions) error {
+		m.allowedHeaders = headers
+		return nil
+	})
+}
+
+func WithExposedHeaders(headers []string) Option[*MCPServerOptions] {
+	return newFuncOption(func(m *MCPServerOptions) error {
+		m.exposedHeaders = headers
+		return nil
+	})
+}
+
+func WithAllowCredentials(allow bool) Option[*MCPServerOptions] {
+	return newFuncOption(func(m *MCPServerOptions) error {
+		m.allowCredentials = allow
+		return nil
+	})
+}
+
+func WithMaxAge(maxAge time.Duration) Option[*MCPServerOptions] {
+	return newFuncOption(func(m *MCPServerOptions) error {
+		m.maxAge = maxAge
+		return nil
+	})
+}
+
 func defaultMCPServerOptions() *MCPServerOptions {
 	return &MCPServerOptions{
 		name:         "MCP Server",
 		version:      "1.0.0",
 		toolbox:      nil,
 		authProvider: nil,
+		// Default CORS options
+		corsEnabled:      true,
+		allowedOrigins:   []string{"*"},
+		allowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		allowedHeaders:   []string{"Content-Type", "Authorization"},
+		exposedHeaders:   nil,
+		allowCredentials: false,
+		maxAge:           24 * time.Hour,
 	}
 }
