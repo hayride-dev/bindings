@@ -2,8 +2,6 @@ package server
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"io"
 	"net/http"
@@ -93,18 +91,8 @@ func NewMCPRouter(options ...Option[*MCPServerOptions]) (*http.ServeMux, error) 
 				return
 			}
 
-			// TODO: The client should provide and validate this, added to work with mcp inspector client for now
-			// Generate a random 16-digit state parameter
-			stateBytes := make([]byte, 8)
-			if _, err := rand.Read(stateBytes); err != nil {
-				http.Error(w, fmt.Sprintf("failed to generate state parameter: %v", err), http.StatusInternalServerError)
-				return
-			}
-			state := hex.EncodeToString(stateBytes)
-
-			// Get existing query parameters and add the state parameter
+			// Passthrough existing query parameters
 			queryParams := r.URL.Query()
-			queryParams.Set("state", state)
 			queryString := queryParams.Encode()
 
 			// Append query parameters to the base URL
