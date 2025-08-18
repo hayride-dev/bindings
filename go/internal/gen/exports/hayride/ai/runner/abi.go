@@ -7,8 +7,16 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-func lift_Message(f0 uint32, f1 *types.MessageContent, f2 uint32) (v types.Message) {
+func lift_Message(f0 uint32, f1 *types.MessageContent, f2 uint32, f3 uint32) (v types.Message) {
 	v.Role = (types.Role)(f0)
 	v.Content = cm.LiftList[cm.List[types.MessageContent]](f1, f2)
+	v.Final = (bool)(cm.U32ToBool(f3))
 	return
+}
+
+func lift_OptionBorrowOutputStream(f0 uint32, f1 uint32) (v cm.Option[cm.Rep]) {
+	if f0 == 0 {
+		return
+	}
+	return (cm.Option[cm.Rep])(cm.Some[cm.Rep](cm.Reinterpret[cm.Rep]((uint32)(f1))))
 }

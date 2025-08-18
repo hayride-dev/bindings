@@ -6,36 +6,36 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.62".
+// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.63".
 
-//go:wasmimport hayride:mcp/resources@0.0.62 [resource-drop]error
+//go:wasmimport hayride:mcp/resources@0.0.63 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:mcp/resources@0.0.62 [method]error.code
+//go:wasmimport hayride:mcp/resources@0.0.63 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:mcp/resources@0.0.62 [method]error.data
+//go:wasmimport hayride:mcp/resources@0.0.63 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:mcp/resources@0.0.62 [resource-drop]resources
+//go:wasmimport hayride:mcp/resources@0.0.63 [resource-drop]resources
 //go:noescape
 func wasmimport_ResourcesResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:mcp/resources@0.0.62 [constructor]resources
+//go:wasmimport hayride:mcp/resources@0.0.63 [constructor]resources
 //go:noescape
 func wasmimport_NewResources() (result0 uint32)
 
-//go:wasmimport hayride:mcp/resources@0.0.62 [method]resources.list-resources
+//go:wasmimport hayride:mcp/resources@0.0.63 [method]resources.list-resources
 //go:noescape
 func wasmimport_ResourcesListResources(self0 uint32, cursor0 *uint8, cursor1 uint32, result *cm.Result[ListResourcesResultShape, ListResourcesResult, Error])
 
-//go:wasmimport hayride:mcp/resources@0.0.62 [method]resources.list-templates
+//go:wasmimport hayride:mcp/resources@0.0.63 [method]resources.list-templates
 //go:noescape
 func wasmimport_ResourcesListTemplates(self0 uint32, cursor0 *uint8, cursor1 uint32, result *cm.Result[ListResourceTemplatesResultShape, ListResourceTemplatesResult, Error])
 
-//go:wasmimport hayride:mcp/resources@0.0.62 [method]resources.read-resources
+//go:wasmimport hayride:mcp/resources@0.0.63 [method]resources.read-resources
 //go:noescape
 func wasmimport_ResourcesReadResources(self0 uint32, params0 *uint8, params1 uint32, result *cm.Result[ReadResourceResultShape, ReadResourceResult, Error])

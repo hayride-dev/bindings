@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:ai/agents@0.0.62".
+// Exports represents the caller-defined exports from "hayride:ai/agents@0.0.63".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:ai/agents@0.0.62#error".
+	// Error represents the caller-defined exports for resource "hayride:ai/agents@0.0.63#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
@@ -30,7 +30,7 @@ var Exports struct {
 		Data func(self cm.Rep) (result string)
 	}
 
-	// Agent represents the caller-defined exports for resource "hayride:ai/agents@0.0.62#agent".
+	// Agent represents the caller-defined exports for resource "hayride:ai/agents@0.0.63#agent".
 	Agent struct {
 		// Destructor represents the caller-defined, exported destructor for resource "agent".
 		//
@@ -39,19 +39,13 @@ var Exports struct {
 
 		// Constructor represents the caller-defined, exported constructor for resource "agent".
 		//
-		//	constructor(name: string, instruction: string, format: format, graph: graph-execution-context-stream,
-		//	tools: option<tools>, context: option<context>)
-		Constructor func(name string, instruction string, format Format, graph GraphExecutionContextStream, tools_ cm.Option[Tools], context_ cm.Option[Context]) (result Agent)
+		//	constructor(name: string, instruction: string, tools: option<tools>, context: option<context>)
+		Constructor func(name string, instruction string, tools_ cm.Option[Tools], context_ cm.Option[Context]) (result Agent)
 
 		// Capabilities represents the caller-defined, exported method "capabilities".
 		//
 		//	capabilities: func() -> result<list<tool>, error>
 		Capabilities func(self cm.Rep) (result cm.Result[cm.List[Tool], cm.List[Tool], Error])
-
-		// Compute represents the caller-defined, exported method "compute".
-		//
-		//	compute: func(message: message) -> result<message, error>
-		Compute func(self cm.Rep, message Message) (result cm.Result[MessageShape, Message, Error])
 
 		// Context represents the caller-defined, exported method "context".
 		//
@@ -72,5 +66,10 @@ var Exports struct {
 		//
 		//	name: func() -> string
 		Name func(self cm.Rep) (result string)
+
+		// Push represents the caller-defined, exported method "push".
+		//
+		//	push: func(msg: message) -> result<_, error>
+		Push func(self cm.Rep, msg Message) (result cm.Result[Error, struct{}, Error])
 	}
 }

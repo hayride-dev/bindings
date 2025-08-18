@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:ai/runner@0.0.62".
+// Exports represents the caller-defined exports from "hayride:ai/runner@0.0.63".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:ai/runner@0.0.62#error".
+	// Error represents the caller-defined exports for resource "hayride:ai/runner@0.0.63#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
@@ -32,12 +32,8 @@ var Exports struct {
 
 	// Invoke represents the caller-defined, exported function "invoke".
 	//
-	//	invoke: func(message: message, agent: borrow<agent>) -> result<list<message>, error>
-	Invoke func(message Message, agent cm.Rep) (result cm.Result[cm.List[Message], cm.List[Message], Error])
-
-	// InvokeStream represents the caller-defined, exported function "invoke-stream".
-	//
-	//	invoke-stream: func(message: message, writer: borrow<output-stream>, agent: borrow<agent>)
-	//	-> result<_, error>
-	InvokeStream func(message Message, writer cm.Rep, agent cm.Rep) (result cm.Result[Error, struct{}, Error])
+	//	invoke: func(message: message, agent: borrow<agent>, format: borrow<format>, graph:
+	//	borrow<graph-execution-context-stream>, output-stream: option<borrow<output-stream>>)
+	//	-> result<list<message>, error>
+	Invoke func(message Message, agent cm.Rep, format cm.Rep, graph cm.Rep, outputStream cm.Option[cm.Rep]) (result cm.Result[cm.List[Message], cm.List[Message], Error])
 }

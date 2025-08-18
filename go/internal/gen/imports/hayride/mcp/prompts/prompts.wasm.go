@@ -6,32 +6,32 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.62".
+// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.63".
 
-//go:wasmimport hayride:mcp/prompts@0.0.62 [resource-drop]error
+//go:wasmimport hayride:mcp/prompts@0.0.63 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:mcp/prompts@0.0.62 [method]error.code
+//go:wasmimport hayride:mcp/prompts@0.0.63 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:mcp/prompts@0.0.62 [method]error.data
+//go:wasmimport hayride:mcp/prompts@0.0.63 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:mcp/prompts@0.0.62 [resource-drop]prompts
+//go:wasmimport hayride:mcp/prompts@0.0.63 [resource-drop]prompts
 //go:noescape
 func wasmimport_PromptsResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:mcp/prompts@0.0.62 [constructor]prompts
+//go:wasmimport hayride:mcp/prompts@0.0.63 [constructor]prompts
 //go:noescape
 func wasmimport_NewPrompts() (result0 uint32)
 
-//go:wasmimport hayride:mcp/prompts@0.0.62 [method]prompts.get-prompt
+//go:wasmimport hayride:mcp/prompts@0.0.63 [method]prompts.get-prompt
 //go:noescape
 func wasmimport_PromptsGetPrompt(self0 uint32, params0 *uint8, params1 uint32, params2 *[2]string, params3 uint32, result *cm.Result[GetPromptResultShape, GetPromptResult, Error])
 
-//go:wasmimport hayride:mcp/prompts@0.0.62 [method]prompts.list-prompts
+//go:wasmimport hayride:mcp/prompts@0.0.63 [method]prompts.list-prompts
 //go:noescape
 func wasmimport_PromptsListPrompts(self0 uint32, cursor0 *uint8, cursor1 uint32, result *cm.Result[ListPromptsResultShape, ListPromptsResult, Error])

@@ -7,32 +7,32 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.62".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.63".
 
-//go:wasmimport hayride:ai/context@0.0.62 [resource-drop]error
+//go:wasmimport hayride:ai/context@0.0.63 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/context@0.0.62 [method]error.code
+//go:wasmimport hayride:ai/context@0.0.63 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/context@0.0.62 [method]error.data
+//go:wasmimport hayride:ai/context@0.0.63 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/context@0.0.62 [resource-drop]context
+//go:wasmimport hayride:ai/context@0.0.63 [resource-drop]context
 //go:noescape
 func wasmimport_ContextResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/context@0.0.62 [constructor]context
+//go:wasmimport hayride:ai/context@0.0.63 [constructor]context
 //go:noescape
 func wasmimport_NewContext() (result0 uint32)
 
-//go:wasmimport hayride:ai/context@0.0.62 [method]context.messages
+//go:wasmimport hayride:ai/context@0.0.63 [method]context.messages
 //go:noescape
 func wasmimport_ContextMessages(self0 uint32, result *cm.Result[cm.List[Message], cm.List[Message], Error])
 
-//go:wasmimport hayride:ai/context@0.0.62 [method]context.push
+//go:wasmimport hayride:ai/context@0.0.63 [method]context.push
 //go:noescape
-func wasmimport_ContextPush(self0 uint32, msg0 uint32, msg1 *types.MessageContent, msg2 uint32, result *cm.Result[Error, struct{}, Error])
+func wasmimport_ContextPush(self0 uint32, msg0 uint32, msg1 *types.MessageContent, msg2 uint32, msg3 uint32, result *cm.Result[Error, struct{}, Error])

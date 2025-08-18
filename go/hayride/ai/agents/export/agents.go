@@ -5,15 +5,13 @@ import (
 
 	"github.com/hayride-dev/bindings/go/hayride/ai/agents"
 	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
-	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
-	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
 	"github.com/hayride-dev/bindings/go/hayride/types"
 	witAgents "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/agents"
 	"go.bytecodealliance.org/cm"
 )
 
-type Constructor func(name string, instruction string, format models.Format, graph graph.GraphExecutionContextStream, tools tools.Tools, context ctx.Context) (agents.Agent, error)
+type Constructor func(name string, instruction string, tools tools.Tools, context ctx.Context) (agents.Agent, error)
 
 var agentConstructor Constructor
 
@@ -35,8 +33,8 @@ func Agent(c Constructor) {
 	witAgents.Exports.Agent.Name = name
 	witAgents.Exports.Agent.Instruction = instruction
 	witAgents.Exports.Agent.Capabilities = capabilities
+	witAgents.Exports.Agent.Push = push
 	witAgents.Exports.Agent.Context = context
-	witAgents.Exports.Agent.Compute = compute
 	witAgents.Exports.Agent.Execute = execute
 
 	witAgents.Exports.Error.Code = errorCode
@@ -44,7 +42,7 @@ func Agent(c Constructor) {
 	witAgents.Exports.Error.Destructor = errorDestructor
 }
 
-func constructor(name string, instruction string, format witAgents.Format, graph_ witAgents.GraphExecutionContextStream, tools_ cm.Option[witAgents.Tools], context cm.Option[witAgents.Context]) witAgents.Agent {
+func constructor(name string, instruction string, tools_ cm.Option[witAgents.Tools], context cm.Option[witAgents.Context]) witAgents.Agent {
 	t := tools_.Some()
 	var toolResource tools.Tools
 	if t != nil {
@@ -57,7 +55,7 @@ func constructor(name string, instruction string, format witAgents.Format, graph
 		contextResource = cm.Reinterpret[ctx.ContextResource](*c)
 	}
 
-	agent, err := agentConstructor(name, instruction, cm.Reinterpret[models.FormatResource](format), cm.Reinterpret[graph.GraphExecCtxStream](graph_), toolResource, contextResource)
+	agent, err := agentConstructor(name, instruction, toolResource, contextResource)
 	if err != nil {
 		return cm.ResourceNone
 	}
@@ -121,22 +119,20 @@ func context(self cm.Rep) cm.Result[cm.List[witAgents.Message], cm.List[witAgent
 	return cm.OK[cm.Result[cm.List[witAgents.Message], cm.List[witAgents.Message], witAgents.Error]](cm.Reinterpret[cm.List[witAgents.Message]](cm.ToList(msg)))
 }
 
-func compute(self cm.Rep, message witAgents.Message) cm.Result[witAgents.MessageShape, witAgents.Message, witAgents.Error] {
+func push(self cm.Rep, msg witAgents.Message) cm.Result[witAgents.Error, struct{}, witAgents.Error] {
 	agent, ok := resourceTable.agents[self]
 	if !ok {
-		wasiErr := createError(witAgents.ErrorCodeComputeError, "failed to find agent resource")
-		return cm.Err[cm.Result[witAgents.MessageShape, witAgents.Message, witAgents.Error]](wasiErr)
+		wasiErr := createError(witAgents.ErrorCodePushError, "failed to find agent resource")
+		return cm.Err[cm.Result[witAgents.Error, struct{}, witAgents.Error]](wasiErr)
 	}
-
-	msg := cm.Reinterpret[types.Message](message)
-
-	result, err := agent.Compute(msg)
+	message := cm.Reinterpret[types.Message](msg)
+	err := agent.Push(message)
 	if err != nil {
-		wasiErr := createError(witAgents.ErrorCodeComputeError, err.Error())
-		return cm.Err[cm.Result[witAgents.MessageShape, witAgents.Message, witAgents.Error]](wasiErr)
+		wasiErr := createError(witAgents.ErrorCodePushError, err.Error())
+		return cm.Err[cm.Result[witAgents.Error, struct{}, witAgents.Error]](wasiErr)
 	}
 
-	return cm.OK[cm.Result[witAgents.MessageShape, witAgents.Message, witAgents.Error]](cm.Reinterpret[witAgents.Message](*result))
+	return cm.OK[cm.Result[witAgents.Error, struct{}, witAgents.Error]](struct{}{})
 }
 
 func execute(self cm.Rep, params witAgents.CallToolParams) cm.Result[witAgents.CallToolResultShape, witAgents.CallToolResult, witAgents.Error] {
