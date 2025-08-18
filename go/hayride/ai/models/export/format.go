@@ -55,12 +55,17 @@ func destructor(self cm.Rep) {
 func decode(self cm.Rep, raw cm.List[uint8]) (result cm.Result[model.MessageShape, model.Message, model.Error]) {
 	m, ok := resourceTable.format[self]
 	if !ok {
-		wasiErr := createError(model.ErrorCodeContextDecode, "failed to find format resource")
+
+		wasiErr := newErrorResource(&models.ContextDecodeError{
+			Code: uint8(model.ErrorCodeContextDecode),
+			Data: "failed to find format resource",
+		})
 		return cm.Err[cm.Result[model.MessageShape, model.Message, model.Error]](wasiErr)
 	}
+
 	msg, err := m.Decode(raw.Slice())
 	if err != nil {
-		wasiErr := createError(model.ErrorCodeContextDecode, err.Error())
+		wasiErr := newErrorResource(err)
 		return cm.Err[cm.Result[model.MessageShape, model.Message, model.Error]](wasiErr)
 	}
 
@@ -72,7 +77,10 @@ func decode(self cm.Rep, raw cm.List[uint8]) (result cm.Result[model.MessageShap
 func encode(self cm.Rep, messages cm.List[model.Message]) (result cm.Result[cm.List[uint8], cm.List[uint8], model.Error]) {
 	m, ok := resourceTable.format[self]
 	if !ok {
-		wasiErr := createError(model.ErrorCodeContextEncode, "failed to find format resource")
+		wasiErr := newErrorResource(&models.ContextEncodeError{
+			Code: uint8(model.ErrorCodeContextEncode),
+			Data: "failed to find format resource",
+		})
 		return cm.Err[cm.Result[cm.List[uint8], cm.List[uint8], model.Error]](wasiErr)
 	}
 
@@ -80,7 +88,7 @@ func encode(self cm.Rep, messages cm.List[model.Message]) (result cm.Result[cm.L
 
 	msg, err := m.Encode(msgs.Slice()...)
 	if err != nil {
-		wasiErr := createError(model.ErrorCodeContextEncode, err.Error())
+		wasiErr := newErrorResource(err)
 		return cm.Err[cm.Result[cm.List[uint8], cm.List[uint8], model.Error]](wasiErr)
 	}
 
