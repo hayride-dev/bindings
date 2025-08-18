@@ -3,6 +3,7 @@ package export
 import (
 	"unsafe"
 
+	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
 	"go.bytecodealliance.org/cm"
 )
@@ -14,14 +15,57 @@ type errorResource struct {
 }
 
 // createError creates a new error resource and stores it in the resource table.
-func createError(code model.ErrorCode, data string) model.Error {
-	err := errorResource{
-		Code: code,
-		Data: data,
+func newErrorResource(e error) model.Error {
+	switch e.(type) {
+	case *models.ContextError:
+		err := errorResource{
+			Code: model.ErrorCodeContextError,
+			Data: e.Error(),
+		}
+		key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&err))))
+		resourceTable.errors[key] = err
+		return model.ErrorResourceNew(key)
+	case *models.ContextEncodeError:
+		err := errorResource{
+			Code: model.ErrorCodeContextEncode,
+			Data: e.Error(),
+		}
+		key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&err))))
+		resourceTable.errors[key] = err
+		return model.ErrorResourceNew(key)
+	case *models.ContextDecodeError:
+		err := errorResource{
+			Code: model.ErrorCodeContextDecode,
+			Data: e.Error(),
+		}
+		key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&err))))
+		resourceTable.errors[key] = err
+		return model.ErrorResourceNew(key)
+	case *models.ComputeError:
+		err := errorResource{
+			Code: model.ErrorCodeComputeError,
+			Data: e.Error(),
+		}
+		key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&err))))
+		resourceTable.errors[key] = err
+		return model.ErrorResourceNew(key)
+	case *models.PartialDecodeError:
+		err := errorResource{
+			Code: model.ErrorCodePartialDecode,
+			Data: e.Error(),
+		}
+		key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&err))))
+		resourceTable.errors[key] = err
+		return model.ErrorResourceNew(key)
+	default:
+		err := errorResource{
+			Code: model.ErrorCodeUnknown,
+			Data: e.Error(),
+		}
+		key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&err))))
+		resourceTable.errors[key] = err
+		return model.ErrorResourceNew(key)
 	}
-	key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&err))))
-	resourceTable.errors[key] = err
-	return model.ErrorResourceNew(key)
 }
 
 func errorCode(self cm.Rep) model.ErrorCode {
