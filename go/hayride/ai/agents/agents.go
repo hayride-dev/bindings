@@ -4,8 +4,6 @@ import (
 	"fmt"
 
 	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
-	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
-	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
 	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agents"
@@ -26,7 +24,7 @@ type Agent interface {
 
 type AgentResource cm.Resource
 
-func New(format models.Format, stream graph.GraphExecutionContextStream, options ...Option[*AgentOptions]) (Agent, error) {
+func New(options ...Option[*AgentOptions]) (Agent, error) {
 	opts := defaultAgentOptions()
 	for _, opt := range options {
 		if err := opt.Apply(opts); err != nil {
