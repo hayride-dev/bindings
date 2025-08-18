@@ -7,8 +7,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-func lower_Message(v types.Message) (f0 uint32, f1 *types.MessageContent, f2 uint32) {
+func lower_Message(v types.Message) (f0 uint32, f1 *types.MessageContent, f2 uint32, f3 uint32) {
 	f0 = (uint32)(v.Role)
 	f1, f2 = cm.LowerList(v.Content)
+	f3 = (uint32)(cm.BoolToU32(v.Final))
 	return
 }

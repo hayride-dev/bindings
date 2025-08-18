@@ -6,36 +6,36 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.62".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.63".
 
-//go:wasmimport hayride:ai/rag@0.0.62 [resource-drop]error
+//go:wasmimport hayride:ai/rag@0.0.63 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/rag@0.0.62 [method]error.code
+//go:wasmimport hayride:ai/rag@0.0.63 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/rag@0.0.62 [method]error.data
+//go:wasmimport hayride:ai/rag@0.0.63 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/rag@0.0.62 [resource-drop]connection
+//go:wasmimport hayride:ai/rag@0.0.63 [resource-drop]connection
 //go:noescape
 func wasmimport_ConnectionResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/rag@0.0.62 [method]connection.embed
+//go:wasmimport hayride:ai/rag@0.0.63 [method]connection.embed
 //go:noescape
 func wasmimport_ConnectionEmbed(self0 uint32, table0 *uint8, table1 uint32, data0 *uint8, data1 uint32, result *cm.Result[Error, struct{}, Error])
 
-//go:wasmimport hayride:ai/rag@0.0.62 [method]connection.query
+//go:wasmimport hayride:ai/rag@0.0.63 [method]connection.query
 //go:noescape
 func wasmimport_ConnectionQuery(self0 uint32, table0 *uint8, table1 uint32, data0 *uint8, data1 uint32, options0 *RagOption, options1 uint32, result *cm.Result[cm.List[string], cm.List[string], Error])
 
-//go:wasmimport hayride:ai/rag@0.0.62 [method]connection.register
+//go:wasmimport hayride:ai/rag@0.0.63 [method]connection.register
 //go:noescape
 func wasmimport_ConnectionRegister(self0 uint32, transformer0 uint32, result *cm.Result[Error, struct{}, Error])
 
-//go:wasmimport hayride:ai/rag@0.0.62 connect
+//go:wasmimport hayride:ai/rag@0.0.63 connect
 //go:noescape
 func wasmimport_Connect(dsn0 *uint8, dsn1 uint32, result *cm.Result[Connection, Connection, Error])

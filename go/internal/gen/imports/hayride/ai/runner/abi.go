@@ -7,8 +7,19 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-func lower_Message(v types.Message) (f0 uint32, f1 *types.MessageContent, f2 uint32) {
+func lower_Message(v types.Message) (f0 uint32, f1 *types.MessageContent, f2 uint32, f3 uint32) {
 	f0 = (uint32)(v.Role)
 	f1, f2 = cm.LowerList(v.Content)
+	f3 = (uint32)(cm.BoolToU32(v.Final))
+	return
+}
+
+func lower_OptionBorrowOutputStream(v cm.Option[OutputStream]) (f0 uint32, f1 uint32) {
+	some := v.Some()
+	if some != nil {
+		f0 = 1
+		v1 := cm.Reinterpret[uint32](*some)
+		f1 = (uint32)(v1)
+	}
 	return
 }
