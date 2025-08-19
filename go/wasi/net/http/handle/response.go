@@ -11,9 +11,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-var _ http.ResponseWriter = &wasiResponseWriter{}
+var _ http.ResponseWriter = &WasiResponseWriter{}
 
-type wasiResponseWriter struct {
+type WasiResponseWriter struct {
 	outparam    types.ResponseOutparam
 	response    types.OutgoingResponse
 	wasiHeaders types.Fields
@@ -27,8 +27,8 @@ type wasiResponseWriter struct {
 	statuscode int
 }
 
-func newWasiResponseWriter(out types.ResponseOutparam) *wasiResponseWriter {
-	return &wasiResponseWriter{
+func newWasiResponseWriter(out types.ResponseOutparam) *WasiResponseWriter {
+	return &WasiResponseWriter{
 		outparam:    out,
 		httpHeaders: http.Header{},
 		wasiHeaders: types.NewFields(),
@@ -36,11 +36,11 @@ func newWasiResponseWriter(out types.ResponseOutparam) *wasiResponseWriter {
 	}
 }
 
-func (w *wasiResponseWriter) Header() http.Header {
+func (w *WasiResponseWriter) Header() http.Header {
 	return w.httpHeaders
 }
 
-func (w *wasiResponseWriter) Write(buf []byte) (int, error) {
+func (w *WasiResponseWriter) Write(buf []byte) (int, error) {
 	// NOTE: If this is the first write, make sure we set the headers/statuscode
 	w.headerOnce.Do(w.reconcile)
 	if w.headerErr != nil {
@@ -62,14 +62,14 @@ func (w *wasiResponseWriter) Write(buf []byte) (int, error) {
 	return int(contents.Len()), nil
 }
 
-func (w *wasiResponseWriter) WriteHeader(statusCode int) {
+func (w *WasiResponseWriter) WriteHeader(statusCode int) {
 	w.headerOnce.Do(func() {
 		w.statuscode = statusCode
 		w.reconcile()
 	})
 }
 
-func (w *wasiResponseWriter) reconcile() {
+func (w *WasiResponseWriter) reconcile() {
 	for key, vals := range w.httpHeaders {
 		fieldVals := []types.FieldValue{}
 		for _, val := range vals {
@@ -103,7 +103,7 @@ func (w *wasiResponseWriter) reconcile() {
 
 // Close closes out the underlying stream by flushing the response and making
 // sure that the underlying resource handle is dropped.
-func (w *wasiResponseWriter) Close() error {
+func (w *WasiResponseWriter) Close() error {
 	if w.stream == nil {
 		return nil
 	}
