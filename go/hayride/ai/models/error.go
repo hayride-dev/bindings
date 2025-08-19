@@ -7,90 +7,78 @@ import (
 )
 
 type ContextError struct {
-	Code uint8
 	Data string
 }
 
 func (e *ContextError) Error() string {
-	return fmt.Sprintf("context error: data: %s, code: %d", e.Data, e.Code)
+	return fmt.Sprintf("context error: data: %s, code: %d", e.Data, model.ErrorCodeContextError)
 }
 
 type ContextEncodeError struct {
-	Code uint8
 	Data string
 }
 
 func (e *ContextEncodeError) Error() string {
-	return fmt.Sprintf("context encode error: data: %s, code: %d", e.Data, e.Code)
+	return fmt.Sprintf("context encode error: data: %s, code: %d", e.Data, model.ErrorCodeContextEncode)
 }
 
 type ContextDecodeError struct {
-	Code uint8
 	Data string
 }
 
 func (e *ContextDecodeError) Error() string {
-	return fmt.Sprintf("context decode error: data: %s, code: %d", e.Data, e.Code)
+	return fmt.Sprintf("context decode error: data: %s, code: %d", e.Data, model.ErrorCodeContextDecode)
 }
 
 type ComputeError struct {
-	Code uint8
 	Data string
 }
 
 func (e *ComputeError) Error() string {
-	return fmt.Sprintf("compute error: data: %s, code: %d", e.Data, e.Code)
+	return fmt.Sprintf("compute error: data: %s, code: %d", e.Data, model.ErrorCodeComputeError)
 }
 
 type PartialDecodeError struct {
-	Code uint8
 	Data string
 }
 
 func (e *PartialDecodeError) Error() string {
-	return fmt.Sprintf("partial decode error: data: %s, code: %d", e.Data, e.Code)
+	return fmt.Sprintf("partial decode error: data: %s, code: %d", e.Data, model.ErrorCodePartialDecode)
 }
 
 type UnknownError struct {
-	Code uint8
 	Data string
 }
 
 func (e *UnknownError) Error() string {
-	return fmt.Sprintf("unknown error: data: %s, code: %d", e.Data, e.Code)
+	return fmt.Sprintf("unknown error: data: %s, code: %d", e.Data, model.ErrorCodeUnknown)
 }
 
 func newError(err *model.Error) error {
 	switch err.Code() {
 	case model.ErrorCodeContextError:
 		return &ContextError{
-			Code: uint8(err.Code()),
 			Data: err.Data(),
 		}
 	case model.ErrorCodeContextEncode:
 		return &ContextEncodeError{
-			Code: uint8(err.Code()),
 			Data: err.Data(),
 		}
 	case model.ErrorCodeContextDecode:
 		return &ContextDecodeError{
-			Code: uint8(err.Code()),
 			Data: err.Data(),
 		}
 	case model.ErrorCodeComputeError:
 		return &ComputeError{
-			Code: uint8(err.Code()),
 			Data: err.Data(),
 		}
 	case model.ErrorCodePartialDecode:
 		return &PartialDecodeError{
-			Code: uint8(err.Code()),
 			Data: err.Data(),
 		}
 
 	default:
 		return &UnknownError{
-			Code: uint8(err.Code()),
 			Data: err.Data(),
 		}
 	}

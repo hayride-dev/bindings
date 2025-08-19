@@ -57,7 +57,6 @@ func decode(self cm.Rep, raw cm.List[uint8]) (result cm.Result[model.MessageShap
 	if !ok {
 
 		wasiErr := newErrorResource(&models.ContextDecodeError{
-			Code: uint8(model.ErrorCodeContextDecode),
 			Data: "failed to find format resource",
 		})
 		return cm.Err[cm.Result[model.MessageShape, model.Message, model.Error]](wasiErr)
@@ -78,7 +77,6 @@ func encode(self cm.Rep, messages cm.List[model.Message]) (result cm.Result[cm.L
 	m, ok := resourceTable.format[self]
 	if !ok {
 		wasiErr := newErrorResource(&models.ContextEncodeError{
-			Code: uint8(model.ErrorCodeContextEncode),
 			Data: "failed to find format resource",
 		})
 		return cm.Err[cm.Result[cm.List[uint8], cm.List[uint8], model.Error]](wasiErr)

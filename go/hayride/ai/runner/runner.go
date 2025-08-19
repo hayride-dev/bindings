@@ -8,7 +8,9 @@ import (
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/types"
+	graphstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/runner"
+	"github.com/hayride-dev/bindings/go/wasi/net/http/handle"
 	"github.com/hayride-dev/bindings/go/wasi/streams"
 
 	"go.bytecodealliance.org/cm"
@@ -37,28 +39,31 @@ func (r *runnerImpl) Invoke(message types.Message, agent agents.Agent, format mo
 	if !ok {
 		return nil, fmt.Errorf("format does not implement hayride ai format resource")
 	}
-	formatResource := cm.Reinterpret[runner.Format](f)
 
 	graphExecCtxStream, ok := stream.(graph.GraphExecCtxStream)
 	if !ok {
 		return nil, fmt.Errorf("stream does not implement graph.GraphExecCtxStream")
 	}
-	graphExecutionContextStream := cm.Reinterpret[runner.GraphExecutionContextStream](graphExecCtxStream)
 
 	// Optional output stream
-	var outputOption cm.Option[runner.OutputStream]
+	outputOption := cm.None[runner.OutputStream]()
 	if writer != nil {
-		w, ok := writer.(streams.Writer)
-		if !ok {
-			return nil, fmt.Errorf("writer does not implement wasi io outputstream resource")
+		switch w := writer.(type) {
+		case streams.Writer:
+			agentOutputStream := cm.Reinterpret[runner.OutputStream](w)
+			outputOption = cm.Some(agentOutputStream)
+		case *handle.WasiResponseWriter:
+			agentOutputStream := cm.Reinterpret[runner.OutputStream](w)
+			outputOption = cm.Some(agentOutputStream)
 		}
-		agentOutputStream := cm.Reinterpret[runner.OutputStream](w)
-		outputOption = cm.Some(agentOutputStream)
-	} else {
-		outputOption = cm.None[runner.OutputStream]()
 	}
 
-	result := runner.Invoke(cm.Reinterpret[runner.Message](message), agentResource, formatResource, graphExecutionContextStream, outputOption)
+	result := runner.Invoke(
+		cm.Reinterpret[runner.Message](message),
+		agentResource,
+		runner.Format(f),
+		graphstream.GraphExecutionContextStream(graphExecCtxStream),
+		outputOption)
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to invoke agent: %s", result.Err().Data())
 	}

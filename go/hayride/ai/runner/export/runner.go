@@ -45,13 +45,13 @@ func invoke(message witRunner.Message, agent cm.Rep, format cm.Rep, stream cm.Re
 	formatResource := cm.Reinterpret[models.FormatResource](format)
 	defer witModel.Format(format).ResourceDrop()
 
-	graphStreamResource := cm.Reinterpret[graph.GraphExecutionContextStream](stream)
+	graphStreamResource := cm.Reinterpret[graph.GraphExecCtxStream](stream)
 	defer witGraph.GraphExecutionContextStream(stream).ResourceDrop()
 
 	o := writer.Some()
 	var outputStream io.Writer
 	if o != nil {
-		w := cm.Reinterpret[streams.Writer](o)
+		w := cm.Reinterpret[streams.Writer](*o)
 		defer witStreams.OutputStream(*o).ResourceDrop()
 
 		outputStream = w
