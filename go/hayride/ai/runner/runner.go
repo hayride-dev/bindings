@@ -53,7 +53,12 @@ func (r *runnerImpl) Invoke(message types.Message, agent agents.Agent, format mo
 			agentOutputStream := cm.Reinterpret[runner.OutputStream](w)
 			outputOption = cm.Some(agentOutputStream)
 		case *handle.WasiResponseWriter:
-			agentOutputStream := cm.Reinterpret[runner.OutputStream](w)
+			stream, err := w.Stream()
+			if err != nil {
+				return nil, fmt.Errorf("failed to get stream from WasiResponseWriter: %s", err)
+			}
+
+			agentOutputStream := cm.Reinterpret[runner.OutputStream](*stream)
 			outputOption = cm.Some(agentOutputStream)
 		}
 	}

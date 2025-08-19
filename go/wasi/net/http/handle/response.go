@@ -40,6 +40,15 @@ func (w *WasiResponseWriter) Header() http.Header {
 	return w.httpHeaders
 }
 
+// Stream returns the underlying OutputStream for this WasiResponseWriter.
+// This is only usable after WriteHeader has been called
+func (w *WasiResponseWriter) Stream() (*streams.OutputStream, error) {
+	if w.stream == nil {
+		return nil, fmt.Errorf("stream is not available until WriteHeader has been called")
+	}
+	return w.stream, nil
+}
+
 func (w *WasiResponseWriter) Write(buf []byte) (int, error) {
 	// NOTE: If this is the first write, make sure we set the headers/statuscode
 	w.headerOnce.Do(w.reconcile)
