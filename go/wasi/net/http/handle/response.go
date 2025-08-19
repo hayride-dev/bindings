@@ -8,6 +8,7 @@ import (
 
 	"github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/http/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/io/streams"
+	wasiStreams "github.com/hayride-dev/bindings/go/wasi/streams"
 	"go.bytecodealliance.org/cm"
 )
 
@@ -42,11 +43,12 @@ func (w *WasiResponseWriter) Header() http.Header {
 
 // Stream returns the underlying OutputStream for this WasiResponseWriter.
 // This is only usable after WriteHeader has been called
-func (w *WasiResponseWriter) Stream() (*streams.OutputStream, error) {
+func (w *WasiResponseWriter) Stream() (io.Writer, error) {
 	if w.stream == nil {
 		return nil, fmt.Errorf("stream is not available until WriteHeader has been called")
 	}
-	return w.stream, nil
+
+	return wasiStreams.Writer(*w.stream), nil
 }
 
 func (w *WasiResponseWriter) Write(buf []byte) (int, error) {
