@@ -64,7 +64,7 @@ func destructor(self cm.Rep) {
 func invoke(self cm.Rep, message witRunner.Message, agent cm.Rep, format cm.Rep, stream cm.Rep, writer cm.Option[cm.Rep]) cm.Result[cm.List[witRunner.Message], cm.List[witRunner.Message], witRunner.Error] {
 	r, ok := resourceTable.runners[self]
 	if !ok {
-		wasiErr := createError(witRunner.ErrorCodeInvokeError, "failed to find agent resource")
+		wasiErr := createError(witRunner.ErrorCodeInvokeError, "failed to find runner resource")
 		return cm.Err[cm.Result[cm.List[witRunner.Message], cm.List[witRunner.Message], witRunner.Error]](wasiErr)
 	}
 
