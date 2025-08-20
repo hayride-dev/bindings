@@ -2,24 +2,25 @@ package handle
 
 import (
 	"fmt"
-	"io"
 	"net/http"
 	"sync"
 
 	"github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/http/types"
-	"github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/io/streams"
+	wasistreams "github.com/hayride-dev/bindings/go/internal/gen/wasip2/wasi/io/streams"
+	"github.com/hayride-dev/bindings/go/wasi/streams"
 	"go.bytecodealliance.org/cm"
 )
 
 var _ http.ResponseWriter = &WasiResponseWriter{}
 
 type WasiResponseWriter struct {
+	streams.Writer
+
 	outparam    types.ResponseOutparam
 	response    types.OutgoingResponse
 	wasiHeaders types.Fields
 	httpHeaders http.Header
 	body        *types.OutgoingBody
-	stream      *streams.OutputStream
 
 	headerOnce sync.Once
 	headerErr  error
@@ -47,19 +48,7 @@ func (w *WasiResponseWriter) Write(buf []byte) (int, error) {
 		return 0, w.headerErr
 	}
 
-	contents := cm.ToList(buf)
-	writeResult := w.stream.Write(contents)
-	if writeResult.IsErr() {
-		if writeResult.Err().Closed() {
-			return 0, io.EOF
-		}
-
-		return 0, fmt.Errorf("failed to write to response body's stream: %s", writeResult.Err().LastOperationFailed().ToDebugString())
-	}
-
-	w.stream.BlockingFlush()
-
-	return int(contents.Len()), nil
+	return w.Writer.Write(buf)
 }
 
 func (w *WasiResponseWriter) WriteHeader(statusCode int) {
@@ -96,7 +85,7 @@ func (w *WasiResponseWriter) reconcile() {
 		w.headerErr = fmt.Errorf("failed to acquire resource handle for response body's stream: %s", writeResult.Err())
 		return
 	}
-	w.stream = writeResult.OK()
+	w.Writer = streams.Writer(*writeResult.OK())
 	result := cm.OK[cm.Result[types.ErrorCodeShape, types.OutgoingResponse, types.ErrorCode]](w.response)
 	types.ResponseOutparamSet(w.outparam, result)
 }
@@ -104,13 +93,16 @@ func (w *WasiResponseWriter) reconcile() {
 // Close closes out the underlying stream by flushing the response and making
 // sure that the underlying resource handle is dropped.
 func (w *WasiResponseWriter) Close() error {
-	if w.stream == nil {
+	if w.Writer != cm.ResourceNone {
 		return nil
 	}
 
-	w.stream.BlockingFlush()
-	w.stream.ResourceDrop()
-	w.stream = nil
+	stream := cm.Reinterpret[wasistreams.OutputStream](w.Writer)
+
+	stream.BlockingFlush()
+	stream.ResourceDrop()
+
+	w.Writer = cm.ResourceNone
 
 	var maybeTrailers cm.Option[types.Fields]
 	wasiTrailers := types.NewFields()
