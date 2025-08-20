@@ -3,6 +3,7 @@ package runner
 import (
 	"fmt"
 	"io"
+	"net/http"
 
 	"github.com/hayride-dev/bindings/go/hayride/ai/agents"
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
@@ -53,6 +54,12 @@ func (r *runnerImpl) Invoke(message types.Message, agent agents.Agent, format mo
 			agentOutputStream := cm.Reinterpret[runner.OutputStream](w)
 			outputOption = cm.Some(agentOutputStream)
 		case *handle.WasiResponseWriter:
+			// Ensure the headers are set for the response writer
+			// NOTE:: This is required to initialize the output stream for the response writer
+			// TODO:: Heavily follow wasi-http 0.3 updates for better output stream handling
+			w.Header().Set("Content-Type", "text/event-stream")
+			w.Header().Set("Cache-Control", "no-cache")
+			w.WriteHeader(http.StatusOK)
 			agentOutputStream := cm.Reinterpret[runner.OutputStream](w.Writer)
 			outputOption = cm.Some(agentOutputStream)
 		}
