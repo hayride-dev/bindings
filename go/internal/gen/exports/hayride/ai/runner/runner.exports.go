@@ -6,9 +6,9 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// Exports represents the caller-defined exports from "hayride:ai/runner@0.0.63".
+// Exports represents the caller-defined exports from "hayride:ai/runner@0.0.64".
 var Exports struct {
-	// Error represents the caller-defined exports for resource "hayride:ai/runner@0.0.63#error".
+	// Error represents the caller-defined exports for resource "hayride:ai/runner@0.0.64#error".
 	Error struct {
 		// Destructor represents the caller-defined, exported destructor for resource "error".
 		//
@@ -30,10 +30,23 @@ var Exports struct {
 		Data func(self cm.Rep) (result string)
 	}
 
-	// Invoke represents the caller-defined, exported function "invoke".
-	//
-	//	invoke: func(message: message, agent: borrow<agent>, format: borrow<format>, graph:
-	//	borrow<graph-execution-context-stream>, output-stream: option<borrow<output-stream>>)
-	//	-> result<list<message>, error>
-	Invoke func(message Message, agent cm.Rep, format cm.Rep, graph cm.Rep, outputStream cm.Option[cm.Rep]) (result cm.Result[cm.List[Message], cm.List[Message], Error])
+	// Runner represents the caller-defined exports for resource "hayride:ai/runner@0.0.64#runner".
+	Runner struct {
+		// Destructor represents the caller-defined, exported destructor for resource "runner".
+		//
+		// Resource destructor.
+		Destructor func(self cm.Rep)
+
+		// Constructor represents the caller-defined, exported constructor for resource "runner".
+		//
+		//	constructor(options: runner-options)
+		Constructor func(options RunnerOptions) (result Runner)
+
+		// Invoke represents the caller-defined, exported method "invoke".
+		//
+		//	invoke: func(message: message, agent: borrow<agent>, format: borrow<format>, graph:
+		//	borrow<graph-execution-context-stream>, output-stream: option<borrow<output-stream>>)
+		//	-> result<list<message>, error>
+		Invoke func(self cm.Rep, message Message, agent cm.Rep, format cm.Rep, graph cm.Rep, outputStream cm.Option[cm.Rep]) (result cm.Result[cm.List[Message], cm.List[Message], Error])
+	}
 }

@@ -32,6 +32,14 @@ type Message = ai.Message
 type Role = ai.Role
 type MessageContent = ai.MessageContent
 
+type WriterType = ai.WriterType
+type RunnerOptions = ai.RunnerOptions
+
+const (
+	WriterTypeSse = ai.WriterTypeSse
+	WriterTypeRaw = ai.WriterTypeRaw
+)
+
 type Tool = mcp.Tool
 type CallToolParams = mcp.CallToolParams
 type CallToolResult = mcp.CallToolResult

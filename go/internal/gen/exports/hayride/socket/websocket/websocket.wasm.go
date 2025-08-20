@@ -6,10 +6,10 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:socket@0.0.63".
+// This file contains wasmimport and wasmexport declarations for "hayride:socket@0.0.64".
 
-//go:wasmexport hayride:socket/websocket@0.0.63#handle
-//export hayride:socket/websocket@0.0.63#handle
+//go:wasmexport hayride:socket/websocket@0.0.64#handle
+//export hayride:socket/websocket@0.0.64#handle
 func wasmexport_Handle(input0 uint32, output0 uint32) {
 	input := cm.Reinterpret[InputStream]((uint32)(input0))
 	output := cm.Reinterpret[OutputStream]((uint32)(output0))
