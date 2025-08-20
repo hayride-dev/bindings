@@ -3,54 +3,54 @@ package hayride:bindings@0.0.1;
 // All hayride imports
 world imports {
     // core
-    import hayride:core/version@0.0.63;
+    import hayride:core/version@0.0.64;
     // ai
-    import hayride:ai/tensor-stream@0.0.63;
-    import hayride:ai/inference-stream@0.0.63;
-    import hayride:ai/graph-stream@0.0.63;
-    import hayride:ai/agents@0.0.63;
-    import hayride:ai/runner@0.0.63;
-    import hayride:ai/model@0.0.63;
-    import hayride:ai/model-repository@0.0.63;
-    import hayride:ai/context@0.0.63;
-    import hayride:ai/rag@0.0.63;
+    import hayride:ai/tensor-stream@0.0.64;
+    import hayride:ai/inference-stream@0.0.64;
+    import hayride:ai/graph-stream@0.0.64;
+    import hayride:ai/agents@0.0.64;
+    import hayride:ai/runner@0.0.64;
+    import hayride:ai/model@0.0.64;
+    import hayride:ai/model-repository@0.0.64;
+    import hayride:ai/context@0.0.64;
+    import hayride:ai/rag@0.0.64;
     // mcp
-    import hayride:mcp/tools@0.0.63;
-    import hayride:mcp/prompts@0.0.63;
-    import hayride:mcp/resources@0.0.63;
-    import hayride:mcp/auth@0.0.63;
+    import hayride:mcp/tools@0.0.64;
+    import hayride:mcp/prompts@0.0.64;
+    import hayride:mcp/resources@0.0.64;
+    import hayride:mcp/auth@0.0.64;
     // silo
-    import hayride:silo/types@0.0.63;
-    import hayride:silo/threads@0.0.63;
-    import hayride:silo/process@0.0.63;
+    import hayride:silo/types@0.0.64;
+    import hayride:silo/threads@0.0.64;
+    import hayride:silo/process@0.0.64;
     // webassembly composition 
-    import hayride:wac/wac@0.0.63;
+    import hayride:wac/wac@0.0.64;
 }
 
 // exports for hayride
 world exports {
-    export hayride:http/config@0.0.63;
-    export hayride:socket/websocket@0.0.63;
+    export hayride:http/config@0.0.64;
+    export hayride:socket/websocket@0.0.64;
 
     // ai
-    export hayride:ai/model@0.0.63;
-    export hayride:ai/context@0.0.63;
-    export hayride:ai/agents@0.0.63;
-    export hayride:ai/runner@0.0.63;
+    export hayride:ai/model@0.0.64;
+    export hayride:ai/context@0.0.64;
+    export hayride:ai/agents@0.0.64;
+    export hayride:ai/runner@0.0.64;
 
     // mcp
-    export hayride:mcp/tools@0.0.63;
-    export hayride:mcp/prompts@0.0.63;
-    export hayride:mcp/resources@0.0.63;
-    export hayride:mcp/auth@0.0.63;
+    export hayride:mcp/tools@0.0.64;
+    export hayride:mcp/prompts@0.0.64;
+    export hayride:mcp/resources@0.0.64;
+    export hayride:mcp/auth@0.0.64;
 }
 
 world types {
-    import hayride:ai/types@0.0.63;
-    import hayride:silo/types@0.0.63;
-    import hayride:core/types@0.0.63;
-    import hayride:http/types@0.0.63;
-    import hayride:mcp/types@0.0.63;
+    import hayride:ai/types@0.0.64;
+    import hayride:silo/types@0.0.64;
+    import hayride:core/types@0.0.64;
+    import hayride:http/types@0.0.64;
+    import hayride:mcp/types@0.0.64;
 }
 
 // various wasi imports and exports that are 

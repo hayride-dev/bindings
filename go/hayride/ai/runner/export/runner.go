@@ -2,6 +2,7 @@ package export
 
 import (
 	"io"
+	"unsafe"
 
 	"github.com/hayride-dev/bindings/go/hayride/ai/agents"
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
@@ -17,28 +18,56 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-var r runner.Runner
+type Constructor func(options types.RunnerOptions) (runner.Runner, error)
+
+var runnerConstructor Constructor
 
 // Runner interface only defines error resources
 type resources struct {
-	errors map[cm.Rep]errorResource
+	runners map[cm.Rep]runner.Runner
+	errors  map[cm.Rep]errorResource
 }
 
 var resourceTable = &resources{
-	errors: make(map[cm.Rep]errorResource),
+	runners: make(map[cm.Rep]runner.Runner),
+	errors:  make(map[cm.Rep]errorResource),
 }
 
-func Runner(runner runner.Runner) {
-	r = runner
+func Runner(c Constructor) {
+	runnerConstructor = c
 
-	witRunner.Exports.Invoke = invoke
+	witRunner.Exports.Runner.Constructor = constructor
+	witRunner.Exports.Runner.Invoke = invoke
+	witRunner.Exports.Runner.Destructor = destructor
 
 	witRunner.Exports.Error.Code = errorCode
 	witRunner.Exports.Error.Data = errorData
 	witRunner.Exports.Error.Destructor = errorDestructor
 }
 
-func invoke(message witRunner.Message, agent cm.Rep, format cm.Rep, stream cm.Rep, writer cm.Option[cm.Rep]) cm.Result[cm.List[witRunner.Message], cm.List[witRunner.Message], witRunner.Error] {
+func constructor(options witRunner.RunnerOptions) witRunner.Runner {
+	r, err := runnerConstructor(cm.Reinterpret[types.RunnerOptions](options))
+	if err != nil {
+		return cm.ResourceNone
+	}
+
+	key := cm.Rep(uintptr(*(*unsafe.Pointer)(unsafe.Pointer(&r))))
+	v := witRunner.RunnerResourceNew(key)
+	resourceTable.runners[key] = r
+	return v
+}
+
+func destructor(self cm.Rep) {
+	delete(resourceTable.runners, self)
+}
+
+func invoke(self cm.Rep, message witRunner.Message, agent cm.Rep, format cm.Rep, stream cm.Rep, writer cm.Option[cm.Rep]) cm.Result[cm.List[witRunner.Message], cm.List[witRunner.Message], witRunner.Error] {
+	r, ok := resourceTable.runners[self]
+	if !ok {
+		wasiErr := createError(witRunner.ErrorCodeInvokeError, "failed to find agent resource")
+		return cm.Err[cm.Result[cm.List[witRunner.Message], cm.List[witRunner.Message], witRunner.Error]](wasiErr)
+	}
+
 	agentResource := cm.Reinterpret[agents.AgentResource](agent)
 	defer witAgents.Agent(agent).ResourceDrop()
 

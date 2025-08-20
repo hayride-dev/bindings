@@ -7,6 +7,12 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+func lower_RunnerOptions(v types.RunnerOptions) (f0 uint32, f1 uint32) {
+	f0 = (uint32)(v.Writer)
+	f1 = (uint32)(v.MaxTurns)
+	return
+}
+
 func lower_Message(v types.Message) (f0 uint32, f1 *types.MessageContent, f2 uint32, f3 uint32) {
 	f0 = (uint32)(v.Role)
 	f1, f2 = cm.LowerList(v.Content)

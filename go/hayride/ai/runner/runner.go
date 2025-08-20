@@ -17,19 +17,21 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-var _ Runner = (*runnerImpl)(nil)
+var _ Runner = (*RunnerResource)(nil)
 
 type Runner interface {
 	Invoke(message types.Message, agent agents.Agent, format models.Format, stream graph.GraphExecutionContextStream, writer io.Writer) ([]types.Message, error)
 }
 
-type runnerImpl struct{}
+type RunnerResource cm.Rep
 
-func New() Runner {
-	return &runnerImpl{}
+func New(options types.RunnerOptions) (Runner, error) {
+	return RunnerResource(runner.NewRunner(cm.Reinterpret[runner.RunnerOptions](options))), nil
 }
 
-func (r *runnerImpl) Invoke(message types.Message, agent agents.Agent, format models.Format, stream graph.GraphExecutionContextStream, writer io.Writer) ([]types.Message, error) {
+func (r RunnerResource) Invoke(message types.Message, agent agents.Agent, format models.Format, stream graph.GraphExecutionContextStream, writer io.Writer) ([]types.Message, error) {
+	runnerResource := cm.Reinterpret[runner.Runner](r)
+
 	a, ok := agent.(agents.AgentResource)
 	if !ok {
 		return nil, fmt.Errorf("agent does not implement hayride ai agent resource")
@@ -65,7 +67,7 @@ func (r *runnerImpl) Invoke(message types.Message, agent agents.Agent, format mo
 		}
 	}
 
-	result := runner.Invoke(
+	result := runnerResource.Invoke(
 		cm.Reinterpret[runner.Message](message),
 		agentResource,
 		runner.Format(f),

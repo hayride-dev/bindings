@@ -7,6 +7,12 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
+func lift_RunnerOptions(f0 uint32, f1 uint32) (v types.RunnerOptions) {
+	v.Writer = (types.WriterType)(f0)
+	v.MaxTurns = (uint32)(f1)
+	return
+}
+
 func lift_Message(f0 uint32, f1 *types.MessageContent, f2 uint32, f3 uint32) (v types.Message) {
 	v.Role = (types.Role)(f0)
 	v.Content = cm.LiftList[cm.List[types.MessageContent]](f1, f2)
