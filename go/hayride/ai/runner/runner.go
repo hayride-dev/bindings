@@ -64,6 +64,8 @@ func (r RunnerResource) Invoke(message types.Message, agent agents.Agent, format
 			w.WriteHeader(http.StatusOK)
 			agentOutputStream := cm.Reinterpret[runner.OutputStream](w.Writer)
 			outputOption = cm.Some(agentOutputStream)
+		default:
+			return nil, fmt.Errorf("writer must be a Wasi OutputStream")
 		}
 	}
 
