@@ -32,6 +32,15 @@ type Message = ai.Message
 type Role = ai.Role
 type MessageContent = ai.MessageContent
 
+const (
+	MessageContentNone       = "none"
+	MessageContentText       = "text"
+	MessageContentBlob       = "blob"
+	MessageContentTools      = "tools"
+	MessageContentToolInput  = "tool-input"
+	MessageContentToolOutput = "tool-output"
+)
+
 type WriterType = ai.WriterType
 type RunnerOptions = ai.RunnerOptions
 
