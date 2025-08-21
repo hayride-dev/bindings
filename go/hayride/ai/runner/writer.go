@@ -48,12 +48,7 @@ func (mw *Writer) Write(p []byte) (int, error) {
 			return 0, fmt.Errorf("failed to write SSE terminator: %w", err)
 		}
 
-		// Flush if supported to push the event immediately.
-		if f, ok := mw.w.(interface{ Flush() }); ok {
-			f.Flush()
-		}
 		return len(p), nil
-
 	case types.WriterTypeRaw:
 		if _, err := mw.w.Write(p); err != nil {
 			return 0, fmt.Errorf("failed to write raw message: %w", err)
