@@ -2,6 +2,7 @@ package runner
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -32,50 +33,64 @@ func (r *Reader) Read(p []byte) (n int, err error) {
 func (r *Reader) ReadLine() ([]byte, error) {
 	switch r.writerType {
 	case types.WriterTypeSse:
-		// For SSE mode, read one data line at a time
+		var dataLines []string
+
 		for {
-			line, err := r.r.ReadString('\n')
+			line, err := r.r.ReadString('\n') // includes '\n' if found
 			if err != nil {
+				// If EOF and we have buffered data, flush it as a final event
+				if errors.Is(err, io.EOF) && len(dataLines) > 0 {
+					return []byte(strings.Join(dataLines, "\n")), nil
+				}
 				return nil, err
 			}
 
-			// Remove only the trailing newline added by ReadString
-			if len(line) > 0 && line[len(line)-1] == '\n' {
-				line = line[:len(line)-1]
-			}
-			// Also remove \r if present (for Windows line endings)
-			if len(line) > 0 && line[len(line)-1] == '\r' {
-				line = line[:len(line)-1]
+			// Trim CRLF (SSE commonly uses CRLF)
+			line = strings.TrimRight(line, "\r\n")
+
+			// Blank line => end of event frame
+			if line == "" {
+				if len(dataLines) == 0 {
+					// Skip stray keep-alive blank lines
+					continue
+				}
+				return []byte(strings.Join(dataLines, "\n")), nil
 			}
 
-			// Skip empty lines (SSE message separators)
-			if line == "" {
+			// Comments (ignore)
+			if strings.HasPrefix(line, ":") {
 				continue
 			}
 
-			// Parse SSE format: "data: content"
-			if strings.HasPrefix(line, "data: ") {
-				data := strings.TrimPrefix(line, "data: ")
-				return []byte(data), nil
+			// Parse field: "name: value" or "name:value"
+			// We only care about data fields; ignore others.
+			if i := strings.IndexByte(line, ':'); i >= 0 {
+				field := line[:i]
+				value := line[i+1:]
+				// If there is a single leading space after ":", strip it (per spec).
+				if len(value) > 0 && value[0] == ' ' {
+					value = value[1:]
+				}
+				if field == "data" {
+					dataLines = append(dataLines, value)
+				}
+				// ignore id/event/retry
+				continue
 			}
 
-			// Skip non-data lines (like comments, event types, etc.)
+			// Field without ":" (non-standard)
 		}
 
 	case types.WriterTypeRaw:
-		// For raw mode, just read a single line
 		line, err := r.r.ReadString('\n')
 		if err != nil {
+			// If EOF and we got some bytes, return them (without forcing an error)
+			if errors.Is(err, io.EOF) && len(line) > 0 {
+				return []byte(strings.TrimRight(line, "\r\n")), nil
+			}
 			return nil, err
 		}
-		// Remove only the trailing newline added by ReadString
-		if len(line) > 0 && line[len(line)-1] == '\n' {
-			line = line[:len(line)-1]
-		}
-		if len(line) > 0 && line[len(line)-1] == '\r' {
-			line = line[:len(line)-1]
-		}
-		return []byte(line), nil
+		return []byte(strings.TrimRight(line, "\r\n")), nil
 
 	default:
 		return nil, fmt.Errorf("unknown writer type: %s", r.writerType)
