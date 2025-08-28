@@ -3,7 +3,7 @@ package resources
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/hayride/types"
+	"github.com/hayride-dev/bindings/go/hayride/mcp"
 	witResources "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/mcp/resources"
 
 	"go.bytecodealliance.org/cm"
@@ -12,9 +12,9 @@ import (
 var _ Resources = (*MCPResource)(nil)
 
 type Resources interface {
-	Read(params types.ReadResourceParams) (*types.ReadResourceResult, error)
-	List(cursor string) (*types.ListResourcesResult, error)
-	ListTemplates(cursor string) (*types.ListResourceTemplatesResult, error)
+	Read(params mcp.ReadResourceParams) (*mcp.ReadResourceResult, error)
+	List(cursor string) (*mcp.ListResourcesResult, error)
+	ListTemplates(cursor string) (*mcp.ListResourceTemplatesResult, error)
 }
 
 type MCPResource cm.Resource
@@ -23,7 +23,7 @@ func New() (MCPResource, error) {
 	return MCPResource(witResources.NewResources()), nil
 }
 
-func (t MCPResource) Read(params types.ReadResourceParams) (*types.ReadResourceResult, error) {
+func (t MCPResource) Read(params mcp.ReadResourceParams) (*mcp.ReadResourceResult, error) {
 	witMCPResource := cm.Reinterpret[witResources.Resources](t)
 
 	result := witMCPResource.ReadResources(cm.Reinterpret[witResources.ReadResourceParams](params))
@@ -31,10 +31,10 @@ func (t MCPResource) Read(params types.ReadResourceParams) (*types.ReadResourceR
 		return nil, fmt.Errorf("failed to read resources: %s", result.Err().Data())
 	}
 
-	return cm.Reinterpret[*types.ReadResourceResult](result.OK()), nil
+	return cm.Reinterpret[*mcp.ReadResourceResult](result.OK()), nil
 }
 
-func (t MCPResource) List(cursor string) (*types.ListResourcesResult, error) {
+func (t MCPResource) List(cursor string) (*mcp.ListResourcesResult, error) {
 	witMCPResource := cm.Reinterpret[witResources.Resources](t)
 
 	result := witMCPResource.ListResources(cursor)
@@ -42,10 +42,10 @@ func (t MCPResource) List(cursor string) (*types.ListResourcesResult, error) {
 		return nil, fmt.Errorf("failed to get resources: %s", result.Err().Data())
 	}
 
-	return cm.Reinterpret[*types.ListResourcesResult](result.OK()), nil
+	return cm.Reinterpret[*mcp.ListResourcesResult](result.OK()), nil
 }
 
-func (t MCPResource) ListTemplates(cursor string) (*types.ListResourceTemplatesResult, error) {
+func (t MCPResource) ListTemplates(cursor string) (*mcp.ListResourceTemplatesResult, error) {
 	witMCPResource := cm.Reinterpret[witResources.Resources](t)
 
 	result := witMCPResource.ListTemplates(cursor)
@@ -53,5 +53,5 @@ func (t MCPResource) ListTemplates(cursor string) (*types.ListResourceTemplatesR
 		return nil, fmt.Errorf("failed to get resource templates: %s", result.Err().Data())
 	}
 
-	return cm.Reinterpret[*types.ListResourceTemplatesResult](result.OK()), nil
+	return cm.Reinterpret[*mcp.ListResourceTemplatesResult](result.OK()), nil
 }

@@ -165,7 +165,7 @@ func (r *driverRows) Close() error {
 }
 
 // dbValueFromInterface converts a Go driver.Value to a WIT types.DbValue
-func dbValueFromInterface(value driver.Value) types.DbValue {
+func dbValueFromInterface(value driver.Value) DbValue {
 	if value == nil {
 		return types.DbValueNull()
 	}

@@ -3,8 +3,8 @@ package export
 import (
 	"unsafe"
 
+	"github.com/hayride-dev/bindings/go/hayride/mcp"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	witTools "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/mcp/tools"
 	"go.bytecodealliance.org/cm"
 )
@@ -55,7 +55,7 @@ func call(self cm.Rep, params witTools.CallToolParams) cm.Result[witTools.CallTo
 		return cm.Err[cm.Result[witTools.CallToolResultShape, witTools.CallToolResult, witTools.Error]](wasiErr)
 	}
 
-	result, err := tool.Call(cm.Reinterpret[types.CallToolParams](params))
+	result, err := tool.Call(cm.Reinterpret[mcp.CallToolParams](params))
 	if err != nil {
 		wasiErr := createError(witTools.ErrorCodeToolCallFailed, err.Error())
 		return cm.Err[cm.Result[witTools.CallToolResultShape, witTools.CallToolResult, witTools.Error]](wasiErr)

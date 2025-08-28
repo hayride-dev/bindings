@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"strings"
 
+	types "github.com/hayride-dev/bindings/go/hayride/mcp"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/auth"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 	"go.bytecodealliance.org/cm"

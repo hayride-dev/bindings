@@ -7,7 +7,7 @@ for interacting with a imported context resource.
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/hayride/types"
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/context"
 	"go.bytecodealliance.org/cm"
 )
@@ -15,8 +15,8 @@ import (
 var _ Context = (*ContextResource)(nil)
 
 type Context interface {
-	Push(messages ...types.Message) error
-	Messages() ([]types.Message, error)
+	Push(messages ...ai.Message) error
+	Messages() ([]ai.Message, error)
 }
 
 type ContextResource cm.Resource
@@ -28,9 +28,9 @@ func New() (Context, error) {
 
 // Push take a list of messages, convert them to a list of wit Messages
 // and call imported context push
-func (c ContextResource) Push(messages ...types.Message) error {
+func (c ContextResource) Push(messages ...ai.Message) error {
 	witContext := cm.Reinterpret[context.Context](c)
-	// Convert types.Message to context.Message and push
+	// Convert ai.Message to context.Message and push
 	for _, msg := range messages {
 		result := witContext.Push(cm.Reinterpret[context.Message](msg))
 		if result.IsErr() {
@@ -41,12 +41,12 @@ func (c ContextResource) Push(messages ...types.Message) error {
 }
 
 // Messages returns the list of messages in the context
-func (c ContextResource) Messages() ([]types.Message, error) {
+func (c ContextResource) Messages() ([]ai.Message, error) {
 	witContext := cm.Reinterpret[context.Context](c)
 	result := witContext.Messages()
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to get messages: %s", result.Err().Data())
 	}
 	msgs := result.OK().Slice()
-	return cm.Reinterpret[[]types.Message](msgs), nil
+	return cm.Reinterpret[[]ai.Message](msgs), nil
 }

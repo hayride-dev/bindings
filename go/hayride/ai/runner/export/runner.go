@@ -4,11 +4,11 @@ import (
 	"io"
 	"unsafe"
 
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 	"github.com/hayride-dev/bindings/go/hayride/ai/agents"
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
 	"github.com/hayride-dev/bindings/go/hayride/ai/runner"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	witRunner "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/runner"
 	witAgents "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agents"
 	witGraph "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
@@ -18,7 +18,7 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-type Constructor func(options types.RunnerOptions) (runner.Runner, error)
+type Constructor func(options ai.RunnerOptions) (runner.Runner, error)
 
 var runnerConstructor Constructor
 
@@ -46,7 +46,7 @@ func Runner(c Constructor) {
 }
 
 func constructor(options witRunner.RunnerOptions) witRunner.Runner {
-	r, err := runnerConstructor(cm.Reinterpret[types.RunnerOptions](options))
+	r, err := runnerConstructor(cm.Reinterpret[ai.RunnerOptions](options))
 	if err != nil {
 		return cm.ResourceNone
 	}
@@ -86,7 +86,7 @@ func invoke(self cm.Rep, message witRunner.Message, agent cm.Rep, format cm.Rep,
 		outputStream = w
 	}
 
-	msg, err := r.Invoke(cm.Reinterpret[types.Message](message), agentResource, formatResource, graphStreamResource, outputStream)
+	msg, err := r.Invoke(cm.Reinterpret[ai.Message](message), agentResource, formatResource, graphStreamResource, outputStream)
 	if err != nil {
 		wasiErr := createError(witRunner.ErrorCodeInvokeError, err.Error())
 		return cm.Err[cm.Result[cm.List[witRunner.Message], cm.List[witRunner.Message], witRunner.Error]](wasiErr)

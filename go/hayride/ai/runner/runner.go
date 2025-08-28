@@ -5,10 +5,10 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 	"github.com/hayride-dev/bindings/go/hayride/ai/agents"
 	"github.com/hayride-dev/bindings/go/hayride/ai/graph"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	graphstream "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/graph-stream"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/runner"
 	"github.com/hayride-dev/bindings/go/wasi/net/http/handle"
@@ -20,16 +20,16 @@ import (
 var _ Runner = (*RunnerResource)(nil)
 
 type Runner interface {
-	Invoke(message types.Message, agent agents.Agent, format models.Format, stream graph.GraphExecutionContextStream, writer io.Writer) ([]types.Message, error)
+	Invoke(message ai.Message, agent agents.Agent, format models.Format, stream graph.GraphExecutionContextStream, writer io.Writer) ([]ai.Message, error)
 }
 
 type RunnerResource cm.Rep
 
-func New(options types.RunnerOptions) (Runner, error) {
+func New(options ai.RunnerOptions) (Runner, error) {
 	return RunnerResource(runner.NewRunner(cm.Reinterpret[runner.RunnerOptions](options))), nil
 }
 
-func (r RunnerResource) Invoke(message types.Message, agent agents.Agent, format models.Format, stream graph.GraphExecutionContextStream, writer io.Writer) ([]types.Message, error) {
+func (r RunnerResource) Invoke(message ai.Message, agent agents.Agent, format models.Format, stream graph.GraphExecutionContextStream, writer io.Writer) ([]ai.Message, error) {
 	runnerResource := cm.Reinterpret[runner.Runner](r)
 
 	a, ok := agent.(agents.AgentResource)
@@ -80,5 +80,5 @@ func (r RunnerResource) Invoke(message types.Message, agent agents.Agent, format
 	}
 
 	msgs := result.OK().Slice()
-	return cm.Reinterpret[[]types.Message](msgs), nil
+	return cm.Reinterpret[[]ai.Message](msgs), nil
 }
