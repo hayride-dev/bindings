@@ -6,40 +6,40 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.64".
+// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.65".
 
-//go:wasmimport hayride:mcp/auth@0.0.64 [resource-drop]error
+//go:wasmimport hayride:mcp/auth@0.0.65 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:mcp/auth@0.0.64 [method]error.code
+//go:wasmimport hayride:mcp/auth@0.0.65 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:mcp/auth@0.0.64 [method]error.data
+//go:wasmimport hayride:mcp/auth@0.0.65 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:mcp/auth@0.0.64 [resource-drop]provider
+//go:wasmimport hayride:mcp/auth@0.0.65 [resource-drop]provider
 //go:noescape
 func wasmimport_ProviderResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:mcp/auth@0.0.64 [constructor]provider
+//go:wasmimport hayride:mcp/auth@0.0.65 [constructor]provider
 //go:noescape
 func wasmimport_NewProvider() (result0 uint32)
 
-//go:wasmimport hayride:mcp/auth@0.0.64 [method]provider.auth-url
+//go:wasmimport hayride:mcp/auth@0.0.65 [method]provider.auth-url
 //go:noescape
 func wasmimport_ProviderAuthURL(self0 uint32, result *cm.Result[string, string, Error])
 
-//go:wasmimport hayride:mcp/auth@0.0.64 [method]provider.exchange-code
+//go:wasmimport hayride:mcp/auth@0.0.65 [method]provider.exchange-code
 //go:noescape
 func wasmimport_ProviderExchangeCode(self0 uint32, data0 *uint8, data1 uint32, result *cm.Result[cm.List[uint8], cm.List[uint8], Error])
 
-//go:wasmimport hayride:mcp/auth@0.0.64 [method]provider.registration
+//go:wasmimport hayride:mcp/auth@0.0.65 [method]provider.registration
 //go:noescape
 func wasmimport_ProviderRegistration(self0 uint32, data0 *uint8, data1 uint32, result *cm.Result[cm.List[uint8], cm.List[uint8], Error])
 
-//go:wasmimport hayride:mcp/auth@0.0.64 [method]provider.validate
+//go:wasmimport hayride:mcp/auth@0.0.65 [method]provider.validate
 //go:noescape
 func wasmimport_ProviderValidate(self0 uint32, token0 *uint8, token1 uint32, result *cm.Result[Error, bool, Error])

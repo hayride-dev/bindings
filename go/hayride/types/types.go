@@ -1,6 +1,7 @@
 package types
 
 import (
+	db "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/db/types"
 	ai "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/ai/types"
 	core "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/core/types"
 	http "github.com/hayride-dev/bindings/go/internal/gen/types/hayride/http/types"
@@ -192,5 +193,59 @@ func NewResourceContents[T ResourceContentsType](data T) ResourceContents {
 		return cm.New[ResourceContents](2, data)
 	default:
 		return cm.New[ResourceContents](0, struct{}{})
+	}
+}
+
+type Row = db.Row
+type IsolationLevel = db.IsolationLevel
+
+const (
+	IsolationLevelReadUncommitted = db.IsolationLevelReadUncommitted
+	IsolationLevelReadCommitted   = db.IsolationLevelReadCommitted
+	IsolationLevelWriteCommitted  = db.IsolationLevelWriteCommitted
+	IsolationLevelRepeatableRead  = db.IsolationLevelRepeatableRead
+	IsolationLevelSnapshot        = db.IsolationLevelSnapshot
+	IsolationLevelSerializable    = db.IsolationLevelSerializable
+	IsolationLevelLinearizable    = db.IsolationLevelLinearizable
+)
+
+type DbValue = db.DbValue
+type Double float64
+type Date string
+type Time string
+type Timestamp string
+
+type DbValueType interface {
+	None | int32 | int64 | uint32 | uint64 | float64 | Double | string | bool | Date | Time | Timestamp | cm.List[uint8]
+}
+
+func NewDbValue[T DbValueType](data T) DbValue {
+	switch any(data).(type) {
+	case int32:
+		return cm.New[DbValue](0, data)
+	case int64:
+		return cm.New[DbValue](1, data)
+	case uint32:
+		return cm.New[DbValue](2, data)
+	case uint64:
+		return cm.New[DbValue](3, data)
+	case float64:
+		return cm.New[DbValue](4, data)
+	case Double:
+		return cm.New[DbValue](5, float64(any(data).(Double)))
+	case string:
+		return cm.New[DbValue](6, data)
+	case bool:
+		return cm.New[DbValue](7, data)
+	case Date:
+		return cm.New[DbValue](8, string(any(data).(Date)))
+	case Time:
+		return cm.New[DbValue](9, string(any(data).(Time)))
+	case Timestamp:
+		return cm.New[DbValue](10, string(any(data).(Timestamp)))
+	case cm.List[uint8]:
+		return cm.New[DbValue](11, data)
+	default:
+		return cm.New[DbValue](12, struct{}{}) // null case
 	}
 }

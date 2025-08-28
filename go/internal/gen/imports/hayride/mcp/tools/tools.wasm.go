@@ -6,32 +6,32 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.64".
+// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.65".
 
-//go:wasmimport hayride:mcp/tools@0.0.64 [resource-drop]error
+//go:wasmimport hayride:mcp/tools@0.0.65 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:mcp/tools@0.0.64 [method]error.code
+//go:wasmimport hayride:mcp/tools@0.0.65 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:mcp/tools@0.0.64 [method]error.data
+//go:wasmimport hayride:mcp/tools@0.0.65 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:mcp/tools@0.0.64 [resource-drop]tools
+//go:wasmimport hayride:mcp/tools@0.0.65 [resource-drop]tools
 //go:noescape
 func wasmimport_ToolsResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:mcp/tools@0.0.64 [constructor]tools
+//go:wasmimport hayride:mcp/tools@0.0.65 [constructor]tools
 //go:noescape
 func wasmimport_NewTools() (result0 uint32)
 
-//go:wasmimport hayride:mcp/tools@0.0.64 [method]tools.call-tool
+//go:wasmimport hayride:mcp/tools@0.0.65 [method]tools.call-tool
 //go:noescape
 func wasmimport_ToolsCallTool(self0 uint32, params0 *uint8, params1 uint32, params2 *[2]string, params3 uint32, result *cm.Result[CallToolResultShape, CallToolResult, Error])
 
-//go:wasmimport hayride:mcp/tools@0.0.64 [method]tools.list-tools
+//go:wasmimport hayride:mcp/tools@0.0.65 [method]tools.list-tools
 //go:noescape
 func wasmimport_ToolsListTools(self0 uint32, cursor0 *uint8, cursor1 uint32, result *cm.Result[ListToolsResultShape, ListToolsResult, Error])

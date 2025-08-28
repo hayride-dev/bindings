@@ -6,20 +6,20 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:core@0.0.64".
+// This file contains wasmimport and wasmexport declarations for "hayride:core@0.0.65".
 
-//go:wasmimport hayride:core/version@0.0.64 [resource-drop]error
+//go:wasmimport hayride:core/version@0.0.65 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:core/version@0.0.64 [method]error.code
+//go:wasmimport hayride:core/version@0.0.65 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:core/version@0.0.64 [method]error.data
+//go:wasmimport hayride:core/version@0.0.65 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:core/version@0.0.64 latest
+//go:wasmimport hayride:core/version@0.0.65 latest
 //go:noescape
 func wasmimport_Latest(result *cm.Result[string, string, Error])

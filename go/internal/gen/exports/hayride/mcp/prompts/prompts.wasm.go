@@ -6,30 +6,30 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.64".
+// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.65".
 
-//go:wasmimport [export]hayride:mcp/prompts@0.0.64 [resource-new]error
+//go:wasmimport [export]hayride:mcp/prompts@0.0.65 [resource-new]error
 //go:noescape
 func wasmimport_ErrorResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/prompts@0.0.64 [resource-rep]error
+//go:wasmimport [export]hayride:mcp/prompts@0.0.65 [resource-rep]error
 //go:noescape
 func wasmimport_ErrorResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/prompts@0.0.64 [resource-drop]error
+//go:wasmimport [export]hayride:mcp/prompts@0.0.65 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:mcp/prompts@0.0.64#[dtor]error
-//export hayride:mcp/prompts@0.0.64#[dtor]error
+//go:wasmexport hayride:mcp/prompts@0.0.65#[dtor]error
+//export hayride:mcp/prompts@0.0.65#[dtor]error
 func wasmexport_ErrorDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Error.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:mcp/prompts@0.0.64#[method]error.code
-//export hayride:mcp/prompts@0.0.64#[method]error.code
+//go:wasmexport hayride:mcp/prompts@0.0.65#[method]error.code
+//export hayride:mcp/prompts@0.0.65#[method]error.code
 func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result := Exports.Error.Code(self)
@@ -37,8 +37,8 @@ func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	return
 }
 
-//go:wasmexport hayride:mcp/prompts@0.0.64#[method]error.data
-//export hayride:mcp/prompts@0.0.64#[method]error.data
+//go:wasmexport hayride:mcp/prompts@0.0.65#[method]error.data
+//export hayride:mcp/prompts@0.0.65#[method]error.data
 func wasmexport_ErrorData(self0 uint32) (result *string) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result_ := Exports.Error.Data(self)
@@ -46,36 +46,36 @@ func wasmexport_ErrorData(self0 uint32) (result *string) {
 	return
 }
 
-//go:wasmimport [export]hayride:mcp/prompts@0.0.64 [resource-new]prompts
+//go:wasmimport [export]hayride:mcp/prompts@0.0.65 [resource-new]prompts
 //go:noescape
 func wasmimport_PromptsResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/prompts@0.0.64 [resource-rep]prompts
+//go:wasmimport [export]hayride:mcp/prompts@0.0.65 [resource-rep]prompts
 //go:noescape
 func wasmimport_PromptsResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/prompts@0.0.64 [resource-drop]prompts
+//go:wasmimport [export]hayride:mcp/prompts@0.0.65 [resource-drop]prompts
 //go:noescape
 func wasmimport_PromptsResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:mcp/prompts@0.0.64#[dtor]prompts
-//export hayride:mcp/prompts@0.0.64#[dtor]prompts
+//go:wasmexport hayride:mcp/prompts@0.0.65#[dtor]prompts
+//export hayride:mcp/prompts@0.0.65#[dtor]prompts
 func wasmexport_PromptsDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Prompts.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:mcp/prompts@0.0.64#[constructor]prompts
-//export hayride:mcp/prompts@0.0.64#[constructor]prompts
+//go:wasmexport hayride:mcp/prompts@0.0.65#[constructor]prompts
+//export hayride:mcp/prompts@0.0.65#[constructor]prompts
 func wasmexport_Constructor() (result0 uint32) {
 	result := Exports.Prompts.Constructor()
 	result0 = cm.Reinterpret[uint32](result)
 	return
 }
 
-//go:wasmexport hayride:mcp/prompts@0.0.64#[method]prompts.get-prompt
-//export hayride:mcp/prompts@0.0.64#[method]prompts.get-prompt
+//go:wasmexport hayride:mcp/prompts@0.0.65#[method]prompts.get-prompt
+//export hayride:mcp/prompts@0.0.65#[method]prompts.get-prompt
 func wasmexport_PromptsGetPrompt(self0 uint32, params0 *uint8, params1 uint32, params2 *[2]string, params3 uint32) (result *cm.Result[GetPromptResultShape, GetPromptResult, Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	params := lift_GetPromptParams((*uint8)(params0), (uint32)(params1), (*[2]string)(params2), (uint32)(params3))
@@ -84,8 +84,8 @@ func wasmexport_PromptsGetPrompt(self0 uint32, params0 *uint8, params1 uint32, p
 	return
 }
 
-//go:wasmexport hayride:mcp/prompts@0.0.64#[method]prompts.list-prompts
-//export hayride:mcp/prompts@0.0.64#[method]prompts.list-prompts
+//go:wasmexport hayride:mcp/prompts@0.0.65#[method]prompts.list-prompts
+//export hayride:mcp/prompts@0.0.65#[method]prompts.list-prompts
 func wasmexport_PromptsListPrompts(self0 uint32, cursor0 *uint8, cursor1 uint32) (result *cm.Result[ListPromptsResultShape, ListPromptsResult, Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	cursor := cm.LiftString[string]((*uint8)(cursor0), (uint32)(cursor1))
