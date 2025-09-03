@@ -3,7 +3,7 @@ package prompts
 import (
 	"fmt"
 
-	"github.com/hayride-dev/bindings/go/hayride/types"
+	"github.com/hayride-dev/bindings/go/hayride/mcp"
 	witPrompts "github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/mcp/prompts"
 
 	"go.bytecodealliance.org/cm"
@@ -12,8 +12,8 @@ import (
 var _ Prompts = (*PromptResource)(nil)
 
 type Prompts interface {
-	Get(params types.GetPromptParams) (*types.GetPromptResult, error)
-	List(cursor string) (*types.ListPromptsResult, error)
+	Get(params mcp.GetPromptParams) (*mcp.GetPromptResult, error)
+	List(cursor string) (*mcp.ListPromptsResult, error)
 }
 
 type PromptResource cm.Resource
@@ -22,7 +22,7 @@ func New() (PromptResource, error) {
 	return PromptResource(witPrompts.NewPrompts()), nil
 }
 
-func (t PromptResource) Get(params types.GetPromptParams) (*types.GetPromptResult, error) {
+func (t PromptResource) Get(params mcp.GetPromptParams) (*mcp.GetPromptResult, error) {
 	witPromptsResource := cm.Reinterpret[witPrompts.Prompts](t)
 
 	result := witPromptsResource.GetPrompt(cm.Reinterpret[witPrompts.GetPromptParams](params))
@@ -30,9 +30,9 @@ func (t PromptResource) Get(params types.GetPromptParams) (*types.GetPromptResul
 		return nil, fmt.Errorf("failed to get prompt: %s", result.Err().Data())
 	}
 
-	return cm.Reinterpret[*types.GetPromptResult](result.OK()), nil
+	return cm.Reinterpret[*mcp.GetPromptResult](result.OK()), nil
 }
-func (t PromptResource) List(cursor string) (*types.ListPromptsResult, error) {
+func (t PromptResource) List(cursor string) (*mcp.ListPromptsResult, error) {
 	witPromptsToolbox := cm.Reinterpret[witPrompts.Prompts](t)
 
 	result := witPromptsToolbox.ListPrompts(cursor)
@@ -40,5 +40,5 @@ func (t PromptResource) List(cursor string) (*types.ListPromptsResult, error) {
 		return nil, fmt.Errorf("failed to list prompts: %s", result.Err().Data())
 	}
 
-	return cm.Reinterpret[*types.ListPromptsResult](result.OK()), nil
+	return cm.Reinterpret[*mcp.ListPromptsResult](result.OK()), nil
 }

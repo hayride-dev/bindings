@@ -6,30 +6,30 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.64".
+// This file contains wasmimport and wasmexport declarations for "hayride:mcp@0.0.65".
 
-//go:wasmimport [export]hayride:mcp/resources@0.0.64 [resource-new]error
+//go:wasmimport [export]hayride:mcp/resources@0.0.65 [resource-new]error
 //go:noescape
 func wasmimport_ErrorResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/resources@0.0.64 [resource-rep]error
+//go:wasmimport [export]hayride:mcp/resources@0.0.65 [resource-rep]error
 //go:noescape
 func wasmimport_ErrorResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/resources@0.0.64 [resource-drop]error
+//go:wasmimport [export]hayride:mcp/resources@0.0.65 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:mcp/resources@0.0.64#[dtor]error
-//export hayride:mcp/resources@0.0.64#[dtor]error
+//go:wasmexport hayride:mcp/resources@0.0.65#[dtor]error
+//export hayride:mcp/resources@0.0.65#[dtor]error
 func wasmexport_ErrorDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Error.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:mcp/resources@0.0.64#[method]error.code
-//export hayride:mcp/resources@0.0.64#[method]error.code
+//go:wasmexport hayride:mcp/resources@0.0.65#[method]error.code
+//export hayride:mcp/resources@0.0.65#[method]error.code
 func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result := Exports.Error.Code(self)
@@ -37,8 +37,8 @@ func wasmexport_ErrorCode(self0 uint32) (result0 uint32) {
 	return
 }
 
-//go:wasmexport hayride:mcp/resources@0.0.64#[method]error.data
-//export hayride:mcp/resources@0.0.64#[method]error.data
+//go:wasmexport hayride:mcp/resources@0.0.65#[method]error.data
+//export hayride:mcp/resources@0.0.65#[method]error.data
 func wasmexport_ErrorData(self0 uint32) (result *string) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	result_ := Exports.Error.Data(self)
@@ -46,36 +46,36 @@ func wasmexport_ErrorData(self0 uint32) (result *string) {
 	return
 }
 
-//go:wasmimport [export]hayride:mcp/resources@0.0.64 [resource-new]resources
+//go:wasmimport [export]hayride:mcp/resources@0.0.65 [resource-new]resources
 //go:noescape
 func wasmimport_ResourcesResourceNew(rep0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/resources@0.0.64 [resource-rep]resources
+//go:wasmimport [export]hayride:mcp/resources@0.0.65 [resource-rep]resources
 //go:noescape
 func wasmimport_ResourcesResourceRep(self0 uint32) (result0 uint32)
 
-//go:wasmimport [export]hayride:mcp/resources@0.0.64 [resource-drop]resources
+//go:wasmimport [export]hayride:mcp/resources@0.0.65 [resource-drop]resources
 //go:noescape
 func wasmimport_ResourcesResourceDrop(self0 uint32)
 
-//go:wasmexport hayride:mcp/resources@0.0.64#[dtor]resources
-//export hayride:mcp/resources@0.0.64#[dtor]resources
+//go:wasmexport hayride:mcp/resources@0.0.65#[dtor]resources
+//export hayride:mcp/resources@0.0.65#[dtor]resources
 func wasmexport_ResourcesDestructor(self0 uint32) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	Exports.Resources.Destructor(self)
 	return
 }
 
-//go:wasmexport hayride:mcp/resources@0.0.64#[constructor]resources
-//export hayride:mcp/resources@0.0.64#[constructor]resources
+//go:wasmexport hayride:mcp/resources@0.0.65#[constructor]resources
+//export hayride:mcp/resources@0.0.65#[constructor]resources
 func wasmexport_Constructor() (result0 uint32) {
 	result := Exports.Resources.Constructor()
 	result0 = cm.Reinterpret[uint32](result)
 	return
 }
 
-//go:wasmexport hayride:mcp/resources@0.0.64#[method]resources.list-resources
-//export hayride:mcp/resources@0.0.64#[method]resources.list-resources
+//go:wasmexport hayride:mcp/resources@0.0.65#[method]resources.list-resources
+//export hayride:mcp/resources@0.0.65#[method]resources.list-resources
 func wasmexport_ResourcesListResources(self0 uint32, cursor0 *uint8, cursor1 uint32) (result *cm.Result[ListResourcesResultShape, ListResourcesResult, Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	cursor := cm.LiftString[string]((*uint8)(cursor0), (uint32)(cursor1))
@@ -84,8 +84,8 @@ func wasmexport_ResourcesListResources(self0 uint32, cursor0 *uint8, cursor1 uin
 	return
 }
 
-//go:wasmexport hayride:mcp/resources@0.0.64#[method]resources.list-templates
-//export hayride:mcp/resources@0.0.64#[method]resources.list-templates
+//go:wasmexport hayride:mcp/resources@0.0.65#[method]resources.list-templates
+//export hayride:mcp/resources@0.0.65#[method]resources.list-templates
 func wasmexport_ResourcesListTemplates(self0 uint32, cursor0 *uint8, cursor1 uint32) (result *cm.Result[ListResourceTemplatesResultShape, ListResourceTemplatesResult, Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	cursor := cm.LiftString[string]((*uint8)(cursor0), (uint32)(cursor1))
@@ -94,8 +94,8 @@ func wasmexport_ResourcesListTemplates(self0 uint32, cursor0 *uint8, cursor1 uin
 	return
 }
 
-//go:wasmexport hayride:mcp/resources@0.0.64#[method]resources.read-resources
-//export hayride:mcp/resources@0.0.64#[method]resources.read-resources
+//go:wasmexport hayride:mcp/resources@0.0.65#[method]resources.read-resources
+//export hayride:mcp/resources@0.0.65#[method]resources.read-resources
 func wasmexport_ResourcesReadResources(self0 uint32, params0 *uint8, params1 uint32) (result *cm.Result[ReadResourceResultShape, ReadResourceResult, Error]) {
 	self := cm.Reinterpret[cm.Rep]((uint32)(self0))
 	params := lift_ReadResourceParams((*uint8)(params0), (uint32)(params1))

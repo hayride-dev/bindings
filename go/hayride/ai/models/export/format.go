@@ -3,8 +3,8 @@ package export
 import (
 	"unsafe"
 
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 	"github.com/hayride-dev/bindings/go/hayride/ai/models"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/model"
 	"go.bytecodealliance.org/cm"
 )
@@ -82,7 +82,7 @@ func encode(self cm.Rep, messages cm.List[model.Message]) (result cm.Result[cm.L
 		return cm.Err[cm.Result[cm.List[uint8], cm.List[uint8], model.Error]](wasiErr)
 	}
 
-	msgs := cm.Reinterpret[cm.List[types.Message]](messages)
+	msgs := cm.Reinterpret[cm.List[ai.Message]](messages)
 
 	msg, err := m.Encode(msgs.Slice()...)
 	if err != nil {

@@ -2,28 +2,28 @@
 
 package transformer
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.64".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.65".
 
-//go:wasmimport hayride:ai/transformer@0.0.64 [resource-drop]transformer
+//go:wasmimport hayride:ai/transformer@0.0.65 [resource-drop]transformer
 //go:noescape
 func wasmimport_TransformerResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/transformer@0.0.64 [constructor]transformer
+//go:wasmimport hayride:ai/transformer@0.0.65 [constructor]transformer
 //go:noescape
 func wasmimport_NewTransformer(embedding0 uint32, model0 *uint8, model1 uint32, dataColumn0 *uint8, dataColumn1 uint32, vectorColumn0 *uint8, vectorColumn1 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/transformer@0.0.64 [method]transformer.data-column
+//go:wasmimport hayride:ai/transformer@0.0.65 [method]transformer.data-column
 //go:noescape
 func wasmimport_TransformerDataColumn(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/transformer@0.0.64 [method]transformer.embedding
+//go:wasmimport hayride:ai/transformer@0.0.65 [method]transformer.embedding
 //go:noescape
 func wasmimport_TransformerEmbedding(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/transformer@0.0.64 [method]transformer.model
+//go:wasmimport hayride:ai/transformer@0.0.65 [method]transformer.model
 //go:noescape
 func wasmimport_TransformerModel(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/transformer@0.0.64 [method]transformer.vector-column
+//go:wasmimport hayride:ai/transformer@0.0.65 [method]transformer.vector-column
 //go:noescape
 func wasmimport_TransformerVectorColumn(self0 uint32, result *string)

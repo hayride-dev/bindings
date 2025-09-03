@@ -3,8 +3,8 @@ package export
 import (
 	"unsafe"
 
+	"github.com/hayride-dev/bindings/go/hayride/mcp"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/prompts"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	witPrompts "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/mcp/prompts"
 	"go.bytecodealliance.org/cm"
 )
@@ -55,7 +55,7 @@ func get(self cm.Rep, params witPrompts.GetPromptParams) cm.Result[witPrompts.Ge
 		return cm.Err[cm.Result[witPrompts.GetPromptResultShape, witPrompts.GetPromptResult, witPrompts.Error]](wasiErr)
 	}
 
-	result, err := prompt.Get(cm.Reinterpret[types.GetPromptParams](params))
+	result, err := prompt.Get(cm.Reinterpret[mcp.GetPromptParams](params))
 	if err != nil {
 		wasiErr := createError(witPrompts.ErrorCodePromptNotFound, err.Error())
 		return cm.Err[cm.Result[witPrompts.GetPromptResultShape, witPrompts.GetPromptResult, witPrompts.Error]](wasiErr)

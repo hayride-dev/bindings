@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/hayride-dev/bindings/go/hayride/types"
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/model"
 	"go.bytecodealliance.org/cm"
 )
@@ -9,8 +9,8 @@ import (
 var _ Format = (*FormatResource)(nil)
 
 type Format interface {
-	Encode(messages ...types.Message) ([]byte, error)
-	Decode(b []byte) (*types.Message, error)
+	Encode(messages ...ai.Message) ([]byte, error)
+	Decode(b []byte) (*ai.Message, error)
 }
 
 type FormatResource cm.Resource
@@ -19,7 +19,7 @@ func New() (Format, error) {
 	return FormatResource(model.NewFormat()), nil
 }
 
-func (f FormatResource) Encode(messages ...types.Message) ([]byte, error) {
+func (f FormatResource) Encode(messages ...ai.Message) ([]byte, error) {
 	witFormat := cm.Reinterpret[model.Format](f)
 
 	witList := cm.ToList(messages)
@@ -33,7 +33,7 @@ func (f FormatResource) Encode(messages ...types.Message) ([]byte, error) {
 	return result.OK().Slice(), nil
 }
 
-func (f FormatResource) Decode(b []byte) (*types.Message, error) {
+func (f FormatResource) Decode(b []byte) (*ai.Message, error) {
 	witFormat := cm.Reinterpret[model.Format](f)
 
 	data := cm.ToList(b)
@@ -44,5 +44,5 @@ func (f FormatResource) Decode(b []byte) (*types.Message, error) {
 		return nil, newError(err)
 	}
 
-	return cm.Reinterpret[*types.Message](result.OK()), nil
+	return cm.Reinterpret[*ai.Message](result.OK()), nil
 }

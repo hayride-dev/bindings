@@ -1,10 +1,12 @@
-package types
+package core
 
 import (
-	"encoding/json"
-	"reflect"
 	"testing"
 
+	"github.com/hayride-dev/bindings/go/hayride/ai"
+	"github.com/hayride-dev/bindings/go/hayride/mcp"
+	"github.com/hayride-dev/bindings/go/hayride/x/silo"
+	"github.com/hayride-dev/bindings/go/internal/gen/types/hayride/core/types"
 	"go.bytecodealliance.org/cm"
 )
 
@@ -33,7 +35,7 @@ func TestRequestData(t *testing.T) {
 
 func TestResponseData(t *testing.T) {
 	t.Run("ThreadMetadata", func(t *testing.T) {
-		data := NewResponseData(cm.ToList([]ThreadMetadata{{}}))
+		data := NewResponseData(cm.ToList([]silo.ThreadMetadata{{}}))
 		if data.Tag() != 1 {
 			t.Errorf("expected tag 1, got %d", data.Tag())
 		}
@@ -54,7 +56,7 @@ func TestResponseData(t *testing.T) {
 	})
 
 	t.Run("Messages", func(t *testing.T) {
-		data := NewResponseData(cm.ToList([]Message{{}}))
+		data := NewResponseData(cm.ToList([]types.Message{{}}))
 		if data.Tag() != 4 {
 			t.Errorf("expected tag 4, got %d", data.Tag())
 		}
@@ -68,7 +70,7 @@ func TestResponseData(t *testing.T) {
 	})
 
 	t.Run("ThreadStatus", func(t *testing.T) {
-		data := NewResponseData(ThreadStatus(0))
+		data := NewResponseData(types.ThreadStatus(0))
 		if data.Tag() != 3 {
 			t.Errorf("expected tag 3, got %d", data.Tag())
 		}
@@ -88,7 +90,7 @@ func TestMarshalRequest(t *testing.T) {
 					Generate{
 						Model:    "test-model",
 						System:   "This is a system message.",
-						Messages: cm.ToList([]Message{{Role: RoleUser, Content: cm.ToList([]MessageContent{NewMessageContent(Text("Hello, world!"))})}}),
+						Messages: cm.ToList([]types.Message{{Role: ai.RoleUser, Content: cm.ToList([]ai.MessageContent{ai.NewMessageContent(ai.Text("Hello, world!"))})}}),
 					},
 				),
 				Metadata: cm.ToList([][2]string{{"key", "value"}}),
@@ -102,9 +104,9 @@ func TestMarshalRequest(t *testing.T) {
 					Generate{
 						Model:  "test-model",
 						System: "This is a system message.",
-						Messages: cm.ToList([]Message{
-							{Role: RoleSystem, Content: cm.ToList([]MessageContent{NewMessageContent(Text("System message."))})},
-							{Role: RoleUser, Content: cm.ToList([]MessageContent{NewMessageContent(Text("User message."))})},
+						Messages: cm.ToList([]ai.Message{
+							{Role: ai.RoleSystem, Content: cm.ToList([]ai.MessageContent{ai.NewMessageContent(ai.Text("System message."))})},
+							{Role: ai.RoleUser, Content: cm.ToList([]ai.MessageContent{ai.NewMessageContent(ai.Text("User message."))})},
 						}),
 					}),
 				Metadata: cm.ToList([][2]string{{"key1", "value1"}, {"key2", "value2"}}),
@@ -118,22 +120,22 @@ func TestMarshalRequest(t *testing.T) {
 					Generate{
 						Model:  "test-model",
 						System: "This is a system message.",
-						Messages: cm.ToList([]Message{
-							{Role: RoleUser, Content: cm.ToList([]MessageContent{NewMessageContent(cm.ToList([]Tool{
-								{Name: "example-tool", Description: "An example tool", InputSchema: ToolSchema{SchemaType: "object", Properties: cm.ToList([][2]string{{"arg1", "string"}, {"arg2", "string"}}), Required: cm.ToList([]string{"arg1", "arg2"})}},
+						Messages: cm.ToList([]ai.Message{
+							{Role: ai.RoleUser, Content: cm.ToList([]ai.MessageContent{ai.NewMessageContent(cm.ToList([]mcp.Tool{
+								{Name: "example-tool", Description: "An example tool", InputSchema: mcp.ToolSchema{SchemaType: "object", Properties: cm.ToList([][2]string{{"arg1", "string"}, {"arg2", "string"}}), Required: cm.ToList([]string{"arg1", "arg2"})}},
 							}))})},
-							{Role: RoleAssistant, Content: cm.ToList([]MessageContent{NewMessageContent(CallToolParams{
+							{Role: ai.RoleAssistant, Content: cm.ToList([]ai.MessageContent{ai.NewMessageContent(mcp.CallToolParams{
 								Name:      "example-tool",
 								Arguments: cm.ToList([][2]string{{"arg1", "value1"}, {"arg2", "value2"}}),
 							})})},
-							{Role: RoleTool, Content: cm.ToList([]MessageContent{NewMessageContent(CallToolResult{
-								Content: cm.ToList([]Content{
-									NewContent(TextContent{ContentType: "text", Text: "Tool output"}),
-									NewContent(ImageContent{ContentType: "image", Data: cm.ToList([]byte{0x89, 0x50, 0x4E, 0x47})}),
-									NewContent(AudioContent{ContentType: "audio", Data: cm.ToList([]byte("audio data"))}),
-									NewContent(ResourceLinkContent{ContentType: "resource_link", URI: "https://example.com/resource"}),
-									NewContent(EmbeddedResourceContent{ContentType: "resource", ResourceContents: NewResourceContents(
-										TextResourceContents{
+							{Role: ai.RoleTool, Content: cm.ToList([]ai.MessageContent{ai.NewMessageContent(mcp.CallToolResult{
+								Content: cm.ToList([]mcp.Content{
+									mcp.NewContent(mcp.TextContent{ContentType: "text", Text: "Tool output"}),
+									mcp.NewContent(mcp.ImageContent{ContentType: "image", Data: cm.ToList([]byte{0x89, 0x50, 0x4E, 0x47})}),
+									mcp.NewContent(mcp.AudioContent{ContentType: "audio", Data: cm.ToList([]byte("audio data"))}),
+									mcp.NewContent(mcp.ResourceLinkContent{ContentType: "resource_link", URI: "https://example.com/resource"}),
+									mcp.NewContent(mcp.EmbeddedResourceContent{ContentType: "resource", ResourceContents: mcp.NewResourceContents(
+										mcp.TextResourceContents{
 											URI:      "file:///example.txt",
 											Name:     "example.txt",
 											Title:    "Example Text File",
@@ -141,8 +143,8 @@ func TestMarshalRequest(t *testing.T) {
 											Text:     "Resource content",
 										},
 									)}),
-									NewContent(EmbeddedResourceContent{ContentType: "resource", ResourceContents: NewResourceContents(
-										BlobResourceContents{
+									mcp.NewContent(mcp.EmbeddedResourceContent{ContentType: "resource", ResourceContents: mcp.NewResourceContents(
+										mcp.BlobResourceContents{
 											URI:      "file:///example.bin",
 											Name:     "example.bin",
 											Title:    "Example Binary File",
@@ -409,76 +411,6 @@ func TestMarshalRequest(t *testing.T) {
 				default:
 					t.Fatal("unexpected data tag")
 				}
-			}
-		})
-	}
-}
-
-func TestMarshalToolSchema(t *testing.T) {
-	tests := []struct {
-		name     string
-		schema   *ToolSchema
-		expected string // JSON string
-	}{
-		{
-			name: "empty schema",
-			schema: &ToolSchema{
-				SchemaType: "object",
-				Properties: cm.ToList([][2]string{}),
-				Required:   cm.ToList([]string{}),
-			},
-			expected: `{"type":"object", "properties":{}}`,
-		},
-		{
-			name: "valid JSON property",
-			schema: &ToolSchema{
-				SchemaType: "object",
-				Properties: cm.ToList([][2]string{
-					{"name", `{"type":"string","description":"Name","default":""}`},
-				}),
-			},
-			expected: `{"type":"object","properties":{"name":{"type":"string","description":"Name","default":""}}}`,
-		},
-		{
-			name: "non JSON fallback",
-			schema: &ToolSchema{
-				SchemaType: "object",
-				Properties: cm.ToList([][2]string{
-					{"name", "not valid json"},
-				}),
-			},
-			expected: `{"type":"object","properties":{"name":"not valid json"}}`,
-		},
-		{
-			name: "required fields",
-			schema: &ToolSchema{
-				SchemaType: "object",
-				Properties: cm.ToList([][2]string{
-					{"name", `{"type":"string"}`},
-				}),
-				Required: cm.ToList([]string{"name"}),
-			},
-			expected: `{"type":"object","properties":{"name":{"type":"string"}},"required":["name"]}`,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			actualBytes, err := json.Marshal(tt.schema)
-			if err != nil {
-				t.Fatalf("unexpected error marshaling schema: %v", err)
-			}
-
-			var actualObj, expectedObj any
-			if err := json.Unmarshal(actualBytes, &actualObj); err != nil {
-				t.Fatalf("failed to unmarshal actual JSON: %v", err)
-			}
-			if err := json.Unmarshal([]byte(tt.expected), &expectedObj); err != nil {
-				t.Fatalf("failed to unmarshal expected JSON: %v", err)
-			}
-
-			if !reflect.DeepEqual(actualObj, expectedObj) {
-				t.Errorf("unexpected marshaled JSON.\nExpected: %s\nGot:      %s", tt.expected, string(actualBytes))
 			}
 		})
 	}

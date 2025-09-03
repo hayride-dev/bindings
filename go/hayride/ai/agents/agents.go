@@ -3,9 +3,10 @@ package agents
 import (
 	"fmt"
 
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
+	"github.com/hayride-dev/bindings/go/hayride/mcp"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/ai/agents"
 
 	"go.bytecodealliance.org/cm"
@@ -16,10 +17,10 @@ var _ Agent = (*AgentResource)(nil)
 type Agent interface {
 	Name() string
 	Instruction() string
-	Capabilities() ([]types.Tool, error)
-	Context() ([]types.Message, error)
-	Push(message types.Message) error
-	Execute(params types.CallToolParams) (*types.CallToolResult, error)
+	Capabilities() ([]mcp.Tool, error)
+	Context() ([]ai.Message, error)
+	Push(message ai.Message) error
+	Execute(params mcp.CallToolParams) (*mcp.CallToolResult, error)
 }
 
 type AgentResource cm.Resource
@@ -77,27 +78,27 @@ func (a AgentResource) Instruction() string {
 	return result
 }
 
-func (a AgentResource) Capabilities() ([]types.Tool, error) {
+func (a AgentResource) Capabilities() ([]mcp.Tool, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Capabilities()
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to get capabilities: %s", result.Err().Data())
 	}
 
-	return cm.Reinterpret[[]types.Tool](result.OK().Slice()), nil
+	return cm.Reinterpret[[]mcp.Tool](result.OK().Slice()), nil
 }
 
-func (a AgentResource) Context() ([]types.Message, error) {
+func (a AgentResource) Context() ([]ai.Message, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Context()
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to get context: %s", result.Err().Data())
 	}
 
-	return cm.Reinterpret[[]types.Message](result.OK().Slice()), nil
+	return cm.Reinterpret[[]ai.Message](result.OK().Slice()), nil
 }
 
-func (a AgentResource) Push(message types.Message) error {
+func (a AgentResource) Push(message ai.Message) error {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Push(cm.Reinterpret[agents.Message](message))
 	if result.IsErr() {
@@ -107,12 +108,12 @@ func (a AgentResource) Push(message types.Message) error {
 	return nil
 }
 
-func (a AgentResource) Execute(params types.CallToolParams) (*types.CallToolResult, error) {
+func (a AgentResource) Execute(params mcp.CallToolParams) (*mcp.CallToolResult, error) {
 	wa := cm.Reinterpret[agents.Agent](a)
 	result := wa.Execute(cm.Reinterpret[agents.CallToolParams](params))
 	if result.IsErr() {
 		return nil, fmt.Errorf("failed to execute tool: %s", result.Err().Data())
 	}
 
-	return cm.Reinterpret[*types.CallToolResult](result.OK()), nil
+	return cm.Reinterpret[*mcp.CallToolResult](result.OK()), nil
 }

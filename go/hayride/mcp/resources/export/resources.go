@@ -3,8 +3,8 @@ package export
 import (
 	"unsafe"
 
+	"github.com/hayride-dev/bindings/go/hayride/mcp"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/resources"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	witResources "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/mcp/resources"
 	"go.bytecodealliance.org/cm"
 )
@@ -56,7 +56,7 @@ func read(self cm.Rep, params witResources.ReadResourceParams) cm.Result[witReso
 		return cm.Err[cm.Result[witResources.ReadResourceResultShape, witResources.ReadResourceResult, witResources.Error]](wasiErr)
 	}
 
-	result, err := resource.Read(cm.Reinterpret[types.ReadResourceParams](params))
+	result, err := resource.Read(cm.Reinterpret[mcp.ReadResourceParams](params))
 	if err != nil {
 		wasiErr := createError(witResources.ErrorCodeResourceNotFound, err.Error())
 		return cm.Err[cm.Result[witResources.ReadResourceResultShape, witResources.ReadResourceResult, witResources.Error]](wasiErr)

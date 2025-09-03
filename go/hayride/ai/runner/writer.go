@@ -5,17 +5,17 @@ import (
 	"io"
 	"strings"
 
-	"github.com/hayride-dev/bindings/go/hayride/types"
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 )
 
 var _ io.Writer = &Writer{}
 
 type Writer struct {
-	writerType types.WriterType
+	writerType ai.WriterType
 	w          io.Writer
 }
 
-func NewWriter(writerType types.WriterType, w io.Writer) *Writer {
+func NewWriter(writerType ai.WriterType, w io.Writer) *Writer {
 	return &Writer{
 		writerType: writerType,
 		w:          w,
@@ -24,7 +24,7 @@ func NewWriter(writerType types.WriterType, w io.Writer) *Writer {
 
 func (mw *Writer) Write(p []byte) (int, error) {
 	switch mw.writerType {
-	case types.WriterTypeSse:
+	case ai.WriterTypeSse:
 		// SSE is text; normalize line endings to \n
 		s := strings.ReplaceAll(string(p), "\r\n", "\n")
 
@@ -49,7 +49,7 @@ func (mw *Writer) Write(p []byte) (int, error) {
 		}
 
 		return len(p), nil
-	case types.WriterTypeRaw:
+	case ai.WriterTypeRaw:
 		if _, err := mw.w.Write(p); err != nil {
 			return 0, fmt.Errorf("failed to write raw message: %w", err)
 		}

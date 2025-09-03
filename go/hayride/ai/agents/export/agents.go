@@ -3,10 +3,11 @@ package export
 import (
 	"unsafe"
 
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 	"github.com/hayride-dev/bindings/go/hayride/ai/agents"
 	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
+	"github.com/hayride-dev/bindings/go/hayride/mcp"
 	"github.com/hayride-dev/bindings/go/hayride/mcp/tools"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	witAgents "github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/agents"
 	"go.bytecodealliance.org/cm"
 )
@@ -125,7 +126,7 @@ func push(self cm.Rep, msg witAgents.Message) cm.Result[witAgents.Error, struct{
 		wasiErr := createError(witAgents.ErrorCodePushError, "failed to find agent resource")
 		return cm.Err[cm.Result[witAgents.Error, struct{}, witAgents.Error]](wasiErr)
 	}
-	message := cm.Reinterpret[types.Message](msg)
+	message := cm.Reinterpret[ai.Message](msg)
 	err := agent.Push(message)
 	if err != nil {
 		wasiErr := createError(witAgents.ErrorCodePushError, err.Error())
@@ -142,7 +143,7 @@ func execute(self cm.Rep, params witAgents.CallToolParams) cm.Result[witAgents.C
 		return cm.Err[cm.Result[witAgents.CallToolResultShape, witAgents.CallToolResult, witAgents.Error]](wasiErr)
 	}
 
-	p := cm.Reinterpret[types.CallToolParams](params)
+	p := cm.Reinterpret[mcp.CallToolParams](params)
 
 	result, err := agent.Execute(p)
 	if err != nil {

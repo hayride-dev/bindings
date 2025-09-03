@@ -7,17 +7,17 @@ import (
 	"io"
 	"strings"
 
-	"github.com/hayride-dev/bindings/go/hayride/types"
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 )
 
 var _ io.Reader = &Reader{}
 
 type Reader struct {
-	writerType types.WriterType
+	writerType ai.WriterType
 	r          *bufio.Reader
 }
 
-func NewReader(writerType types.WriterType, r io.Reader) *Reader {
+func NewReader(writerType ai.WriterType, r io.Reader) *Reader {
 	return &Reader{
 		writerType: writerType,
 		r:          bufio.NewReader(r),
@@ -32,7 +32,7 @@ func (r *Reader) Read(p []byte) (n int, err error) {
 // ReadLine reads a single line and handles SSE parsing if in SSE mode
 func (r *Reader) ReadLine() ([]byte, error) {
 	switch r.writerType {
-	case types.WriterTypeSse:
+	case ai.WriterTypeSse:
 		var dataLines []string
 
 		for {
@@ -81,7 +81,7 @@ func (r *Reader) ReadLine() ([]byte, error) {
 			// Field without ":" (non-standard)
 		}
 
-	case types.WriterTypeRaw:
+	case ai.WriterTypeRaw:
 		line, err := r.r.ReadString('\n')
 		if err != nil {
 			// If EOF and we got some bytes, return them (without forcing an error)

@@ -7,28 +7,28 @@ import (
 	"go.bytecodealliance.org/cm"
 )
 
-// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.64".
+// This file contains wasmimport and wasmexport declarations for "hayride:ai@0.0.65".
 
-//go:wasmimport hayride:ai/runner@0.0.64 [resource-drop]error
+//go:wasmimport hayride:ai/runner@0.0.65 [resource-drop]error
 //go:noescape
 func wasmimport_ErrorResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/runner@0.0.64 [method]error.code
+//go:wasmimport hayride:ai/runner@0.0.65 [method]error.code
 //go:noescape
 func wasmimport_ErrorCode(self0 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/runner@0.0.64 [method]error.data
+//go:wasmimport hayride:ai/runner@0.0.65 [method]error.data
 //go:noescape
 func wasmimport_ErrorData(self0 uint32, result *string)
 
-//go:wasmimport hayride:ai/runner@0.0.64 [resource-drop]runner
+//go:wasmimport hayride:ai/runner@0.0.65 [resource-drop]runner
 //go:noescape
 func wasmimport_RunnerResourceDrop(self0 uint32)
 
-//go:wasmimport hayride:ai/runner@0.0.64 [constructor]runner
+//go:wasmimport hayride:ai/runner@0.0.65 [constructor]runner
 //go:noescape
 func wasmimport_NewRunner(options0 uint32, options1 uint32) (result0 uint32)
 
-//go:wasmimport hayride:ai/runner@0.0.64 [method]runner.invoke
+//go:wasmimport hayride:ai/runner@0.0.65 [method]runner.invoke
 //go:noescape
 func wasmimport_RunnerInvoke(self0 uint32, message0 uint32, message1 *types.MessageContent, message2 uint32, message3 uint32, agent0 uint32, format0 uint32, graph0 uint32, outputStream0 uint32, outputStream1 uint32, result *cm.Result[cm.List[Message], cm.List[Message], Error])

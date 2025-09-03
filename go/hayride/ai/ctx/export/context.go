@@ -3,8 +3,8 @@ package export
 import (
 	"unsafe"
 
+	"github.com/hayride-dev/bindings/go/hayride/ai"
 	"github.com/hayride-dev/bindings/go/hayride/ai/ctx"
-	"github.com/hayride-dev/bindings/go/hayride/types"
 	"github.com/hayride-dev/bindings/go/internal/gen/exports/hayride/ai/context"
 	"go.bytecodealliance.org/cm"
 )
@@ -59,7 +59,7 @@ func push(self cm.Rep, msg context.Message) cm.Result[context.Error, struct{}, c
 		return cm.Err[cm.Result[context.Error, struct{}, context.Error]](wasiErr)
 	}
 
-	m := cm.Reinterpret[types.Message](msg)
+	m := cm.Reinterpret[ai.Message](msg)
 
 	if err := ctx.Push(m); err != nil {
 		wasiErr := createError(context.ErrorCodePushError, err.Error())
