@@ -123,11 +123,15 @@ func TestMarshalRequest(t *testing.T) {
 						Messages: cm.ToList([]ai.Message{
 							{Role: ai.RoleUser, Content: cm.ToList([]ai.MessageContent{ai.NewMessageContent(cm.ToList([]mcp.Tool{
 								{Name: "example-tool", Description: "An example tool", InputSchema: mcp.ToolSchema{SchemaType: "object", Properties: cm.ToList([][2]string{{"arg1", "string"}, {"arg2", "string"}}), Required: cm.ToList([]string{"arg1", "arg2"})}},
-							}))})},
+							}))}),
+								Final: false,
+							},
 							{Role: ai.RoleAssistant, Content: cm.ToList([]ai.MessageContent{ai.NewMessageContent(mcp.CallToolParams{
 								Name:      "example-tool",
 								Arguments: cm.ToList([][2]string{{"arg1", "value1"}, {"arg2", "value2"}}),
-							})})},
+							})}),
+								Final: false,
+							},
 							{Role: ai.RoleTool, Content: cm.ToList([]ai.MessageContent{ai.NewMessageContent(mcp.CallToolResult{
 								Content: cm.ToList([]mcp.Content{
 									mcp.NewContent(mcp.TextContent{ContentType: "text", Text: "Tool output"}),
@@ -153,7 +157,9 @@ func TestMarshalRequest(t *testing.T) {
 										},
 									)}),
 								}),
-							})})},
+							})}),
+								Final: true,
+							},
 						}),
 					}),
 				Metadata: cm.ToList([][2]string{{"key1", "value1"}, {"key2", "value2"}}),
@@ -406,6 +412,10 @@ func TestMarshalRequest(t *testing.T) {
 									}
 								}
 							}
+						}
+
+						if dataMessage.Final != unmarshalledMessage.Final {
+							t.Fatalf("expected message final %v, got %v", dataMessage.Final, unmarshalledMessage.Final)
 						}
 					}
 				default:

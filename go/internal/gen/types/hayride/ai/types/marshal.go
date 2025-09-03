@@ -23,9 +23,11 @@ func (m Message) MarshalJSON() ([]byte, error) {
 	return json.Marshal(struct {
 		Role    string            `json:"role"`
 		Content []json.RawMessage `json:"content"`
+		Final   bool              `json:"final"`
 	}{
 		Role:    roleStr,
 		Content: content,
+		Final:   m.Final,
 	})
 }
 
@@ -33,6 +35,7 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 	var aux struct {
 		Role    string            `json:"role"`
 		Content []json.RawMessage `json:"content"`
+		Final   bool              `json:"final"`
 	}
 	if err := json.Unmarshal(data, &aux); err != nil {
 		return fmt.Errorf("failed to unmarshal message: %w", err)
@@ -53,6 +56,9 @@ func (m *Message) UnmarshalJSON(data []byte) error {
 		content = append(content, cw)
 	}
 	m.Content = cm.ToList(content)
+
+	// Set final
+	m.Final = aux.Final
 
 	return nil
 }
