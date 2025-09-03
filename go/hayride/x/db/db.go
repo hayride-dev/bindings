@@ -6,6 +6,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"io"
+	"time"
 
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/db/db"
 	"github.com/hayride-dev/bindings/go/internal/gen/imports/hayride/db/types"
@@ -199,6 +200,11 @@ func dbValueFromInterface(value driver.Value) DbValue {
 		return types.DbValueBoolean(v)
 	case string:
 		return types.DbValueStr(v)
+	case time.Time:
+		if v.IsZero() {
+			return types.DbValueNull()
+		}
+		return types.DbValueTimestamp(v.Format(time.RFC3339))
 	case []byte:
 		return types.DbValueBinary(cm.ToList(v))
 	default:
