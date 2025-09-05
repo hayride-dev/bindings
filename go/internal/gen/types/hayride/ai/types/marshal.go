@@ -68,30 +68,47 @@ func (c MessageContent) MarshalJSON() ([]byte, error) {
 	var value interface{}
 
 	switch c.Tag() {
+	case 0:
+		if c.None() {
+			contentType = "none"
+			value = nil
+		} else {
+			return nil, fmt.Errorf("invalid none content for tag 0")
+		}
 	case 1:
 		if v := c.Text(); v != nil {
 			contentType = "text"
 			value = v
+		} else {
+			return nil, fmt.Errorf("text content is nil for tag 1")
 		}
 	case 2:
 		if v := c.Blob(); v != nil {
 			contentType = "blob"
 			value = v
+		} else {
+			return nil, fmt.Errorf("blob content is nil for tag 2")
 		}
 	case 3:
 		if v := c.Tools(); v != nil {
 			contentType = "tools"
 			value = v
+		} else {
+			return nil, fmt.Errorf("tools content is nil for tag 3")
 		}
 	case 4:
 		if v := c.ToolInput(); v != nil {
 			contentType = "tool-input"
 			value = v
+		} else {
+			return nil, fmt.Errorf("tool-input content is nil for tag 4")
 		}
 	case 5:
 		if v := c.ToolOutput(); v != nil {
 			contentType = "tool-output"
 			value = v
+		} else {
+			return nil, fmt.Errorf("tool-output content is nil for tag 5")
 		}
 	default:
 		return nil, fmt.Errorf("unsupported content tag: %d", c.Tag())
@@ -117,6 +134,8 @@ func (c *MessageContent) UnmarshalJSON(data []byte) error {
 	}
 	for key, raw := range temp {
 		switch key {
+		case "none":
+			*c = MessageContentNone()
 		case "text":
 			var text string
 			if err := json.Unmarshal(raw, &text); err != nil {
